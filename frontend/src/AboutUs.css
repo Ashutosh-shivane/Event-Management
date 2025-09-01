@@ -1,0 +1,181 @@
+.about-page {
+  font-family: Arial, sans-serif;
+  color: #333;
+  line-height: 1.6;
+}
+
+/* Hero */
+.hero {
+  background: linear-gradient(to bottom right, #e0f2fe, #ede9fe);
+  text-align: center;
+  padding: 60px 20px;
+}
+.hero h1 {
+  font-size: 2.5rem;
+  margin-bottom: 20px;
+}
+
+/* Mission */
+.mission {
+  background: #f7f7f7;
+  text-align: center;
+  padding: 60px 20px;
+}
+.mission-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 15px;
+  max-width: 900px;
+  margin: 0 auto;
+}
+.mission-card {
+  background: #fff;
+  border-left: 4px solid #007bff;
+  padding: 20px;
+  border-radius: 6px;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+/* Vision */
+.vision {
+  padding: 60px 20px;
+  max-width: 900px;
+  margin: 0 auto;
+}
+.values-list {
+  margin-top: 20px;
+}
+.value-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 8px 0;
+}
+
+/* Story */
+.story {
+  background: #f7f7f7;
+  text-align: center;
+  padding: 60px 20px;
+}
+
+/* Team */
+.team {
+  text-align: center;
+  padding: 60px 20px;
+  max-width: 1000px;
+  margin: 0 auto;
+}
+.team-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 20px;
+}
+.team-card {
+  background: #fff;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+}
+.avatar {
+  width: 80px;
+  height: 80px;
+  background: #007bff;
+  color: #fff;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 10px;
+  font-weight: bold;
+  font-size: 1.2rem;
+}
+.role {
+  color: #666;
+  font-size: 0.9rem;
+}
+
+/* Features */
+.features {
+  background: #f7f7f7;
+  text-align: center;
+  padding: 60px 20px;
+}
+.features-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 20px;
+  max-width: 1000px;
+  margin: 0 auto;
+}
+.feature-card {
+  background: #fff;
+  padding: 20px;
+  border-radius: 6px;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+/* Achievements */
+.achievements {
+  text-align: center;
+  padding: 60px 20px;
+}
+.achievements-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 20px;
+  max-width: 900px;
+  margin: 0 auto;
+}
+.achievement-card {
+  background: #fff;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  padding: 20px;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+}
+
+/* CTA */
+.cta {
+  background: #2563eb;
+  color: #fff;
+  text-align: center;
+  padding: 60px 20px;
+}
+.cta h2 {
+  margin-bottom: 15px;
+}
+.cta-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 15px;
+  margin-top: 20px;
+}
+.cta-buttons button {
+  background: #fff;
+  color: #2563eb;
+  padding: 12px 20px;
+  border: none;
+  border-radius: 6px;
+  font-weight: bold;
+  cursor: pointer;
+}
+.cta-buttons button:hover {
+  background: #f0f0f0;
+}
+
+/* Contact */
+.contact {
+  background: #f7f7f7;
+  text-align: center;
+  padding: 60px 20px;
+}
+.contact-box {
+  background: #fff;
+  padding: 20px;
+  border-radius: 6px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+  max-width: 400px;
+  margin: 0 auto;
+}
