@@ -2,6 +2,7 @@ package com.example.GreenRoute.domain.entity;
 
 
 import com.example.GreenRoute.domain.entity.type.AuthProviderType;
+import com.example.GreenRoute.domain.entity.type.UserType;
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
@@ -26,9 +27,14 @@ public class User implements UserDetails {
     @JoinColumn(unique = true)
     private String username;
 
+    private String name;
+
     private String password;
 
     private String providerId;
+
+    @Enumerated(EnumType.STRING)
+    private UserType usertype;
 
     @Enumerated(EnumType.STRING)
     private AuthProviderType providerType;
