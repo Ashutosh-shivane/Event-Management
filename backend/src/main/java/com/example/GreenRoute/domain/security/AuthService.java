@@ -6,6 +6,7 @@ import com.example.GreenRoute.domain.dto.SignupRequestDTO;
 import com.example.GreenRoute.domain.dto.SignupResponceDTO;
 import com.example.GreenRoute.domain.entity.User;
 import com.example.GreenRoute.domain.entity.type.AuthProviderType;
+import com.example.GreenRoute.domain.entity.type.UserType;
 import com.example.GreenRoute.domain.repository.UserRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -38,7 +39,7 @@ public class AuthService {
 
         String token =authUtil.generateAccessToken(user);
 
-        return new LoginResponceDTO(token,user.getId());
+        return new LoginResponceDTO(token,user.getId(),user.getName(),user.getUsername(),user.getUsertype());
 
 
     }
@@ -49,10 +50,14 @@ public class AuthService {
 
         if(user != null) throw new IllegalArgumentException("User already exists");
 
+        System.out.println(signupRequestDto);
+
         user = User.builder()
                 .username(signupRequestDto.getUsername())
                 .providerId(providerId)
                 .providerType(authProviderType)
+                .name(signupRequestDto.getName())
+                .usertype(signupRequestDto.getUsertype())
                 .build();
 
         if(authProviderType == AuthProviderType.EMAIL) {
@@ -85,7 +90,7 @@ public class AuthService {
 
         if(user ==null && emailUser==null){
             String username=authUtil.determineUsernameFromOAuth2User(oAuth2User,registrationId,providerId);
-            user=signUpInternal(new SignupRequestDTO(username,null),authProviderType,providerId);
+            user=signUpInternal(new SignupRequestDTO(username,null,username, UserType.STUDENT),authProviderType,providerId);
         } else if(user != null) {
         if(email != null && !email.isBlank() && !email.equals(user.getUsername())) {
             user.setUsername(email);
@@ -95,7 +100,7 @@ public class AuthService {
         throw new BadCredentialsException("This email is already registered with provider "+emailUser.getProviderType());
     }
 
-        LoginResponceDTO loginResponceDTO=new LoginResponceDTO(authUtil.generateAccessToken(user),user.getId());
+        LoginResponceDTO loginResponceDTO=new LoginResponceDTO(authUtil.generateAccessToken(user),user.getId(),user.getName(),user.getUsername(),user.getUsertype());
 
             return ResponseEntity.ok(loginResponceDTO);
 

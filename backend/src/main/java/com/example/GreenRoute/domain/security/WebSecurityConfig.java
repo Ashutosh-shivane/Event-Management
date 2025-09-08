@@ -33,7 +33,7 @@ public class WebSecurityConfig {
                 .sessionManagement(sessionConfig ->
                         sessionConfig.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth->auth
-                                .requestMatchers("/Public/**","/auth/**").permitAll()
+                                .requestMatchers("/Public/**","/auth/**","/Event/**").permitAll()
 //                                .requestMatchers("/admin/**").hasRole("ADMIN")
 //                                .requestMatchers("/stationOwner/**").hasRole("STATIONOWNER")
                                 .anyRequest().authenticated()
