@@ -6,7 +6,10 @@ import { LandingPage } from './components/LandingPage';
 import { AboutPage } from './components/AboutPage';
 import { EventDetailsPage } from './components/EventDetailsPage';
 import { ManagerEventAddPage } from './components/ManagerEventAddPage';
-import {EventAddPage} from './components/EventAddPage'
+import {EventAddPage} from './components/EventAddPage';
+import { OrganizerEventCreatePage } from './components/organizer/OrganizerEventCreatePage';
+import { OrganizerEventManagePage } from './components/organizer/OrganizerEventManagePage';
+import { OrganizerAddManagerPage } from './components/organizer/OrganizerAddManagerPage';
 
 export type PageType = 'landing' | 'about' | 'login' | 'signup' | 'dashboard' | 'event-details' | 'add-event';
 
@@ -76,6 +79,34 @@ function AppContent({
       ) : (
         <LandingPage onNavigate={setCurrentPage} />
       );
+
+
+      case 'organizer-create-event':
+      return isAuthenticated ? (
+        <OrganizerEventCreatePage onNavigate={setCurrentPage} />
+      ) : (
+        <LandingPage onNavigate={setCurrentPage} />
+      );
+    case 'organizer-manage-events':
+      return isAuthenticated ? (
+        <OrganizerEventManagePage 
+          onNavigate={setCurrentPage} 
+          onEventSelect={setSelectedEventId}
+        />
+      ) : (
+        <LandingPage onNavigate={setCurrentPage} />
+      );
+    case 'organizer-add-manager':
+      return isAuthenticated ? (
+        <OrganizerAddManagerPage 
+          onNavigate={setCurrentPage}
+          eventId={selectedEventId}
+        />
+      ) : (
+        <LandingPage onNavigate={setCurrentPage} />
+      );
+
+
     default:
       return <LandingPage onNavigate={setCurrentPage} />;
   }

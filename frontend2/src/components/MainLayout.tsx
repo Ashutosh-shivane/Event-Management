@@ -27,7 +27,7 @@ export function MainLayout({ onNavigate, onEventSelect }: MainLayoutProps) {
   const renderCurrentPage = () => {
     switch (currentPage) {
       case 'dashboard':
-        return <Dashboard onNavigate={onNavigate} onEventSelect={onEventSelect} />;
+        return <Dashboard onNavigate={onNavigate} onEventSelect={onEventSelect} onPageChange={setCurrentPage} />;
       case 'events':
         return <EventsPage onNavigate={onNavigate} onEventSelect={onEventSelect} />;
       case 'wallet':

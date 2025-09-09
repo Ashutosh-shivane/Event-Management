@@ -1,4 +1,4 @@
-package com.example.GreenRoute.config;
+package com.example.GreenRoute.domain.config;
 
 import com.example.GreenRoute.domain.Event.Event;
 import com.example.GreenRoute.domain.entity.User;
