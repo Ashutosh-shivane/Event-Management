@@ -10,6 +10,7 @@ import {EventAddPage} from './components/EventAddPage';
 import { OrganizerEventCreatePage } from './components/organizer/OrganizerEventCreatePage';
 import { OrganizerEventManagePage } from './components/organizer/OrganizerEventManagePage';
 import { OrganizerAddManagerPage } from './components/organizer/OrganizerAddManagerPage';
+import { ManagerStudentApprovalsPage } from './components/manager/ManagerStudentApprovalsPage';
 
 export type PageType = 'landing' | 'about' | 'login' | 'signup' | 'dashboard' | 'event-details' | 'add-event';
 
@@ -99,6 +100,17 @@ function AppContent({
     case 'organizer-add-manager':
       return isAuthenticated ? (
         <OrganizerAddManagerPage 
+          onNavigate={setCurrentPage}
+          eventId={selectedEventId}
+        />
+      ) : (
+        <LandingPage onNavigate={setCurrentPage} />
+      );
+
+
+      case 'manager-student-approvals':
+      return isAuthenticated ? (
+        <ManagerStudentApprovalsPage 
           onNavigate={setCurrentPage}
           eventId={selectedEventId}
         />

@@ -22,7 +22,7 @@ export function Dashboard({ onNavigate, onEventSelect,onPageChange }: DashboardP
     case 'ORGANIZER':
       return <OrganizerDashboard onNavigate={onNavigate} onEventSelect={onEventSelect} />;
     case 'MANAGER':
-      return <ManagerDashboard onNavigate={onNavigate} onEventSelect={onEventSelect} />;
+      return <ManagerDashboard onNavigate={onNavigate} onEventSelect={onEventSelect} onPageChange={onPageChange} />;
     case 'VENDOR':
       return <VendorDashboard onNavigate={onNavigate} onEventSelect={onEventSelect} />;
     case 'ADMIN':

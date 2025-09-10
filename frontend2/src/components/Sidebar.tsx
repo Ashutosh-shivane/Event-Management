@@ -2,6 +2,7 @@ import React from 'react';
 import { useAuth } from './AuthContext';
 import { Page } from './MainLayout';
 import { Button } from './ui/button';
+import { Badge } from './ui/badge';
 import { 
   LayoutDashboard, 
   Calendar, 

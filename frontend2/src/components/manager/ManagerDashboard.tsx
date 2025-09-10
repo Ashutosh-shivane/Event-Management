@@ -164,15 +164,15 @@ export function ManagerDashboard({ onNavigate, onEventSelect, onPageChange }: Ma
           </CardContent>
         </Card>
 
-        <Card>
+        <Card className="cursor-pointer hover:shadow-md transition-shadow" onClick={() => onNavigate('manager-student-approvals')}>
           <CardContent className="p-6">
             <div className="flex items-center">
               <div className="p-2 bg-orange-100 rounded-lg">
                 <Clock className="h-6 w-6 text-orange-600" />
               </div>
               <div className="ml-4">
-                <p className="text-sm text-gray-600">Pending Approvals</p>
-                <p className="text-2xl font-semibold">7</p>
+                <p className="text-sm text-gray-600">Student Approvals</p>
+                <p className="text-2xl font-semibold">35</p>
                 <p className="text-xs text-orange-600">Needs attention</p>
               </div>
             </div>
@@ -245,6 +245,16 @@ export function ManagerDashboard({ onNavigate, onEventSelect, onPageChange }: Ma
                       onClick={() => onEventSelect(event.id.toString())}
                     >
                       Manage
+                    </Button>
+                    <Button 
+                      size="sm" 
+                      variant="outline"
+                      onClick={() => {
+                        onEventSelect(event.id.toString());
+                        onNavigate('manager-student-approvals');
+                      }}
+                    >
+                      Students
                     </Button>
                     <Button size="sm" variant="outline">Tasks</Button>
                   </div>
