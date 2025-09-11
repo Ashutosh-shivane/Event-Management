@@ -39,7 +39,7 @@ public class AuthService {
 
         String token =authUtil.generateAccessToken(user);
 
-        return new LoginResponceDTO(token,user.getId(),user.getName(),user.getUsername(),user.getUsertype());
+        return new LoginResponceDTO(token,user.getId(),user.getName(),user.getUsername(),user.getUsertype(),user.getProfileCompleted());
 
 
     }
@@ -58,6 +58,7 @@ public class AuthService {
                 .providerType(authProviderType)
                 .name(signupRequestDto.getName())
                 .usertype(signupRequestDto.getUsertype())
+                .profileCompleted("13")
                 .build();
 
         if(authProviderType == AuthProviderType.EMAIL) {
@@ -94,13 +95,14 @@ public class AuthService {
         } else if(user != null) {
         if(email != null && !email.isBlank() && !email.equals(user.getUsername())) {
             user.setUsername(email);
+//            user.setProfileCompleted("13");
             userRepository.save(user);
         }
     } else {
         throw new BadCredentialsException("This email is already registered with provider "+emailUser.getProviderType());
     }
 
-        LoginResponceDTO loginResponceDTO=new LoginResponceDTO(authUtil.generateAccessToken(user),user.getId(),user.getName(),user.getUsername(),user.getUsertype());
+        LoginResponceDTO loginResponceDTO=new LoginResponceDTO(authUtil.generateAccessToken(user),user.getId(),user.getName(),user.getUsername(),user.getUsertype(),user.getProfileCompleted());
 
             return ResponseEntity.ok(loginResponceDTO);
 

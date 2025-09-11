@@ -9,7 +9,7 @@ export interface User {
   email: string;
   role: UserRole;
   avatar?: string;
-  profileCompleted:boolean;
+  profileCompleted:string;
 }
 
 interface AuthContextType {
@@ -45,7 +45,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       name: data.name,
       email:data.username,
       role:data.role,
-      profileCompleted:false,
+      profileCompleted:data.profileCompleted,
     };
 
       localStorage.setItem("token", data.jwt);

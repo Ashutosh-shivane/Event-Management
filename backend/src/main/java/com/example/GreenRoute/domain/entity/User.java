@@ -33,6 +33,9 @@ public class User implements UserDetails {
 
     private String providerId;
 
+    @Column(length = 100, nullable = false)
+    private String profileCompleted = "13";
+
     @Enumerated(EnumType.STRING)
     private UserType usertype;
 

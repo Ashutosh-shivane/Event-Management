@@ -11,6 +11,7 @@ import { OrganizerEventCreatePage } from './components/organizer/OrganizerEventC
 import { OrganizerEventManagePage } from './components/organizer/OrganizerEventManagePage';
 import { OrganizerAddManagerPage } from './components/organizer/OrganizerAddManagerPage';
 import { ManagerStudentApprovalsPage } from './components/manager/ManagerStudentApprovalsPage';
+import { StudentRegisterPage } from './components/student/StudentRegisterPage';
 
 export type PageType = 'landing' | 'about' | 'login' | 'signup' | 'dashboard' | 'event-details' | 'add-event';
 
@@ -118,6 +119,16 @@ function AppContent({
         <LandingPage onNavigate={setCurrentPage} />
       );
 
+
+      case 'student-register':
+      return isAuthenticated ? (
+        <StudentRegisterPage 
+          eventId={selectedEventId} 
+          onNavigate={setCurrentPage}
+        />
+      ) : (
+        <LandingPage onNavigate={setCurrentPage} />
+      );
 
     default:
       return <LandingPage onNavigate={setCurrentPage} />;

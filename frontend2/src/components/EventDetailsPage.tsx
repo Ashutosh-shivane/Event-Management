@@ -92,6 +92,8 @@ export function EventDetailsPage({ eventId, onNavigate }: EventDetailsPageProps)
 
     // eventId="1";
 
+    localStorage.setItem("eventid", String(eventId));
+
 
   useEffect(() => {
     axios
@@ -103,7 +105,16 @@ export function EventDetailsPage({ eventId, onNavigate }: EventDetailsPageProps)
         // setEventdata( mapEvent(response.data[0])); // store events
         setLoading(false);
         console.log(response.data[0]);
-        console.log(mapped); // done loading
+        console.log(mapped); 
+
+        localStorage.setItem("eventDetails", JSON.stringify(mapped));
+
+        
+        
+        
+
+        
+        // done loading
       })
       .catch((err) => {
         console.error(err.message || "Something went wrong");
@@ -261,7 +272,13 @@ export function EventDetailsPage({ eventId, onNavigate }: EventDetailsPageProps)
             <Button
               size="lg"
               className="px-8"
-              onClick={() => setIsRegistered(!isRegistered)}
+               onClick={() => {
+                if (isRegistered) {
+                  setIsRegistered(false);
+                } else if (event.registered < event.capacity) {
+                  onNavigate('student-register');
+                }
+              }}
               disabled={event.registered >= event.capacity}
             >
               {isRegistered ? (

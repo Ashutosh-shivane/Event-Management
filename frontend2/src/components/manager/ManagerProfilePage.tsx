@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useAuth } from '../AuthContext';
 import { Card, CardHeader, CardTitle, CardContent } from '../ui/card';
 import { Button } from '../ui/button';
@@ -10,11 +10,11 @@ import { Badge } from '../ui/badge';
 import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '../ui/tabs';
 import { Progress } from '../ui/progress';
-import { 
-  User, 
-  Mail, 
-  Phone, 
-  MapPin, 
+import {
+  User,
+  Mail,
+  Phone,
+  MapPin,
   Calendar,
   Briefcase,
   Award,
@@ -29,11 +29,100 @@ import {
   TrendingUp
 } from 'lucide-react';
 
+import axios from 'axios';
+
 export function ManagerProfilePage() {
   const { user, updateUser } = useAuth();
   const [isEditing, setIsEditing] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
-  
+
+
+
+
+  useEffect(() => {
+
+    const userId = localStorage.getItem("id");
+
+    if (!userId) {
+      console.error("No user id found in localStorage");
+      return;
+    }
+
+    var tempdata = {};
+
+
+
+
+    axios.get(`http://localhost:8080/Manager/${userId}`)
+      .then((response) => {
+        // setStudentdata(response.data);
+
+        tempdata =
+        {
+          // Basic User Info
+          name: response.data?.name || '',
+          email: response.data?.email || '',
+          phone: response.data?.phone || '',
+          dateOfBirth: response.data?.birthDate || '',
+          address: response.data?.address || '',
+          city: response.data?.city || '',
+          state: response.data?.state || '',
+          zipCode: response.data?.zipcode || '',
+
+          // Professional Information
+          jobTitle: response.data?.jobTitle || '',
+          company: response.data?.company || '',
+          industry: response.data?.industry || '',
+          yearsExperience: response.data?.yearsExp || '',
+          currentSalary: response.data?.currentSalary || '',
+          expectedSalary: response.data?.expectedSalary || '',
+
+          // Management Information
+          teamSize: response.data?.teamSize || '',
+          managementLevel: response.data?.managementLevel || '',
+          specializations: response.data?.specializations || '',
+          certifications: response.data?.certifications || '',
+          languages: response.data?.languages || '',
+
+          // Personal Information
+          bio: response.data?.bio || '',
+          achievements: response.data?.achievements || '',
+          managementPhilosophy: response.data?.managementPhilosophy || '',
+
+          // Event Management Experience
+          eventTypes: response.data?.eventTypes || '',
+          eventSizes: response.data?.eventSizes || '',
+          budgetRange: response.data?.budgetRange || '',
+          availability: response.data?.availability || '',
+          preferredRoles: response.data?.preferredRoles || '',
+
+          // Emergency Contact
+          emergencyContactName: response.data?.emergencyContactName || '',
+          emergencyContactPhone: response.data?.emergencyContactPhone || '',
+          emergencyContactRelation: response.data?.emergencyContactRelation || ''
+        }
+
+
+        setFormData(tempdata);
+        console.log("student here:", tempdata);
+
+
+
+      })
+      .catch((err) => {
+        console.error(err.message || "Something went wrong");
+
+      });;
+
+  }, []);
+
+
+
+
+
+
+
+
   const [formData, setFormData] = useState({
     name: user?.name || '',
     email: user?.email || '',
@@ -43,7 +132,7 @@ export function ManagerProfilePage() {
     city: user?.city || '',
     state: user?.state || '',
     zipCode: user?.zipCode || '',
-    
+
     // Professional Information
     jobTitle: user?.jobTitle || '',
     company: user?.company || '',
@@ -51,31 +140,31 @@ export function ManagerProfilePage() {
     yearsExperience: user?.yearsExperience || '',
     currentSalary: user?.currentSalary || '',
     expectedSalary: user?.expectedSalary || '',
-    
+
     // Management Information
     teamSize: user?.teamSize || '',
     managementLevel: user?.managementLevel || '',
-    specializations: user?.specializations || [],
-    certifications: user?.certifications || [],
-    languages: user?.languages || [],
-    
+    specializations: user?.specializations || '',
+    certifications: user?.certifications || '',
+    languages: user?.languages || '',
+
     // Personal Information
     bio: user?.bio || '',
     achievements: user?.achievements || '',
     managementPhilosophy: user?.managementPhilosophy || '',
-    
+
     // Event Management Experience
-    eventTypes: user?.eventTypes || [],
-    eventSizes: user?.eventSizes || [],
+    eventTypes: user?.eventTypes || '',
+    eventSizes: user?.eventSizes || '',
     budgetRange: user?.budgetRange || '',
     availability: user?.availability || '',
-    preferredRoles: user?.preferredRoles || [],
-    
+    preferredRoles: user?.preferredRoles || '',
+
     // References
     references: user?.references || [
       { name: '', position: '', company: '', email: '', phone: '' }
     ],
-    
+
     // Emergency Contact
     emergencyContactName: user?.emergencyContactName || '',
     emergencyContactPhone: user?.emergencyContactPhone || '',
@@ -84,7 +173,7 @@ export function ManagerProfilePage() {
 
   const calculateProfileCompletion = () => {
     const requiredFields = [
-      'name', 'email', 'phone', 'jobTitle', 'company', 'yearsExperience', 
+      'name', 'email', 'phone', 'jobTitle', 'company', 'yearsExperience',
       'managementLevel', 'bio', 'specializations', 'eventTypes'
     ];
     const optionalFields = [
@@ -92,24 +181,24 @@ export function ManagerProfilePage() {
       'achievements', 'managementPhilosophy', 'budgetRange', 'availability',
       'emergencyContactName', 'emergencyContactPhone'
     ];
-    
+
     const completedRequired = requiredFields.filter(field => {
       if (Array.isArray(formData[field])) {
         return formData[field].length > 0;
       }
       return formData[field] && formData[field].length > 0;
     }).length;
-    
+
     const completedOptional = optionalFields.filter(field => {
       if (Array.isArray(formData[field])) {
         return formData[field].length > 0;
       }
       return formData[field] && formData[field].length > 0;
     }).length;
-    
+
     const totalFields = requiredFields.length + optionalFields.length;
     const completedFields = completedRequired + completedOptional;
-    
+
     return Math.round((completedFields / totalFields) * 100);
   };
 
@@ -128,12 +217,65 @@ export function ManagerProfilePage() {
     }));
   };
 
+
+  function mapFormDataToManagerInDto(formData, userId) {
+  return {
+    userid: userId,                              // pass logged-in user ID
+    name: formData.name || '',
+    email: formData.email || '',
+    phone: formData.phone || '',
+    birthDate: formData.dateOfBirth || '',       // map dateOfBirth -> birthDate
+    address: formData.address || '',
+    city: formData.city || '',
+    state: formData.state || '',
+    zipcode: formData.zipCode || '',             // map zipCode -> zipcode
+
+    // Professional Information
+    jobTitle: formData.jobTitle || '',
+    company: formData.company || '',
+    industry: formData.industry || '',
+    yearsExp: formData.yearsExperience || '',    // map yearsExperience -> yearsExp
+    currentSalary: formData.currentSalary || '',
+    expectedSalary: formData.expectedSalary || '',
+
+    // Management Information
+    teamSize: formData.teamSize || '',
+    managementLevel: formData.managementLevel || '',
+    specializations: formData.specializations || '',
+    certifications: formData.certifications || '',
+    languages: formData.languages || '',
+
+    // Personal Information
+    bio: formData.bio || '',
+    achievements: formData.achievements || '',
+    managementPhilosophy: formData.managementPhilosophy || '',
+
+    // Event Management Experience
+    eventTypes: formData.eventTypes || '',
+    eventSizes: formData.eventSizes || '',
+    budgetRange: formData.budgetRange || '',
+    availability: formData.availability || '',
+    preferredRoles: formData.preferredRoles || '',
+
+    // Emergency Contact
+    emergencyContactName: formData.emergencyContactName || '',
+    emergencyContactPhone: formData.emergencyContactPhone || '',
+    emergencyContactRelation: formData.emergencyContactRelation || ''
+  };
+}
+
+
   const handleSaveProfile = async () => {
     setIsSaving(true);
+
+     let indata=mapFormDataToManagerInDto(formData,localStorage.getItem("id"));
     try {
       // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 1500));
-      
+      const response = await axios.post(
+      `http://localhost:8080/Manager/save`,
+     indata
+    );
+
       if (updateUser) {
         updateUser({
           ...user,
@@ -141,7 +283,7 @@ export function ManagerProfilePage() {
           profileCompletion: calculateProfileCompletion()
         });
       }
-      
+
       setIsEditing(false);
       alert('Profile updated successfully!');
     } catch (error) {
@@ -156,12 +298,12 @@ export function ManagerProfilePage() {
 
   const specializationOptions = [
     'Event Planning', 'Project Management', 'Team Leadership', 'Budget Management',
-    'Vendor Relations', 'Marketing', 'Logistics', 'Risk Management', 
+    'Vendor Relations', 'Marketing', 'Logistics', 'Risk Management',
     'Stakeholder Management', 'Quality Assurance', 'Operations', 'Strategy'
   ];
 
   const eventTypeOptions = [
-    'Corporate Events', 'Conferences', 'Trade Shows', 'Workshops', 
+    'Corporate Events', 'Conferences', 'Trade Shows', 'Workshops',
     'Cultural Events', 'Sports Events', 'Fundraisers', 'Product Launches',
     'Educational Events', 'Social Events', 'Virtual Events', 'Hybrid Events'
   ];
@@ -190,7 +332,7 @@ export function ManagerProfilePage() {
                     <Camera className="h-3 w-3" />
                   </Button>
                 </div>
-                
+
                 <div>
                   <h1 className="text-2xl font-bold text-gray-900">{formData.name || 'Manager Profile'}</h1>
                   <p className="text-gray-600">{formData.jobTitle} at {formData.company}</p>
@@ -207,15 +349,15 @@ export function ManagerProfilePage() {
                   </div>
                 </div>
               </div>
-              
+
               <div className="text-right">
                 <div className="mb-2">
                   <span className="text-sm text-gray-600">Profile Completion</span>
                   <Progress value={profileCompletion} className="w-32 mt-1" />
                   <span className="text-xs text-gray-500">{profileCompletion}%</span>
                 </div>
-                
-                <Button 
+
+                <Button
                   onClick={() => setIsEditing(!isEditing)}
                   variant={isEditing ? "outline" : "default"}
                 >
@@ -257,7 +399,7 @@ export function ManagerProfilePage() {
                       disabled={!isEditing}
                     />
                   </div>
-                  
+
                   <div>
                     <Label htmlFor="email">Email Address *</Label>
                     <Input
@@ -265,10 +407,10 @@ export function ManagerProfilePage() {
                       type="email"
                       value={formData.email}
                       onChange={(e) => handleInputChange('email', e.target.value)}
-                      disabled={!isEditing}
+                      disabled={true}
                     />
                   </div>
-                  
+
                   <div>
                     <Label htmlFor="phone">Phone Number *</Label>
                     <Input
@@ -278,7 +420,7 @@ export function ManagerProfilePage() {
                       disabled={!isEditing}
                     />
                   </div>
-                  
+
                   <div>
                     <Label htmlFor="dateOfBirth">Date of Birth</Label>
                     <Input
@@ -289,7 +431,7 @@ export function ManagerProfilePage() {
                       disabled={!isEditing}
                     />
                   </div>
-                  
+
                   <div className="md:col-span-2">
                     <Label htmlFor="address">Address</Label>
                     <Input
@@ -299,7 +441,7 @@ export function ManagerProfilePage() {
                       disabled={!isEditing}
                     />
                   </div>
-                  
+
                   <div>
                     <Label htmlFor="city">City</Label>
                     <Input
@@ -309,7 +451,7 @@ export function ManagerProfilePage() {
                       disabled={!isEditing}
                     />
                   </div>
-                  
+
                   <div>
                     <Label htmlFor="state">State</Label>
                     <Input
@@ -347,7 +489,7 @@ export function ManagerProfilePage() {
                         disabled={!isEditing}
                       />
                     </div>
-                    
+
                     <div>
                       <Label htmlFor="emergencyContactPhone">Contact Phone</Label>
                       <Input
@@ -357,10 +499,10 @@ export function ManagerProfilePage() {
                         disabled={!isEditing}
                       />
                     </div>
-                    
+
                     <div>
                       <Label htmlFor="emergencyContactRelation">Relationship</Label>
-                      <Select 
+                      <Select
                         value={formData.emergencyContactRelation}
                         onValueChange={(value) => handleInputChange('emergencyContactRelation', value)}
                         disabled={!isEditing}
@@ -404,7 +546,7 @@ export function ManagerProfilePage() {
                       disabled={!isEditing}
                     />
                   </div>
-                  
+
                   <div>
                     <Label htmlFor="company">Company *</Label>
                     <Input
@@ -414,10 +556,10 @@ export function ManagerProfilePage() {
                       disabled={!isEditing}
                     />
                   </div>
-                  
+
                   <div>
                     <Label htmlFor="industry">Industry</Label>
-                    <Select 
+                    <Select
                       value={formData.industry}
                       onValueChange={(value) => handleInputChange('industry', value)}
                       disabled={!isEditing}
@@ -439,10 +581,10 @@ export function ManagerProfilePage() {
                       </SelectContent>
                     </Select>
                   </div>
-                  
+
                   <div>
                     <Label htmlFor="yearsExperience">Years of Experience *</Label>
-                    <Select 
+                    <Select
                       value={formData.yearsExperience}
                       onValueChange={(value) => handleInputChange('yearsExperience', value)}
                       disabled={!isEditing}
@@ -460,7 +602,7 @@ export function ManagerProfilePage() {
                       </SelectContent>
                     </Select>
                   </div>
-                  
+
                   <div>
                     <Label htmlFor="currentSalary">Current Salary (Optional)</Label>
                     <Input
@@ -472,7 +614,7 @@ export function ManagerProfilePage() {
                       placeholder="Annual salary"
                     />
                   </div>
-                  
+
                   <div>
                     <Label htmlFor="expectedSalary">Expected Salary (Optional)</Label>
                     <Input
@@ -490,8 +632,8 @@ export function ManagerProfilePage() {
                   <Label htmlFor="languages">Languages (comma-separated)</Label>
                   <Input
                     id="languages"
-                    value={formData.languages.join(', ')}
-                    onChange={(e) => handleArrayInputChange('languages', e.target.value)}
+                    value={formData.languages}
+                    onChange={(e) => handleInputChange('languages', e.target.value)}
                     disabled={!isEditing}
                     placeholder="English, Spanish, French..."
                   />
@@ -501,8 +643,8 @@ export function ManagerProfilePage() {
                   <Label htmlFor="certifications">Certifications (comma-separated)</Label>
                   <Input
                     id="certifications"
-                    value={formData.certifications.join(', ')}
-                    onChange={(e) => handleArrayInputChange('certifications', e.target.value)}
+                    value={formData.certifications}
+                    onChange={(e) => handleInputChange('certifications', e.target.value)}
                     disabled={!isEditing}
                     placeholder="PMP, Agile, Six Sigma..."
                   />
@@ -524,7 +666,7 @@ export function ManagerProfilePage() {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
                     <Label htmlFor="managementLevel">Management Level *</Label>
-                    <Select 
+                    <Select
                       value={formData.managementLevel}
                       onValueChange={(value) => handleInputChange('managementLevel', value)}
                       disabled={!isEditing}
@@ -542,10 +684,10 @@ export function ManagerProfilePage() {
                       </SelectContent>
                     </Select>
                   </div>
-                  
+
                   <div>
                     <Label htmlFor="teamSize">Team Size</Label>
-                    <Select 
+                    <Select
                       value={formData.teamSize}
                       onValueChange={(value) => handleInputChange('teamSize', value)}
                       disabled={!isEditing}
@@ -568,8 +710,8 @@ export function ManagerProfilePage() {
                   <Label htmlFor="specializations">Specializations *</Label>
                   <Input
                     id="specializations"
-                    value={formData.specializations.join(', ')}
-                    onChange={(e) => handleArrayInputChange('specializations', e.target.value)}
+                    value={formData.specializations}
+                    onChange={(e) => handleInputChange('specializations', e.target.value)}
                     disabled={!isEditing}
                     placeholder="Event Planning, Project Management, Team Leadership..."
                   />
@@ -623,8 +765,8 @@ export function ManagerProfilePage() {
                   <Label htmlFor="eventTypes">Event Types Experience *</Label>
                   <Input
                     id="eventTypes"
-                    value={formData.eventTypes.join(', ')}
-                    onChange={(e) => handleArrayInputChange('eventTypes', e.target.value)}
+                    value={formData.eventTypes}
+                    onChange={(e) => handleInputChange('eventTypes', e.target.value)}
                     disabled={!isEditing}
                     placeholder="Corporate Events, Conferences, Trade Shows..."
                   />
@@ -642,16 +784,16 @@ export function ManagerProfilePage() {
                     <Label htmlFor="eventSizes">Event Sizes Managed</Label>
                     <Input
                       id="eventSizes"
-                      value={formData.eventSizes.join(', ')}
-                      onChange={(e) => handleArrayInputChange('eventSizes', e.target.value)}
+                      value={formData.eventSizes}
+                      onChange={(e) => handleInputChange('eventSizes', e.target.value)}
                       disabled={!isEditing}
                       placeholder="Small (50-100), Medium (100-500), Large (500+)..."
                     />
                   </div>
-                  
+
                   <div>
                     <Label htmlFor="budgetRange">Budget Range Experience</Label>
-                    <Select 
+                    <Select
                       value={formData.budgetRange}
                       onValueChange={(value) => handleInputChange('budgetRange', value)}
                       disabled={!isEditing}
@@ -688,8 +830,8 @@ export function ManagerProfilePage() {
                   <Label htmlFor="preferredRoles">Preferred Management Roles</Label>
                   <Input
                     id="preferredRoles"
-                    value={formData.preferredRoles.join(', ')}
-                    onChange={(e) => handleArrayInputChange('preferredRoles', e.target.value)}
+                    value={formData.preferredRoles}
+                    onChange={(e) => handleInputChange('preferredRoles', e.target.value)}
                     disabled={!isEditing}
                     placeholder="Event Manager, Project Manager, Operations Manager..."
                   />
@@ -701,10 +843,10 @@ export function ManagerProfilePage() {
                     ))}
                   </div>
                 </div>
-                
+
                 <div>
                   <Label htmlFor="availability">Availability</Label>
-                  <Select 
+                  <Select
                     value={formData.availability}
                     onValueChange={(value) => handleInputChange('availability', value)}
                     disabled={!isEditing}
@@ -746,8 +888,8 @@ export function ManagerProfilePage() {
                     </div>
                   )}
                 </div>
-                
-                <Button 
+
+                <Button
                   onClick={handleSaveProfile}
                   disabled={isSaving}
                   className="min-w-[120px]"

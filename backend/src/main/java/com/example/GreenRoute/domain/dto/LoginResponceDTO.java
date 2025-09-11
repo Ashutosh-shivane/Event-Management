@@ -15,5 +15,6 @@ public class LoginResponceDTO {
     String name;
     String username;
     UserType role;
+    String profileCompleted;
 
 }

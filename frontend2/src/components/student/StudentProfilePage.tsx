@@ -38,6 +38,8 @@ export function StudentProfilePage() {
 
   console.log("student here");
 
+  console.log(user);
+
 
   useEffect(()=>{
 
@@ -255,7 +257,8 @@ export function StudentProfilePage() {
     volunteerExperience: formData.volunteerExperience || '',
     emergencyContactName: formData.emergencyContactName || '',
     emergencyContactPhone: formData.emergencyContactPhone || '',
-    emergencyContactRelation: formData.emergencyContactRelation || ''
+    emergencyContactRelation: formData.emergencyContactRelation || '',
+    profileCompleted:profileCompletion
   };
 }
 
@@ -281,7 +284,7 @@ export function StudentProfilePage() {
         updateUser({
           ...user,
           ...formData,
-          profileCompletion: calculateProfileCompletion()
+          profileCompleted: calculateProfileCompletion()
         });
       }
 

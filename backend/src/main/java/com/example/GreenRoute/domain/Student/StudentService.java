@@ -1,11 +1,18 @@
 package com.example.GreenRoute.domain.Student;
 
+import com.example.GreenRoute.domain.Event.Event;
+import com.example.GreenRoute.domain.Event.EventRepository;
 import com.example.GreenRoute.domain.entity.User;
 import com.example.GreenRoute.domain.repository.UserRepository;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -13,6 +20,9 @@ public class StudentService {
 
     private final UserRepository userRepository;
     private final StudentRepository studentRepository;
+    private final StudentEventRegisterRepository studentEventRegisterRepository;
+
+    private final EventRepository eventRepository;
 
     @Autowired
     private ModelMapper modelMapper;
@@ -53,6 +63,9 @@ public class StudentService {
         Student student=modelMapper.map(studentInDto,Student.class);
 
         User user=userRepository.findById(Long.parseLong(studentInDto.getUserid())).orElseThrow();
+
+        user.setProfileCompleted(studentInDto.getProfileCompleted());
+        userRepository.save(user);
 
         Student existingStudent =studentRepository.findByUserId(user.getId());
 
@@ -99,6 +112,72 @@ public class StudentService {
 
 
 
+
+
+
+
+    }
+
+    public Map<String, Object> getprofilecompleted(Long userid,String eventid) {
+        User user=userRepository.findById(userid).orElseThrow();
+
+        Event event=eventRepository.findById(Long.parseLong(eventid)).orElseThrow();
+
+        Optional<StudentEventRegister> existing = studentEventRegisterRepository.findByUserAndEvent(user, event);
+
+        Map<String, Object> response = new HashMap<>();
+        response.put("profileCompleted", user.getProfileCompleted());
+        if (existing.isPresent()) {
+
+            response.put("alreadyApplied", true);
+
+        }
+        else{
+            response.put("alreadyApplied", false);
+        }
+
+        return response;
+
+
+        
+    }
+
+    @Transactional
+    public StudentEventRegisterOutDto registerForEvent(StudentEventRegisterInDto studentEventRegisterInDto) {
+
+        StudentEventRegister studentEventRegister=modelMapper.map(studentEventRegisterInDto,StudentEventRegister.class);
+
+        User user=userRepository.findById(Long.parseLong(  studentEventRegisterInDto.getUserid())).orElseThrow();
+
+        Event event=eventRepository.findById(Long.parseLong(studentEventRegisterInDto.getEventid())).orElseThrow();
+
+
+        Optional<StudentEventRegister> existing = studentEventRegisterRepository.findByUserAndEvent(user, event);
+
+        StudentEventRegister savedRegister;
+        if (existing.isPresent()) {
+            // update existing registration
+            StudentEventRegister existingRegister = existing.get();
+            existingRegister.setPrevExp(studentEventRegister.getPrevExp());
+            existingRegister.setReasonforevent(studentEventRegister.getReasonforevent());
+            existingRegister.setSkills(studentEventRegister.getSkills());
+            existingRegister.setNotes(studentEventRegister.getNotes());
+            existingRegister.setAvailability(studentEventRegister.getAvailability());
+            existingRegister.setHaveBike(studentEventRegister.getHaveBike());
+            existingRegister.setTransportMedium(studentEventRegister.getTransportMedium());
+            existingRegister.setDietaryRestrictions(studentEventRegister.getDietaryRestrictions());
+            existingRegister.setStatus(studentEventRegister.getStatus());
+
+            savedRegister = studentEventRegisterRepository.save(existingRegister);
+        } else {
+            // create new registration
+            studentEventRegister.setUser(user);
+            studentEventRegister.setEvent(event);
+            savedRegister = studentEventRegisterRepository.save(studentEventRegister);
+        }
+
+        // convert back to OutDto
+        return modelMapper.map(savedRegister, StudentEventRegisterOutDto.class);
 
 
 

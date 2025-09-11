@@ -33,6 +33,7 @@ public class DataInitializer implements CommandLineRunner {
                     .password(passwordEncoder.encode("s")) // encode if using Spring Security
                     .usertype(UserType.STUDENT)
                     .providerType(AuthProviderType.EMAIL)
+                    .profileCompleted("100")
                     .build();
 
             User manager = User.builder()
@@ -41,6 +42,7 @@ public class DataInitializer implements CommandLineRunner {
                     .password(passwordEncoder.encode("m"))
                     .usertype(UserType.MANAGER)
                     .providerType(AuthProviderType.EMAIL)
+                    .profileCompleted("13")
                     .build();
 
             User organizer = User.builder()
@@ -49,6 +51,7 @@ public class DataInitializer implements CommandLineRunner {
                     .password(passwordEncoder.encode("o"))
                     .usertype(UserType.ORGANIZER)
                     .providerType(AuthProviderType.EMAIL)
+                    .profileCompleted("13")
                     .build();
 
             userRepository.save(student);

@@ -18,6 +18,8 @@ public class StudentInDto {
 
     private String userid;
 
+    private String profileCompleted;
+
 
 
     private String phone;
