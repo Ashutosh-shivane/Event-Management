@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState,useEffect} from 'react';
 import { useAuth } from '../AuthContext';
 import { Card, CardHeader, CardTitle, CardContent } from '../ui/card';
 import { Button } from '../ui/button';
@@ -10,11 +10,11 @@ import { Badge } from '../ui/badge';
 import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '../ui/tabs';
 import { Progress } from '../ui/progress';
-import { 
-  User, 
-  Mail, 
-  Phone, 
-  MapPin, 
+import {
+  User,
+  Mail,
+  Phone,
+  MapPin,
   Calendar,
   Building,
   Award,
@@ -31,60 +31,130 @@ import {
   DollarSign
 } from 'lucide-react';
 
+import axios from 'axios';
+
 export function OrganizerProfilePage() {
   const { user, updateUser } = useAuth();
   const [isEditing, setIsEditing] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
-  
+
+
+
+
+
+  useEffect(() => {
+
+    const userId = localStorage.getItem("id");
+
+    if (!userId) {
+      console.error("No user id found in localStorage");
+      return;
+    }
+
+    var tempdata = {};
+
+
+
+
+    axios.get(`http://localhost:8080/Organizer/${userId}`)
+      .then((response) => {
+        // setStudentdata(response.data);
+
+        console.log(response);
+
+
+        const tempdata = {
+          // Basic User Info
+          name: response.data?.name || '',
+          email: response.data?.email || '',
+          phone: response.data?.phone || '',
+          dateOfBirth: response.data?.birthDate || '',
+          Personaladdress: response.data?.personalAddress || '',
+          city: response.data?.personalCity || '',
+          state: response.data?.personalState || '',
+          zipCode: response.data?.personalZipcode || '',
+
+          // Organization Information
+          organizationBio: response.data?.organizationBio || '',
+          organizationName: response.data?.organizationName || '',
+          organizationType: response.data?.organizationType || '',
+          industry: response.data?.industry || '',
+          establishedYear: response.data?.establishedYear || '',
+          website: response.data?.website || '',
+          teamSize: response.data?.teamSize || '',
+          businessAddress: response.data?.businessAddress || '',
+          businessPhone: response.data?.businessPhone || '',
+          businessEmail: response.data?.businessEmail || '',
+          taxId: response.data?.taxId || '',
+
+          // Business Information
+          businessModel: response.data?.businessModel || '',
+          targetAudience: response.data?.targetAudience || '',
+          averageEventBudget: response.data?.averageEventBudget || '',
+
+          // Emergency Contact
+          emergencyContactName: response.data?.emergencyContactName || '',
+          emergencyContactPhone: response.data?.emergencyContactPhone || '',
+          emergencyContactRelation: response.data?.emergencyContactRelation || ''
+        };
+
+
+
+        setFormData(tempdata);
+        console.log("Organizer here:", tempdata);
+
+
+
+      })
+      .catch((err) => {
+        console.error(err.message || "Something went wrong");
+
+      });;
+
+  }, []);
+
+
+
+
+
   const [formData, setFormData] = useState({
     name: user?.name || '',
     email: user?.email || '',
     phone: user?.phone || '',
     dateOfBirth: user?.dateOfBirth || '',
-    address: user?.address || '',
+    Personaladdress: user?.address || '',
     city: user?.city || '',
     state: user?.state || '',
     zipCode: user?.zipCode || '',
-    
+    organizationBio: user?.organizationBio,
+
+
+
+
     // Organization Information
     organizationName: user?.organizationName || '',
     organizationType: user?.organizationType || '',
     industry: user?.industry || '',
     establishedYear: user?.establishedYear || '',
     website: user?.website || '',
-    socialMedia: user?.socialMedia || {},
-    
-    // Professional Information
-    jobTitle: user?.jobTitle || '',
-    yearsExperience: user?.yearsExperience || '',
-    specializations: user?.specializations || [],
-    certifications: user?.certifications || [],
-    languages: user?.languages || [],
-    
-    // Personal Information
-    bio: user?.bio || '',
-    achievements: user?.achievements || '',
-    vision: user?.vision || '',
-    
-    // Event Organizing Experience
-    eventTypes: user?.eventTypes || [],
-    eventSizes: user?.eventSizes || [],
-    budgetRanges: user?.budgetRanges || [],
-    eventsOrganized: user?.eventsOrganized || '',
-    successStories: user?.successStories || '',
-    
-    // Business Information
-    businessModel: user?.businessModel || '',
-    targetAudience: user?.targetAudience || [],
-    averageEventBudget: user?.averageEventBudget || '',
     teamSize: user?.teamSize || '',
-    
-    // Contact & Legal
     businessAddress: user?.businessAddress || '',
     businessPhone: user?.businessPhone || '',
     businessEmail: user?.businessEmail || '',
     taxId: user?.taxId || '',
-    
+
+    // socialMedia: user?.socialMedia || {},
+
+    // Business Information
+    businessModel: user?.businessModel || '',
+    targetAudience: user?.targetAudience || '',
+    averageEventBudget: user?.averageEventBudget || '',
+
+
+    // Contact & Legal
+
+
+
     // Emergency Contact
     emergencyContactName: user?.emergencyContactName || '',
     emergencyContactPhone: user?.emergencyContactPhone || '',
@@ -93,7 +163,7 @@ export function OrganizerProfilePage() {
 
   const calculateProfileCompletion = () => {
     const requiredFields = [
-      'name', 'email', 'phone', 'organizationName', 'organizationType', 
+      'name', 'email', 'phone', 'organizationName', 'organizationType',
       'jobTitle', 'yearsExperience', 'bio', 'specializations', 'eventTypes'
     ];
     const optionalFields = [
@@ -101,24 +171,24 @@ export function OrganizerProfilePage() {
       'eventSizes', 'budgetRanges', 'businessModel', 'targetAudience',
       'businessAddress', 'emergencyContactName', 'emergencyContactPhone'
     ];
-    
+
     const completedRequired = requiredFields.filter(field => {
       if (Array.isArray(formData[field])) {
         return formData[field].length > 0;
       }
       return formData[field] && formData[field].length > 0;
     }).length;
-    
+
     const completedOptional = optionalFields.filter(field => {
       if (Array.isArray(formData[field])) {
         return formData[field].length > 0;
       }
       return formData[field] && formData[field].length > 0;
     }).length;
-    
+
     const totalFields = requiredFields.length + optionalFields.length;
     const completedFields = completedRequired + completedOptional;
-    
+
     return Math.round((completedFields / totalFields) * 100);
   };
 
@@ -137,12 +207,65 @@ export function OrganizerProfilePage() {
     }));
   };
 
+
+  function mapFormDataToOrganizerInDto(formData, userId) {
+  return {
+    usertestid: userId,                           // logged-in user ID
+    name: formData.name || '',
+    email: formData.email || '',
+    phone: formData.phone || '',
+    birthDate: formData.dateOfBirth || '',        // map dateOfBirth -> birthDate
+
+    // Personal Info
+    personalAddress: formData.Personaladdress || '',      // map address -> personalAddress
+    personalCity: formData.city || '',            // map city -> personalCity
+    personalState: formData.state || '',          // map state -> personalState
+    personalZipcode: formData.zipCode || '',      // map zipCode -> personalZipcode
+
+    // Organization Info
+    organizationBio: formData.organizationBio || '',
+    organizationName: formData.organizationName || '',
+    organizationType: formData.organizationType || '',
+    industry: formData.industry || '',
+    establishedYear: formData.establishedYear || '',
+    website: formData.website || '',
+    teamSize: formData.teamSize || '',
+    businessAddress: formData.businessAddress || '',
+    businessPhone: formData.businessPhone || '',
+    businessEmail: formData.businessEmail || '',
+    taxId: formData.taxId || '',
+
+    // Business Info
+    businessModel: formData.businessModel || '',
+    targetAudience: formData.targetAudience || '',
+    averageEventBudget: formData.averageEventBudget || '',
+
+    // Emergency Contact
+    emergencyContactName: formData.emergencyContactName || '',
+    emergencyContactPhone: formData.emergencyContactPhone || '',
+    emergencyContactRelation: formData.emergencyContactRelation || ''
+  };
+}
+
+
+
+
   const handleSaveProfile = async () => {
     setIsSaving(true);
+
+    let indata=mapFormDataToOrganizerInDto(formData,localStorage.getItem("id"));
     try {
       // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 1500));
       
+
+        const response = await axios.post(
+      `http://localhost:8080/Organizer/save`,
+     indata
+    );
+      
+
+
+
       if (updateUser) {
         updateUser({
           ...user,
@@ -150,7 +273,7 @@ export function OrganizerProfilePage() {
           profileCompletion: calculateProfileCompletion()
         });
       }
-      
+
       setIsEditing(false);
       alert('Profile updated successfully!');
     } catch (error) {
@@ -163,17 +286,6 @@ export function OrganizerProfilePage() {
 
   const profileCompletion = calculateProfileCompletion();
 
-  const specializationOptions = [
-    'Event Planning', 'Corporate Events', 'Wedding Planning', 'Conference Management',
-    'Trade Show Organization', 'Festival Production', 'Non-profit Events', 'Sports Events',
-    'Cultural Events', 'Educational Events', 'Virtual Events', 'Hybrid Events'
-  ];
-
-  const eventTypeOptions = [
-    'Corporate Events', 'Conferences', 'Trade Shows', 'Weddings', 'Festivals',
-    'Sports Events', 'Cultural Events', 'Educational Events', 'Non-profit Events',
-    'Product Launches', 'Awards Ceremonies', 'Galas', 'Workshops', 'Seminars'
-  ];
 
   const organizationTypeOptions = [
     'Event Management Company', 'Corporate', 'Non-profit', 'Educational Institution',
@@ -199,7 +311,7 @@ export function OrganizerProfilePage() {
                     <Camera className="h-3 w-3" />
                   </Button>
                 </div>
-                
+
                 <div>
                   <h1 className="text-2xl font-bold text-gray-900">{formData.name || 'Organizer Profile'}</h1>
                   <p className="text-gray-600">{formData.jobTitle} at {formData.organizationName}</p>
@@ -216,15 +328,15 @@ export function OrganizerProfilePage() {
                   </div>
                 </div>
               </div>
-              
+
               <div className="text-right">
                 <div className="mb-2">
                   <span className="text-sm text-gray-600">Profile Completion</span>
                   <Progress value={profileCompletion} className="w-32 mt-1" />
                   <span className="text-xs text-gray-500">{profileCompletion}%</span>
                 </div>
-                
-                <Button 
+
+                <Button
                   onClick={() => setIsEditing(!isEditing)}
                   variant={isEditing ? "outline" : "default"}
                 >
@@ -241,8 +353,7 @@ export function OrganizerProfilePage() {
           <TabsList className="grid w-full grid-cols-5">
             <TabsTrigger value="basic">Basic Info</TabsTrigger>
             <TabsTrigger value="organization">Organization</TabsTrigger>
-            <TabsTrigger value="professional">Professional</TabsTrigger>
-            <TabsTrigger value="experience">Experience</TabsTrigger>
+
             <TabsTrigger value="business">Business</TabsTrigger>
           </TabsList>
 
@@ -266,7 +377,7 @@ export function OrganizerProfilePage() {
                       disabled={!isEditing}
                     />
                   </div>
-                  
+
                   <div>
                     <Label htmlFor="email">Email Address *</Label>
                     <Input
@@ -277,7 +388,7 @@ export function OrganizerProfilePage() {
                       disabled={!isEditing}
                     />
                   </div>
-                  
+
                   <div>
                     <Label htmlFor="phone">Phone Number *</Label>
                     <Input
@@ -287,7 +398,7 @@ export function OrganizerProfilePage() {
                       disabled={!isEditing}
                     />
                   </div>
-                  
+
                   <div>
                     <Label htmlFor="dateOfBirth">Date of Birth</Label>
                     <Input
@@ -298,17 +409,17 @@ export function OrganizerProfilePage() {
                       disabled={!isEditing}
                     />
                   </div>
-                  
+
                   <div className="md:col-span-2">
                     <Label htmlFor="address">Personal Address</Label>
                     <Input
                       id="address"
-                      value={formData.address}
-                      onChange={(e) => handleInputChange('address', e.target.value)}
+                      value={formData.Personaladdress}
+                      onChange={(e) => handleInputChange('Personaladdress', e.target.value)}
                       disabled={!isEditing}
                     />
                   </div>
-                  
+
                   <div>
                     <Label htmlFor="city">City</Label>
                     <Input
@@ -318,7 +429,7 @@ export function OrganizerProfilePage() {
                       disabled={!isEditing}
                     />
                   </div>
-                  
+
                   <div>
                     <Label htmlFor="state">State</Label>
                     <Input
@@ -332,11 +443,11 @@ export function OrganizerProfilePage() {
 
                 {/* Bio */}
                 <div className="border-t pt-4 mt-6">
-                  <Label htmlFor="bio">Professional Bio *</Label>
+                  <Label htmlFor="bio">Organizer Bio *</Label>
                   <Textarea
                     id="bio"
-                    value={formData.bio}
-                    onChange={(e) => handleInputChange('bio', e.target.value)}
+                    value={formData.organizationBio}
+                    onChange={(e) => handleInputChange('organizationBio', e.target.value)}
                     disabled={!isEditing}
                     placeholder="Describe your background in event organization, your passion for creating memorable experiences, and what sets you apart..."
                     rows={4}
@@ -356,7 +467,7 @@ export function OrganizerProfilePage() {
                         disabled={!isEditing}
                       />
                     </div>
-                    
+
                     <div>
                       <Label htmlFor="emergencyContactPhone">Contact Phone</Label>
                       <Input
@@ -366,10 +477,10 @@ export function OrganizerProfilePage() {
                         disabled={!isEditing}
                       />
                     </div>
-                    
+
                     <div>
                       <Label htmlFor="emergencyContactRelation">Relationship</Label>
-                      <Select 
+                      <Select
                         value={formData.emergencyContactRelation}
                         onValueChange={(value) => handleInputChange('emergencyContactRelation', value)}
                         disabled={!isEditing}
@@ -413,10 +524,10 @@ export function OrganizerProfilePage() {
                       disabled={!isEditing}
                     />
                   </div>
-                  
+
                   <div>
                     <Label htmlFor="organizationType">Organization Type *</Label>
-                    <Select 
+                    <Select
                       value={formData.organizationType}
                       onValueChange={(value) => handleInputChange('organizationType', value)}
                       disabled={!isEditing}
@@ -433,10 +544,10 @@ export function OrganizerProfilePage() {
                       </SelectContent>
                     </Select>
                   </div>
-                  
+
                   <div>
                     <Label htmlFor="industry">Industry</Label>
-                    <Select 
+                    <Select
                       value={formData.industry}
                       onValueChange={(value) => handleInputChange('industry', value)}
                       disabled={!isEditing}
@@ -458,7 +569,7 @@ export function OrganizerProfilePage() {
                       </SelectContent>
                     </Select>
                   </div>
-                  
+
                   <div>
                     <Label htmlFor="establishedYear">Established Year</Label>
                     <Input
@@ -469,7 +580,7 @@ export function OrganizerProfilePage() {
                       disabled={!isEditing}
                     />
                   </div>
-                  
+
                   <div>
                     <Label htmlFor="website">Website</Label>
                     <Input
@@ -481,10 +592,10 @@ export function OrganizerProfilePage() {
                       placeholder="https://www.yourcompany.com"
                     />
                   </div>
-                  
+
                   <div>
                     <Label htmlFor="teamSize">Team Size</Label>
-                    <Select 
+                    <Select
                       value={formData.teamSize}
                       onValueChange={(value) => handleInputChange('teamSize', value)}
                       disabled={!isEditing}
@@ -516,7 +627,7 @@ export function OrganizerProfilePage() {
                         disabled={!isEditing}
                       />
                     </div>
-                    
+
                     <div>
                       <Label htmlFor="businessPhone">Business Phone</Label>
                       <Input
@@ -526,7 +637,7 @@ export function OrganizerProfilePage() {
                         disabled={!isEditing}
                       />
                     </div>
-                    
+
                     <div>
                       <Label htmlFor="businessEmail">Business Email</Label>
                       <Input
@@ -537,7 +648,7 @@ export function OrganizerProfilePage() {
                         disabled={!isEditing}
                       />
                     </div>
-                    
+
                     <div>
                       <Label htmlFor="taxId">Tax ID/EIN (Optional)</Label>
                       <Input
@@ -553,195 +664,9 @@ export function OrganizerProfilePage() {
             </Card>
           </TabsContent>
 
-          {/* Professional Information */}
-          <TabsContent value="professional" className="space-y-6">
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center">
-                  <Briefcase className="h-5 w-5 mr-2" />
-                  Professional Information
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div>
-                    <Label htmlFor="jobTitle">Job Title/Role *</Label>
-                    <Input
-                      id="jobTitle"
-                      value={formData.jobTitle}
-                      onChange={(e) => handleInputChange('jobTitle', e.target.value)}
-                      disabled={!isEditing}
-                      placeholder="Event Organizer, CEO, Founder..."
-                    />
-                  </div>
-                  
-                  <div>
-                    <Label htmlFor="yearsExperience">Years of Experience *</Label>
-                    <Select 
-                      value={formData.yearsExperience}
-                      onValueChange={(value) => handleInputChange('yearsExperience', value)}
-                      disabled={!isEditing}
-                    >
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select experience" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="1-2">1-2 years</SelectItem>
-                        <SelectItem value="3-5">3-5 years</SelectItem>
-                        <SelectItem value="6-10">6-10 years</SelectItem>
-                        <SelectItem value="11-15">11-15 years</SelectItem>
-                        <SelectItem value="16-20">16-20 years</SelectItem>
-                        <SelectItem value="20+">20+ years</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-                </div>
 
-                <div>
-                  <Label htmlFor="specializations">Specializations *</Label>
-                  <Input
-                    id="specializations"
-                    value={formData.specializations.join(', ')}
-                    onChange={(e) => handleArrayInputChange('specializations', e.target.value)}
-                    disabled={!isEditing}
-                    placeholder="Event Planning, Corporate Events, Wedding Planning..."
-                  />
-                  <div className="flex flex-wrap gap-1 mt-2">
-                    {specializationOptions.map(spec => (
-                      <Badge key={spec} variant="outline" className="text-xs">
-                        {spec}
-                      </Badge>
-                    ))}
-                  </div>
-                </div>
 
-                <div>
-                  <Label htmlFor="certifications">Certifications (comma-separated)</Label>
-                  <Input
-                    id="certifications"
-                    value={formData.certifications.join(', ')}
-                    onChange={(e) => handleArrayInputChange('certifications', e.target.value)}
-                    disabled={!isEditing}
-                    placeholder="CMP, CSEP, PMP, Wedding Planning Certification..."
-                  />
-                </div>
 
-                <div>
-                  <Label htmlFor="languages">Languages (comma-separated)</Label>
-                  <Input
-                    id="languages"
-                    value={formData.languages.join(', ')}
-                    onChange={(e) => handleArrayInputChange('languages', e.target.value)}
-                    disabled={!isEditing}
-                    placeholder="English, Spanish, French..."
-                  />
-                </div>
-
-                <div>
-                  <Label htmlFor="vision">Vision & Mission</Label>
-                  <Textarea
-                    id="vision"
-                    value={formData.vision}
-                    onChange={(e) => handleInputChange('vision', e.target.value)}
-                    disabled={!isEditing}
-                    placeholder="Describe your vision for events and what drives your organization..."
-                    rows={3}
-                  />
-                </div>
-
-                <div>
-                  <Label htmlFor="achievements">Key Achievements</Label>
-                  <Textarea
-                    id="achievements"
-                    value={formData.achievements}
-                    onChange={(e) => handleInputChange('achievements', e.target.value)}
-                    disabled={!isEditing}
-                    placeholder="List your major achievements, awards, notable events organized..."
-                    rows={3}
-                  />
-                </div>
-              </CardContent>
-            </Card>
-          </TabsContent>
-
-          {/* Event Experience */}
-          <TabsContent value="experience" className="space-y-6">
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center">
-                  <Calendar className="h-5 w-5 mr-2" />
-                  Event Organizing Experience
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div>
-                  <Label htmlFor="eventTypes">Event Types *</Label>
-                  <Input
-                    id="eventTypes"
-                    value={formData.eventTypes.join(', ')}
-                    onChange={(e) => handleArrayInputChange('eventTypes', e.target.value)}
-                    disabled={!isEditing}
-                    placeholder="Corporate Events, Conferences, Weddings, Festivals..."
-                  />
-                  <div className="flex flex-wrap gap-1 mt-2">
-                    {eventTypeOptions.map(type => (
-                      <Badge key={type} variant="outline" className="text-xs">
-                        {type}
-                      </Badge>
-                    ))}
-                  </div>
-                </div>
-
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div>
-                    <Label htmlFor="eventSizes">Event Sizes Organized</Label>
-                    <Input
-                      id="eventSizes"
-                      value={formData.eventSizes.join(', ')}
-                      onChange={(e) => handleArrayInputChange('eventSizes', e.target.value)}
-                      disabled={!isEditing}
-                      placeholder="Intimate (10-50), Small (50-100), Medium (100-500)..."
-                    />
-                  </div>
-                  
-                  <div>
-                    <Label htmlFor="eventsOrganized">Total Events Organized</Label>
-                    <Input
-                      id="eventsOrganized"
-                      type="number"
-                      value={formData.eventsOrganized}
-                      onChange={(e) => handleInputChange('eventsOrganized', e.target.value)}
-                      disabled={!isEditing}
-                      placeholder="Number of events"
-                    />
-                  </div>
-                </div>
-
-                <div>
-                  <Label htmlFor="budgetRanges">Budget Ranges Managed</Label>
-                  <Input
-                    id="budgetRanges"
-                    value={formData.budgetRanges.join(', ')}
-                    onChange={(e) => handleArrayInputChange('budgetRanges', e.target.value)}
-                    disabled={!isEditing}
-                    placeholder="Under $10K, $10K-$50K, $50K-$100K, $100K+..."
-                  />
-                </div>
-
-                <div>
-                  <Label htmlFor="successStories">Success Stories & Case Studies</Label>
-                  <Textarea
-                    id="successStories"
-                    value={formData.successStories}
-                    onChange={(e) => handleInputChange('successStories', e.target.value)}
-                    disabled={!isEditing}
-                    placeholder="Describe some of your most successful events and what made them special..."
-                    rows={4}
-                  />
-                </div>
-              </CardContent>
-            </Card>
-          </TabsContent>
 
           {/* Business Information */}
           <TabsContent value="business" className="space-y-6">
@@ -756,7 +681,7 @@ export function OrganizerProfilePage() {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
                     <Label htmlFor="businessModel">Business Model</Label>
-                    <Select 
+                    <Select
                       value={formData.businessModel}
                       onValueChange={(value) => handleInputChange('businessModel', value)}
                       disabled={!isEditing}
@@ -774,10 +699,10 @@ export function OrganizerProfilePage() {
                       </SelectContent>
                     </Select>
                   </div>
-                  
+
                   <div>
                     <Label htmlFor="averageEventBudget">Average Event Budget</Label>
-                    <Select 
+                    <Select
                       value={formData.averageEventBudget}
                       onValueChange={(value) => handleInputChange('averageEventBudget', value)}
                       disabled={!isEditing}
@@ -802,8 +727,8 @@ export function OrganizerProfilePage() {
                   <Label htmlFor="targetAudience">Target Audience</Label>
                   <Input
                     id="targetAudience"
-                    value={formData.targetAudience.join(', ')}
-                    onChange={(e) => handleArrayInputChange('targetAudience', e.target.value)}
+                    value={formData.targetAudience}
+                    onChange={(e) => handleInputChange('targetAudience', e.target.value)}
                     disabled={!isEditing}
                     placeholder="Corporations, Non-profits, Private Individuals, Educational Institutions..."
                   />
@@ -832,8 +757,8 @@ export function OrganizerProfilePage() {
                     </div>
                   )}
                 </div>
-                
-                <Button 
+
+                <Button
                   onClick={handleSaveProfile}
                   disabled={isSaving}
                   className="min-w-[120px]"

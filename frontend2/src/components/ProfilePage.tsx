@@ -95,7 +95,7 @@ export function ProfilePage() {
       return <StudentProfilePage />;
     case 'MANAGER':
       return <ManagerProfilePage />;
-    case 'ORGANIZER':
+    case 'ORGANIZER':   
       return <OrganizerProfilePage />;
     case 'VENDOR':
       return <VendorProfilePage />;
