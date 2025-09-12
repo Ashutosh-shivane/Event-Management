@@ -1,6 +1,6 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../AuthContext';
-import { PageType } from '../../App';
 import { Card, CardHeader, CardTitle, CardContent } from '../ui/card';
 import { Button } from '../ui/button';
 import { Badge } from '../ui/badge';
@@ -19,13 +19,8 @@ import {
   AlertCircle
 } from 'lucide-react';
 
-interface ManagerDashboardProps {
-  onNavigate: (page: PageType) => void;
-  onEventSelect: (eventId: string) => void;
-  onPageChange?: (page: string) => void;
-}
-
-export function ManagerDashboard({ onNavigate, onEventSelect, onPageChange }: ManagerDashboardProps) {
+export function ManagerDashboard() {
+  const navigate = useNavigate();
   const { user } = useAuth();
 
   const assignedEvents = [
@@ -86,7 +81,7 @@ export function ManagerDashboard({ onNavigate, onEventSelect, onPageChange }: Ma
         <h1 className="text-2xl font-bold text-gray-900">Manager Dashboard</h1>
         <div className="flex space-x-3">
           <Button 
-            onClick={() => onNavigate('add-event')}
+            onClick={() => navigate('/manager/add-event')}
             className="flex items-center space-x-2"
           >
             <Plus className="h-4 w-4" />
@@ -110,7 +105,7 @@ export function ManagerDashboard({ onNavigate, onEventSelect, onPageChange }: Ma
             <Button 
               size="sm" 
               className="ml-4 bg-orange-600 hover:bg-orange-700"
-              onClick={() => onPageChange?.('profile')}
+              onClick={() => navigate('/profile')}
             >
               <User className="h-4 w-4 mr-2" />
               Complete Profile
@@ -242,17 +237,14 @@ export function ManagerDashboard({ onNavigate, onEventSelect, onPageChange }: Ma
                     <Button 
                       size="sm" 
                       variant="outline"
-                      onClick={() => onEventSelect(event.id.toString())}
+                      onClick={() => navigate(`/events/${event.id}`)}
                     >
                       Manage
                     </Button>
                     <Button 
                       size="sm" 
                       variant="outline"
-                      onClick={() => {
-                        onEventSelect(event.id.toString());
-                        onNavigate('manager-student-approvals');
-                      }}
+                      onClick={() => navigate(`/manager/events/${event.id}/approvals`)}
                     >
                       Students
                     </Button>

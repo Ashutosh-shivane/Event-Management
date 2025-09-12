@@ -1,5 +1,5 @@
 import React from 'react';
-import { PageType } from '../App';
+import { useNavigate } from 'react-router-dom';
 import { Button } from './ui/button';
 import { Card, CardContent } from './ui/card';
 import { Badge } from './ui/badge';
@@ -17,11 +17,9 @@ import {
 } from 'lucide-react';
 import { ImageWithFallback } from './figma/ImageWithFallback';
 
-interface LandingPageProps {
-  onNavigate: (page: PageType) => void;
-}
+export function LandingPage() {
+  const navigate = useNavigate();
 
-export function LandingPage({ onNavigate }: LandingPageProps) {
   return (
     <div className="min-h-screen bg-background">
       {/* Header */}
@@ -40,7 +38,7 @@ export function LandingPage({ onNavigate }: LandingPageProps) {
                 Pricing
               </button>
               <button 
-                onClick={() => onNavigate('about')}
+                onClick={() => navigate('/about')}
                 className="text-muted-foreground hover:text-foreground transition-colors"
               >
                 About
@@ -49,12 +47,12 @@ export function LandingPage({ onNavigate }: LandingPageProps) {
             <div className="flex items-center space-x-4">
               <Button 
                 variant="ghost" 
-                onClick={() => onNavigate('login')}
+                onClick={() => navigate('/login')}
               >
                 Login
               </Button>
               <Button 
-                onClick={() => onNavigate('signup')}
+                onClick={() => navigate('/signup')}
               >
                 Get Started
               </Button>
@@ -83,7 +81,7 @@ export function LandingPage({ onNavigate }: LandingPageProps) {
               </div>
               
               <div className="flex flex-wrap gap-4">
-                <Button size="lg" onClick={() => onNavigate('signup')}>
+                <Button size="lg" onClick={() => navigate('/signup')}>
                   Start Free Trial
                   <ArrowRight className="ml-2 h-4 w-4" />
                 </Button>
@@ -393,7 +391,7 @@ export function LandingPage({ onNavigate }: LandingPageProps) {
                     <Button 
                       className="w-full" 
                       variant={plan.popular ? "default" : "outline"}
-                      onClick={() => onNavigate('signup')}
+                      onClick={() => navigate('/signup')}
                     >
                       Get Started
                     </Button>
@@ -426,7 +424,7 @@ export function LandingPage({ onNavigate }: LandingPageProps) {
               <Button 
                 size="lg" 
                 variant="secondary"
-                onClick={() => onNavigate('signup')}
+                onClick={() => navigate('/signup')}
               >
                 Start Your Free Trial
                 <ArrowRight className="ml-2 h-4 w-4" />
@@ -466,7 +464,7 @@ export function LandingPage({ onNavigate }: LandingPageProps) {
             <div className="space-y-4">
               <h4 className="font-semibold">Company</h4>
               <div className="space-y-2 text-sm text-muted-foreground">
-                <button onClick={() => onNavigate('about')}>About</button>
+                <button onClick={() => navigate('/about')}>About</button>
                 <div>Careers</div>
                 <div>Blog</div>
                 <div>Contact</div>

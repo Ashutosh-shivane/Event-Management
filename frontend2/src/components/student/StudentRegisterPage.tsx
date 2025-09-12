@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { PageType } from '../../App';
+import { useNavigate, useParams } from 'react-router-dom';
 import { useAuth } from '../AuthContext';
 import { toast } from 'sonner@2.0.3';
 import { Card, CardHeader, CardTitle, CardContent } from '../ui/card';
@@ -18,22 +18,23 @@ import {
   Clock,
   Users,
   CheckCircle,
-  AlertTriangle,
-  User,
-  FileText,
   AlertCircle,
+  FileText,
+  User,
+  Phone,
+  Mail,
+  Star,
   Bike,
+  AlertTriangle,
   CalendarCheck
 } from 'lucide-react';
 import axios from 'axios';
 
-interface StudentRegisterPageProps {
-  eventId: string | null;
-  onNavigate: (page: PageType) => void;
-}
-
-export function StudentRegisterPage({ eventId, onNavigate }: StudentRegisterPageProps) {
+export function StudentRegisterPage() {
+  const navigate = useNavigate();
+  const { eventId } = useParams<{ eventId: string }>();
   const { user } = useAuth();
+  const [selectedRole, setSelectedRole] = useState<string>('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showProfileWarning, setShowProfileWarning] = useState(false);
   const [alreadyApplied, setAlreadyApplied] = useState(false);
@@ -126,7 +127,7 @@ export function StudentRegisterPage({ eventId, onNavigate }: StudentRegisterPage
 
 
 
-  const [selectedRole, setSelectedRole] = useState('');
+  // const [selectedRole, setSelectedRole] = useState('');
 
   const handleInputChange = (field: string, value: string) => {
     setFormData(prev => ({ ...prev, [field]: value }));
@@ -144,7 +145,7 @@ export function StudentRegisterPage({ eventId, onNavigate }: StudentRegisterPage
   };
 
   const handleGoToProfile = () => {
-    onNavigate('profile'); // Navigate directly to profile page
+    navigate('/profile'); // Navigate directly to profile page
   };
 
 
@@ -190,7 +191,7 @@ export function StudentRegisterPage({ eventId, onNavigate }: StudentRegisterPage
       
       // Show success and redirect
       toast.success('Registration submitted successfully! You will receive a confirmation email shortly.');
-      onNavigate('dashboard');
+      navigate('/dashboard');
     } catch (error) {
       console.error('Registration failed:', error);
       toast.error('Registration failed. Please try again.');
@@ -207,7 +208,7 @@ export function StudentRegisterPage({ eventId, onNavigate }: StudentRegisterPage
           <div className="mb-8">
             <Button 
               variant="outline" 
-              onClick={() => onNavigate('dashboard')}
+              onClick={() => navigate('/dashboard')}
               className="mb-4"
             >
               <ArrowLeft className="h-4 w-4 mr-2" />
@@ -260,8 +261,7 @@ export function StudentRegisterPage({ eventId, onNavigate }: StudentRegisterPage
                   </Button>
                   <Button 
                     variant="outline"
-                    onClick={() => onNavigate('dashboard')}
-
+                    onClick={() => navigate('/dashboard')}
                   >
                     Return to Dashboard
                   </Button>
@@ -311,7 +311,7 @@ export function StudentRegisterPage({ eventId, onNavigate }: StudentRegisterPage
         <div className="mb-8">
           <Button 
             variant="outline" 
-            onClick={() => onNavigate('dashboard')}
+            onClick={() => navigate('/dashboard')}
             className="mb-4"
           >
             <ArrowLeft className="h-4 w-4 mr-2" />
@@ -614,7 +614,7 @@ export function StudentRegisterPage({ eventId, onNavigate }: StudentRegisterPage
                 <Button
                   type="button"
                   variant="outline"
-                  onClick={() => onNavigate('dashboard')}
+                  onClick={() => navigate('/dashboard')}
                 >
                   Cancel
                 </Button>

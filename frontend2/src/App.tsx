@@ -1,136 +1,295 @@
-import React, { useState } from 'react';
+import React from 'react';
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider, useAuth } from './components/AuthContext';
+import { NotificationProvider } from './components/NotificationContext';
 import { LoginForm } from './components/LoginForm';
 import { MainLayout } from './components/MainLayout';
 import { LandingPage } from './components/LandingPage';
 import { AboutPage } from './components/AboutPage';
 import { EventDetailsPage } from './components/EventDetailsPage';
-import { ManagerEventAddPage } from './components/ManagerEventAddPage';
+import { ManagerEventAddPage } from './components/manager/ManagerEventAddPage';
+import { StudentRegisterPage } from './components/student/StudentRegisterPage';
 import {EventAddPage} from './components/EventAddPage';
 import { OrganizerEventCreatePage } from './components/organizer/OrganizerEventCreatePage';
 import { OrganizerEventManagePage } from './components/organizer/OrganizerEventManagePage';
 import { OrganizerAddManagerPage } from './components/organizer/OrganizerAddManagerPage';
 import { ManagerStudentApprovalsPage } from './components/manager/ManagerStudentApprovalsPage';
-import { StudentRegisterPage } from './components/student/StudentRegisterPage';
+import { ProfilePage } from './components/ProfilePage';
+import { TestNavigationPage } from './components/TestNavigationPage';
+import { ProjectStatusPage } from './components/ProjectStatusPage';
+import { NotFoundPage } from './components/NotFoundPage';
+import { Button } from './components/ui/button';
+import { ArrowLeft } from 'lucide-react';
+import { Toaster } from './components/ui/sonner';
 
-export type PageType = 'landing' | 'about' | 'login' | 'signup' | 'dashboard' | 'event-details' | 'add-event';
+// Protected Route Component
+function ProtectedRoute({ children }: { children: React.ReactNode }) {
+  const { isAuthenticated } = useAuth();
+  
+  if (!isAuthenticated) {
+    return <Navigate to="/" replace />;
+  }
+  
+  return <>{children}</>;
+}
 
-export default function App() {
-  const [currentPage, setCurrentPage] = useState<PageType>('landing');
-  const [selectedEventId, setSelectedEventId] = useState<string | null>(null);
+// Public Route Component (redirects to dashboard if authenticated)
+function PublicRoute({ children }: { children: React.ReactNode }) {
+  const { isAuthenticated } = useAuth();
+  
+  if (isAuthenticated) {
+    return <Navigate to="/dashboard" replace />;
+  }
+  
+  return <>{children}</>;
+}
 
+// Profile Page Wrapper with Layout
+function ProfilePageWrapper() {
   return (
-    <AuthProvider>
-      <AppContent 
-        currentPage={currentPage} 
-        setCurrentPage={setCurrentPage}
-        selectedEventId={selectedEventId}
-        setSelectedEventId={setSelectedEventId}
-      />
-    </AuthProvider>
+    <div className="min-h-screen bg-gray-50">
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <Button 
+          variant="outline" 
+          onClick={() => window.history.back()}
+          className="mb-6"
+        >
+          <ArrowLeft className="h-4 w-4 mr-2" />
+          Back
+        </Button>
+        <ProfilePage />
+      </div>
+    </div>
   );
 }
 
-function AppContent({ 
-  currentPage, 
-  setCurrentPage,
-  selectedEventId,
-  setSelectedEventId 
-}: { 
-  currentPage: PageType;
-  setCurrentPage: (page: PageType) => void;
-  selectedEventId: string | null;
-  setSelectedEventId: (id: string | null) => void;
-}) {
-  const { user, isAuthenticated } = useAuth();
+function AppRoutes() {
+  return (
+    <Routes>
+      {/* Public Routes */}
+      <Route 
+        path="/" 
+        element={
+          <PublicRoute>
+            <LandingPage />
+          </PublicRoute>
+        } 
+      />
+      <Route 
+        path="/about" 
+        element={
+          <PublicRoute>
+            <AboutPage />
+          </PublicRoute>
+        } 
+      />
+      <Route 
+        path="/login" 
+        element={
+          <PublicRoute>
+            <LoginForm initialMode="login" />
+          </PublicRoute>
+        } 
+      />
+      <Route 
+        path="/signup" 
+        element={
+          <PublicRoute>
+            <LoginForm initialMode="signup" />
+          </PublicRoute>
+        } 
+      />
 
-  // If user is authenticated and on landing/about/login pages, go to dashboard
-  if (isAuthenticated && ['landing', 'about', 'login', 'signup'].includes(currentPage)) {
-    setCurrentPage('dashboard');
-  }
+      {/* Protected Routes */}
+      <Route 
+        path="/dashboard" 
+        element={
+          <ProtectedRoute>
+            <MainLayout />
+          </ProtectedRoute>
+        } 
+      />
+      <Route 
+        path="/profile" 
+        element={
+          <ProtectedRoute>
+            <ProfilePageWrapper />
+          </ProtectedRoute>
+        } 
+      />
+      <Route 
+        path="/events/:eventId" 
+        element={
+          <ProtectedRoute>
+            <EventDetailsPage />
+          </ProtectedRoute>
+        } 
+      />
+      <Route 
+        path="/events/:eventId/register" 
+        element={
+          <ProtectedRoute>
+            <StudentRegisterPage />
+          </ProtectedRoute>
+        } 
+      />
+      <Route 
+        path="/manager/add-event" 
+        element={
+          <ProtectedRoute>
+            <ManagerEventAddPage />
+          </ProtectedRoute>
+        } 
+      />
+      <Route 
+        path="/manager/events/:eventId/approvals" 
+        element={
+          <ProtectedRoute>
+            <ManagerStudentApprovalsPage />
+          </ProtectedRoute>
+        } 
+      />
+      <Route 
+        path="/organizer/create-event" 
+        element={
+          <ProtectedRoute>
+            <OrganizerEventCreatePage />
+          </ProtectedRoute>
+        } 
+      />
+      <Route 
+        path="/organizer/manage-events" 
+        element={
+          <ProtectedRoute>
+            <OrganizerEventManagePage />
+          </ProtectedRoute>
+        } 
+      />
+      <Route 
+        path="/organizer/events/:eventId/edit" 
+        element={
+          <ProtectedRoute>
+            <OrganizerEventCreatePage />
+          </ProtectedRoute>
+        } 
+      />
+      <Route 
+        path="/organizer/events/:eventId/add-manager" 
+        element={
+          <ProtectedRoute>
+            <OrganizerAddManagerPage />
+          </ProtectedRoute>
+        } 
+      />
+      <Route 
+        path="/vendor/bids" 
+        element={
+          <ProtectedRoute>
+            <MainLayout />
+          </ProtectedRoute>
+        } 
+      />
+      <Route 
+        path="/vendor/portfolio" 
+        element={
+          <ProtectedRoute>
+            <MainLayout />
+          </ProtectedRoute>
+        } 
+      />
 
-  switch (currentPage) {
-    case 'landing':
-      return <EventDetailsPage onNavigate={setCurrentPage} />;
-    case 'about':
-      return <AboutPage onNavigate={setCurrentPage} />;
-    case 'login':
-    case 'signup':
-      return <LoginForm initialMode={currentPage} onNavigate={setCurrentPage} />;
-    case 'dashboard':
-      return isAuthenticated ? (
-        <MainLayout 
-          onNavigate={setCurrentPage} 
-          onEventSelect={setSelectedEventId}
-        />
-      ) : (
-        <LandingPage onNavigate={setCurrentPage} />
-      );
-    case 'event-details':
-      return isAuthenticated ? (
-        <EventDetailsPage 
-          eventId={selectedEventId} 
-          onNavigate={setCurrentPage}
-        />
-      ) : (
-        <LandingPage onNavigate={setCurrentPage} />
-      );
-    case 'add-event':
-      return isAuthenticated ? (
-        <EventAddPage onNavigate={setCurrentPage} />
-      ) : (
-        <LandingPage onNavigate={setCurrentPage} />
-      );
+      {/* Additional pages accessible from MainLayout */}
+      <Route 
+        path="/events" 
+        element={
+          <ProtectedRoute>
+            <MainLayout />
+          </ProtectedRoute>
+        } 
+      />
+      <Route 
+        path="/notifications" 
+        element={
+          <ProtectedRoute>
+            <MainLayout />
+          </ProtectedRoute>
+        } 
+      />
+      <Route 
+        path="/chat" 
+        element={
+          <ProtectedRoute>
+            <MainLayout />
+          </ProtectedRoute>
+        } 
+      />
+      <Route 
+        path="/wallet" 
+        element={
+          <ProtectedRoute>
+            <MainLayout />
+          </ProtectedRoute>
+        } 
+      />
+      <Route 
+        path="/reports" 
+        element={
+          <ProtectedRoute>
+            <MainLayout />
+          </ProtectedRoute>
+        } 
+      />
+      <Route 
+        path="/users" 
+        element={
+          <ProtectedRoute>
+            <MainLayout />
+          </ProtectedRoute>
+        } 
+      />
+      <Route 
+        path="/manager/approvals" 
+        element={
+          <ProtectedRoute>
+            <MainLayout />
+          </ProtectedRoute>
+        } 
+      />
+      <Route 
+        path="/test-navigation" 
+        element={
+          <ProtectedRoute>
+            <TestNavigationPage />
+          </ProtectedRoute>
+        } 
+      />
+      <Route 
+        path="/project-status" 
+        element={
+          <ProtectedRoute>
+            <ProjectStatusPage />
+          </ProtectedRoute>
+        } 
+      />
 
+       {/* Catch all route - 404 page */}
+      <Route path="*" element={<NotFoundPage />} />
 
-      case 'organizer-create-event':
-      return isAuthenticated ? (
-        <OrganizerEventCreatePage onNavigate={setCurrentPage} />
-      ) : (
-        <LandingPage onNavigate={setCurrentPage} />
-      );
-    case 'organizer-manage-events':
-      return isAuthenticated ? (
-        <OrganizerEventManagePage 
-          onNavigate={setCurrentPage} 
-          onEventSelect={setSelectedEventId}
-        />
-      ) : (
-        <LandingPage onNavigate={setCurrentPage} />
-      );
-    case 'organizer-add-manager':
-      return isAuthenticated ? (
-        <OrganizerAddManagerPage 
-          onNavigate={setCurrentPage}
-          eventId={selectedEventId}
-        />
-      ) : (
-        <LandingPage onNavigate={setCurrentPage} />
-      );
+      {/* Catch all route - redirect to home */}
+      {/* <Route path="*" element={<Navigate to="/" replace />} /> */}
+    </Routes>
+  );
+}
 
-
-      case 'manager-student-approvals':
-      return isAuthenticated ? (
-        <ManagerStudentApprovalsPage 
-          onNavigate={setCurrentPage}
-          eventId={selectedEventId}
-        />
-      ) : (
-        <LandingPage onNavigate={setCurrentPage} />
-      );
-
-
-      case 'student-register':
-      return isAuthenticated ? (
-        <StudentRegisterPage 
-          eventId={selectedEventId} 
-          onNavigate={setCurrentPage}
-        />
-      ) : (
-        <LandingPage onNavigate={setCurrentPage} />
-      );
-
-    default:
-      return <LandingPage onNavigate={setCurrentPage} />;
-  }
+export default function App() {
+  return (
+    <Router>
+      <AuthProvider>
+        <NotificationProvider>
+          <AppRoutes />
+          <Toaster />
+        </NotificationProvider>
+      </AuthProvider>
+    </Router>
+  );
 }

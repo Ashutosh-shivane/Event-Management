@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { PageType } from '../../App';
+import { useNavigate } from 'react-router-dom';
 import { Card, CardHeader, CardTitle, CardContent } from '../ui/card';
 import { Button } from '../ui/button';
 import { Badge } from '../ui/badge';
@@ -21,12 +21,8 @@ import {
   Clock3
 } from 'lucide-react';
 
-interface OrganizerEventManagePageProps {
-  onNavigate: (page: PageType) => void;
-  onEventSelect: (eventId: string) => void;
-}
-
-export function OrganizerEventManagePage({ onNavigate, onEventSelect }: OrganizerEventManagePageProps) {
+export function OrganizerEventManagePage() {
+  const navigate = useNavigate();
   const [selectedEvent, setSelectedEvent] = useState<string | null>(null);
 
   // Mock data for organizer's events
@@ -123,8 +119,7 @@ export function OrganizerEventManagePage({ onNavigate, onEventSelect }: Organize
   };
 
   const handleAddManager = (eventId: string) => {
-    onEventSelect(eventId);
-    onNavigate('organizer-add-manager');
+    navigate(`/organizer/events/${eventId}/add-manager`);
   };
 
   return (
@@ -134,7 +129,7 @@ export function OrganizerEventManagePage({ onNavigate, onEventSelect }: Organize
         <div className="mb-8">
           <Button 
             variant="outline" 
-            onClick={() => onNavigate('dashboard')}
+            onClick={() => navigate('/dashboard')}
             className="mb-4"
           >
             <ArrowLeft className="h-4 w-4 mr-2" />
@@ -146,7 +141,7 @@ export function OrganizerEventManagePage({ onNavigate, onEventSelect }: Organize
               <h1 className="text-3xl font-bold text-gray-900 mb-2">Manage My Events</h1>
               <p className="text-gray-600">Manage your events, assign managers, and track performance</p>
             </div>
-            <Button onClick={() => onNavigate('organizer-create-event')}>
+            <Button onClick={() => navigate('/organizer/create-event')}>
               <Calendar className="h-4 w-4 mr-2" />
               Create New Event
             </Button>
@@ -263,7 +258,7 @@ export function OrganizerEventManagePage({ onNavigate, onEventSelect }: Organize
                     size="sm" 
                     variant="outline" 
                     className="flex-1"
-                    onClick={() => onEventSelect(event.id)}
+                    onClick={() => navigate(`/events/${event.id}`)}
                   >
                     <Eye className="h-4 w-4 mr-1" />
                     View Details

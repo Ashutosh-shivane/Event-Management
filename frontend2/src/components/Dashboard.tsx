@@ -1,32 +1,29 @@
 import React from 'react';
 import { useAuth } from './AuthContext';
-import { PageType } from '../App';
 import { StudentDashboard } from './student/StudentDashboard';
 import { OrganizerDashboard } from './organizer/OrganizerDashboard';
 import { ManagerDashboard } from './manager/ManagerDashboard';
 import { VendorDashboard } from './dashboards/VendorDashboard';
 import { AdminDashboard } from './dashboards/AdminDashboard';
 
-interface DashboardProps {
-  onNavigate: (page: PageType) => void;
-  onEventSelect: (eventId: string) => void;
-  onPageChange?: (page: string) => void;
-}
-
-export function Dashboard({ onNavigate, onEventSelect,onPageChange }: DashboardProps) {
+export function Dashboard() {
   const { user } = useAuth();
+
+  if (!user) {
+    return <div>Loading...</div>;
+  }
 
   switch (user?.role) {
     case 'STUDENT':
-      return <StudentDashboard onNavigate={onNavigate} onEventSelect={onEventSelect} onPageChange={onPageChange} />;
+      return <StudentDashboard />;
     case 'ORGANIZER':
-      return <OrganizerDashboard onNavigate={onNavigate} onEventSelect={onEventSelect} />;
+      return <OrganizerDashboard />;
     case 'MANAGER':
-      return <ManagerDashboard onNavigate={onNavigate} onEventSelect={onEventSelect} onPageChange={onPageChange} />;
+      return <ManagerDashboard />;
     case 'VENDOR':
-      return <VendorDashboard onNavigate={onNavigate} onEventSelect={onEventSelect} />;
+      return <VendorDashboard />;
     case 'ADMIN':
-      return <AdminDashboard onNavigate={onNavigate} onEventSelect={onEventSelect} />;
+      return <AdminDashboard />;
     default:
       return <div>Unknown role</div>;
   }

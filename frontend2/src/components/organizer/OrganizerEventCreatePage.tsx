@@ -1,735 +1,422 @@
 import React, { useState } from 'react';
-import { PageType } from '../../App';
-import { Card, CardHeader, CardTitle, CardContent } from '../ui/card';
+
 import { Button } from '../ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
 import { Input } from '../ui/input';
 import { Label } from '../ui/label';
 import { Textarea } from '../ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select';
-import { Checkbox } from '../ui/checkbox';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '../ui/tabs';
 import { Badge } from '../ui/badge';
-import { Alert, AlertDescription } from '../ui/alert';
+import { Switch } from '../ui/switch';
 import { 
   ArrowLeft,
   Calendar,
   MapPin,
-  Clock,
   Users,
   DollarSign,
-  FileText,
-  Image,
+  Upload,
   Plus,
   X,
-  AlertTriangle,
-  CheckCircle,
-  Camera,
-  Upload
+  Clock,
+  Save,
+  Eye,
+  Send
 } from 'lucide-react';
 
-interface OrganizerEventCreatePageProps {
-  onNavigate: (page: PageType) => void;
+import axios from 'axios';
+
+
+
+interface EventForm {
+  title: string;
+  description: string;
+  category: string;
+  date: string;
+  startTime: string;
+  endTime: string;
+  location: string;
+  venue: string;
+  capacity: string;
+  price: string;
+  earlyBirdPrice: string;
+  earlyBirdDeadline: string;
+  tags: string[];
+  isPublic: boolean;
+  requiresApproval: boolean;
+  allowWaitlist: boolean;
 }
 
-export function OrganizerEventCreatePage({ onNavigate }: OrganizerEventCreatePageProps) {
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [currentStep, setCurrentStep] = useState(1);
+
+
+interface VendorRequirement {
+  service: string;
+  description: string;
+  budget: string;
+  deadline: string;
+}
+
+export function OrganizerEventCreatePage() {
+  const [activeTab, setActiveTab] = useState("basic");
+  const [currentTag, setCurrentTag] = useState("");
+  const [eventForm, setEventForm] = useState<EventForm>({
+    title: "",
+    description: "",
+    category: "",
+    date: "",
+    startTime: "",
+    endTime: "",
+    location: "",
+    requiredVolunteer:0,
+    venue: "",
+    capacity: "",
+    price: "",
+    tags: []
+  });
+
+ 
+
   
-  const [eventData, setEventData] = useState({
-    title: '',
-    description: '',
-    category: '',
-    date: '',
-    startTime: '',
-    endTime: '',
-    venue: '',
-    address: '',
-    capacity: '',
-    ticketPrice: '',
-    currency: 'USD',
-    isPublic: true,
-    requiresApproval: false,
-    hasTickets: false,
-    allowRefunds: true,
-    tags: [] as string[],
-    requirements: [] as string[],
-    agenda: [] as { time: string; title: string; speaker: string; duration: string }[]
-  });
 
-  const [eventImage, setEventImage] = useState<string | null>(null);
-  const [currentTag, setCurrentTag] = useState('');
-  const [currentRequirement, setCurrentRequirement] = useState('');
-  const [currentAgendaItem, setCurrentAgendaItem] = useState({
-    time: '',
-    title: '',
-    speaker: '',
-    duration: ''
-  });
-
-  const eventCategories = [
-    'Conference', 'Workshop', 'Seminar', 'Networking', 'Training',
-    'Social', 'Charity', 'Sports', 'Cultural', 'Academic', 'Business', 
-    'Entertainment', 'Health', 'Technology', 'Other'
+  const categories = [
+    "Technology", "Business", "Education", "Arts & Culture", 
+    "Sports", "Health & Wellness", "Networking", "Conference", "Workshop"
   ];
 
-  const popularTags = [
-    'Technology', 'Education', 'Business', 'Health', 'Environment', 
-    'Arts', 'Music', 'Sports', 'Volunteer', 'Career', 'Innovation', 
-    'Community', 'Networking', 'Professional Development'
+  const services = [
+    "Catering", "Photography", "Videography", "Audio/Visual", 
+    "Security", "Transportation", "Decoration", "Entertainment"
   ];
 
-  const currencies = ['USD', 'EUR', 'GBP', 'CAD', 'AUD'];
-
-  const totalSteps = 4;
-
-  const handleInputChange = (field: string, value: string | boolean | number) => {
-    setEventData(prev => ({ ...prev, [field]: value }));
-  };
-
-  const addToArray = (field: string, value: string) => {
-    if (value && !eventData[field as keyof typeof eventData].includes(value)) {
-      setEventData(prev => ({
-        ...prev,
-        [field]: [...prev[field as keyof typeof eventData] as string[], value]
-      }));
-    }
-  };
-
-  const removeFromArray = (field: string, value: string) => {
-    setEventData(prev => ({
+  const handleFormChange = (field: keyof EventForm, value: string | boolean) => {
+    setEventForm(prev => ({
       ...prev,
-      [field]: (prev[field as keyof typeof eventData] as string[]).filter(item => item !== value)
+      [field]: value
     }));
   };
 
-  const addAgendaItem = () => {
-    if (currentAgendaItem.time && currentAgendaItem.title) {
-      setEventData(prev => ({
+  const addTag = () => {
+    if (currentTag.trim() && !eventForm.tags.includes(currentTag.trim())) {
+      setEventForm(prev => ({
         ...prev,
-        agenda: [...prev.agenda, { ...currentAgendaItem }]
+        tags: [...prev.tags, currentTag.trim()]
       }));
-      setCurrentAgendaItem({ time: '', title: '', speaker: '', duration: '' });
+      setCurrentTag("");
     }
   };
 
-  const removeAgendaItem = (index: number) => {
-    setEventData(prev => ({
+  const removeTag = (tagToRemove: string) => {
+    setEventForm(prev => ({
       ...prev,
-      agenda: prev.agenda.filter((_, i) => i !== index)
+      tags: prev.tags.filter(tag => tag !== tagToRemove)
     }));
   };
 
-  const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        setEventImage(e.target?.result as string);
-      };
-      reader.readAsDataURL(file);
-    }
+  
+
+  
+
+
+
+ 
+
+  
+  const handleSaveDraft = () => {
+    // In real app, save as draft
+    console.log("Saving draft...", { eventForm });
   };
 
-  const validateStep = (step: number): boolean => {
-    switch (step) {
-      case 1:
-        return !!(eventData.title && eventData.description && eventData.category && 
-                 eventData.date && eventData.startTime && eventData.endTime);
-      case 2:
-        return !!(eventData.venue && eventData.address && eventData.capacity);
-      case 3:
-        return eventData.hasTickets ? !!eventData.ticketPrice : true;
-      case 4:
-        return true; // Optional step
-      default:
-        return false;
-    }
+  const handlePreview = () => {
+    // In real app, show preview
+    console.log("Previewing event...", { eventForm });
   };
 
-  const nextStep = () => {
-    if (validateStep(currentStep) && currentStep < totalSteps) {
-      setCurrentStep(currentStep + 1);
-    }
-  };
-
-  const prevStep = () => {
-    if (currentStep > 1) {
-      setCurrentStep(currentStep - 1);
-    }
-  };
-
-  const handleSubmit = async () => {
-    if (!validateStep(currentStep)) return;
-
-    setIsSubmitting(true);
+ const handlePublish = async () => {
     try {
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 2000));
-      
-      // Show success and redirect
-      alert('Event created successfully! It has been submitted for review.');
-      onNavigate('dashboard');
-    } catch (error) {
-      console.error('Event creation failed:', error);
-      alert('Failed to create event. Please try again.');
-    } finally {
-      setIsSubmitting(false);
+      console.log("Publishing event...", eventForm);
+      const res = await createEvent(eventForm);
+      alert("Event created successfully! ID: " + res.id);
+     
+    } catch (err) {
+      alert("Error while creating event");
+
     }
   };
+
+  // helper function
+async function createEvent(eventForm:any) {
+  try {
+
+    const API_BASE = "http://localhost:8080/Event";
+    const payload = {
+      title: eventForm.title,
+      description: eventForm.description,
+      startAt:
+        eventForm.date && eventForm.startTime
+          ? new Date(`${eventForm.date}T${eventForm.startTime}`).toISOString()
+          : null,
+      endAt:
+        eventForm.date && eventForm.endTime
+          ? new Date(`${eventForm.date}T${eventForm.endTime}`).toISOString()
+          : null,
+      location: eventForm.venue+eventForm.location,
+      requiredVolunteer: eventForm.requiredVolunteer
+        ? parseInt(eventForm.requiredVolunteer, 10)
+        : 0,
+      status: "PUBLISHED",
+      managedByManager: true,
+
+      // optional extras
+      category: eventForm.category,
+      
+      cost: eventForm.price,
+      tags: JSON.stringify(eventForm.tags),
+      createdid:localStorage.getItem('id')
+      
+    };
+
+    console.log(payload);
+
+     const response = await axios.post(`${API_BASE}/create`, payload, {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${localStorage.getItem("token") || ""}`,
+      },
+    });
+
+    console.log("✅ Event created:", response.data);
+    return response.data;
+  } catch (err) {
+    console.error("❌ Failed to create event:", err);
+    throw err;
+  }
+}
+
+
 
   return (
-    <div className="min-h-screen bg-gray-50 py-8">
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Header */}
-        <div className="mb-8">
-          <Button 
-            variant="outline" 
-            onClick={() => onNavigate('dashboard')}
-            className="mb-4"
-          >
-            <ArrowLeft className="h-4 w-4 mr-2" />
-            Back to Dashboard
-          </Button>
-          
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">Create New Event</h1>
-          <p className="text-gray-600">Organize and plan your event with all the necessary details</p>
-          
-          {/* Progress */}
-          <div className="mt-6">
-            <div className="flex items-center justify-between mb-2">
-              <span className="text-sm font-medium">Step {currentStep} of {totalSteps}</span>
-              <span className="text-sm text-gray-600">{Math.round((currentStep / totalSteps) * 100)}% Complete</span>
+    <div className="min-h-screen bg-background">
+      {/* Header */}
+      <header className="border-b border-border bg-card/50 backdrop-blur-sm sticky top-0 z-50">
+        <div className="container mx-auto px-6 py-4">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center space-x-4">
+              <Button 
+                variant="ghost" 
+                size="sm"
+                onClick={() => onNavigate('dashboard')}
+                className="flex items-center space-x-2"
+              >
+                <ArrowLeft className="h-4 w-4" />
+                <span>Back to Dashboard</span>
+              </Button>
+              <h1 className="text-xl font-semibold">Create New Event</h1>
             </div>
-            <div className="w-full bg-gray-200 rounded-full h-2">
-              <div 
-                className="bg-blue-600 h-2 rounded-full transition-all duration-300"
-                style={{ width: `${(currentStep / totalSteps) * 100}%` }}
-              />
+            <div className="flex items-center space-x-4">
+              <Button variant="outline" onClick={handleSaveDraft}>
+                <Save className="h-4 w-4 mr-2" />
+                Save Draft
+              </Button>
+              <Button variant="outline" onClick={handlePreview}>
+                <Eye className="h-4 w-4 mr-2" />
+                Preview
+              </Button>
+              <Button onClick={handlePublish}>
+                <Send className="h-4 w-4 mr-2" />
+                Publish Event
+              </Button>
             </div>
           </div>
         </div>
+      </header>
 
-        {/* Step 1: Basic Information */}
-        {currentStep === 1 && (
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center">
-                <FileText className="h-5 w-5 mr-2" />
-                Basic Event Information
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-6">
-              <div className="space-y-2">
-                <Label htmlFor="title">Event Title *</Label>
-                <Input
-                  id="title"
-                  value={eventData.title}
-                  onChange={(e) => handleInputChange('title', e.target.value)}
-                  placeholder="Enter a compelling event title"
-                />
-              </div>
+      <div className="container mx-auto px-6 py-8 max-w-4xl">
+        <Tabs value={activeTab} onValueChange={setActiveTab}>
+          <TabsList className="grid w-full grid-cols-5">
+            <TabsTrigger value="basic">Basic Info</TabsTrigger>
+            <TabsTrigger value="details">Details</TabsTrigger>
+            
+          </TabsList>
 
-              <div className="space-y-2">
-                <Label htmlFor="description">Event Description *</Label>
-                <Textarea
-                  id="description"
-                  value={eventData.description}
-                  onChange={(e) => handleInputChange('description', e.target.value)}
-                  placeholder="Provide a detailed description of your event"
-                  rows={4}
-                />
-              </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <TabsContent value="basic" className="mt-6">
+            <Card>
+              <CardHeader>
+                <CardTitle>Basic Event Information</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-6">
                 <div className="space-y-2">
-                  <Label htmlFor="category">Event Category *</Label>
-                  <Select value={eventData.category} onValueChange={(value) => handleInputChange('category', value)}>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select category" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {eventCategories.map(category => (
-                        <SelectItem key={category} value={category.toLowerCase()}>{category}</SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="date">Event Date *</Label>
+                  <Label htmlFor="title">Event Title *</Label>
                   <Input
-                    id="date"
-                    type="date"
-                    value={eventData.date}
-                    onChange={(e) => handleInputChange('date', e.target.value)}
-                  />
-                </div>
-              </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <Label htmlFor="startTime">Start Time *</Label>
-                  <Input
-                    id="startTime"
-                    type="time"
-                    value={eventData.startTime}
-                    onChange={(e) => handleInputChange('startTime', e.target.value)}
+                    id="title"
+                    value={eventForm.title}
+                    onChange={(e) => handleFormChange('title', e.target.value)}
+                    placeholder="Enter event title"
                   />
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="endTime">End Time *</Label>
-                  <Input
-                    id="endTime"
-                    type="time"
-                    value={eventData.endTime}
-                    onChange={(e) => handleInputChange('endTime', e.target.value)}
+                  <Label htmlFor="description">Event Description *</Label>
+                  <Textarea
+                    id="description"
+                    value={eventForm.description}
+                    onChange={(e) => handleFormChange('description', e.target.value)}
+                    placeholder="Describe your event, what attendees can expect, key highlights, etc."
+                    rows={4}
                   />
                 </div>
-              </div>
 
-              {/* Event Image Upload */}
-              <div className="space-y-2">
-                <Label>Event Cover Image</Label>
-                <div className="border-2 border-dashed border-gray-300 rounded-lg p-6">
-                  {eventImage ? (
-                    <div className="relative">
-                      <img 
-                        src={eventImage} 
-                        alt="Event cover" 
-                        className="w-full h-48 object-cover rounded-lg"
-                      />
-                      <Button
-                        type="button"
-                        variant="destructive"
-                        size="sm"
-                        className="absolute top-2 right-2"
-                        onClick={() => setEventImage(null)}
-                      >
-                        <X className="h-4 w-4" />
-                      </Button>
-                    </div>
-                  ) : (
-                    <div className="text-center">
-                      <Camera className="mx-auto h-12 w-12 text-gray-400" />
-                      <div className="mt-4">
-                        <label htmlFor="image-upload" className="cursor-pointer">
-                          <span className="mt-2 block text-sm font-medium text-gray-900">
-                            Upload event cover image
-                          </span>
-                          <span className="mt-1 block text-sm text-gray-500">
-                            PNG, JPG, GIF up to 10MB
-                          </span>
-                        </label>
-                        <input
-                          id="image-upload"
-                          type="file"
-                          className="hidden"
-                          accept="image/*"
-                          onChange={handleImageUpload}
-                        />
-                      </div>
-                    </div>
-                  )}
-                </div>
-              </div>
-
-              <div className="space-y-4">
-                <Label>Event Tags</Label>
-                
-                {/* Current Tags */}
-                {eventData.tags.length > 0 && (
-                  <div className="flex flex-wrap gap-2">
-                    {eventData.tags.map((tag, index) => (
-                      <Badge key={index} variant="secondary" className="cursor-pointer" 
-                             onClick={() => removeFromArray('tags', tag)}>
-                        {tag} ×
-                      </Badge>
-                    ))}
-                  </div>
-                )}
-                
-                {/* Add Custom Tag */}
-                <div className="flex space-x-2">
-                  <Input
-                    value={currentTag}
-                    onChange={(e) => setCurrentTag(e.target.value)}
-                    placeholder="Add a tag"
-                    onKeyPress={(e) => {
-                      if (e.key === 'Enter') {
-                        addToArray('tags', currentTag);
-                        setCurrentTag('');
-                      }
-                    }}
-                  />
-                  <Button 
-                    type="button" 
-                    variant="outline" 
-                    onClick={() => {
-                      addToArray('tags', currentTag);
-                      setCurrentTag('');
-                    }}
-                    disabled={!currentTag.trim()}
-                  >
-                    Add
-                  </Button>
-                </div>
-                
-                {/* Popular Tags */}
-                <div>
-                  <Label className="text-sm text-muted-foreground">Popular tags:</Label>
-                  <div className="flex flex-wrap gap-2 mt-2">
-                    {popularTags
-                      .filter(tag => !eventData.tags.includes(tag))
-                      .slice(0, 8)
-                      .map((tag) => (
-                      <Badge 
-                        key={tag} 
-                        variant="outline" 
-                        className="cursor-pointer hover:bg-secondary"
-                        onClick={() => addToArray('tags', tag)}
-                      >
-                        + {tag}
-                      </Badge>
-                    ))}
-                  </div>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        )}
-
-        {/* Step 2: Venue & Logistics */}
-        {currentStep === 2 && (
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center">
-                <MapPin className="h-5 w-5 mr-2" />
-                Venue & Logistics
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-6">
-              <div className="space-y-2">
-                <Label htmlFor="venue">Venue Name *</Label>
-                <Input
-                  id="venue"
-                  value={eventData.venue}
-                  onChange={(e) => handleInputChange('venue', e.target.value)}
-                  placeholder="e.g., Convention Center, University Hall"
-                />
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="address">Venue Address *</Label>
-                <Textarea
-                  id="address"
-                  value={eventData.address}
-                  onChange={(e) => handleInputChange('address', e.target.value)}
-                  placeholder="Full address including city, state, zip code"
-                  rows={2}
-                />
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="capacity">Expected Capacity *</Label>
-                <Input
-                  id="capacity"
-                  type="number"
-                  value={eventData.capacity}
-                  onChange={(e) => handleInputChange('capacity', e.target.value)}
-                  placeholder="Number of attendees"
-                />
-              </div>
-
-              <div className="space-y-4">
-                <Label>Event Settings</Label>
-                
-                <div className="flex items-center space-x-2">
-                  <Checkbox
-                    id="isPublic"
-                    checked={eventData.isPublic}
-                    onCheckedChange={(checked) => handleInputChange('isPublic', checked as boolean)}
-                  />
-                  <Label htmlFor="isPublic">Make this event public (visible to all users)</Label>
-                </div>
-
-                <div className="flex items-center space-x-2">
-                  <Checkbox
-                    id="requiresApproval"
-                    checked={eventData.requiresApproval}
-                    onCheckedChange={(checked) => handleInputChange('requiresApproval', checked as boolean)}
-                  />
-                  <Label htmlFor="requiresApproval">Require approval for registrations</Label>
-                </div>
-              </div>
-
-              <div className="space-y-4">
-                <Label>Event Requirements</Label>
-                
-                {/* Current Requirements */}
-                {eventData.requirements.length > 0 && (
+                <div className="grid md:grid-cols-2 gap-6">
                   <div className="space-y-2">
-                    {eventData.requirements.map((req, index) => (
-                      <div key={index} className="flex items-center justify-between bg-gray-50 p-2 rounded">
-                        <span className="text-sm">{req}</span>
-                        <Button
-                          type="button"
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => removeFromArray('requirements', req)}
+                    <Label htmlFor="category">Category *</Label>
+                    <Select value={eventForm.category} onValueChange={(value) => handleFormChange('category', value)}>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select category" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {categories.map(category => (
+                          <SelectItem key={category} value={category}>{category}</SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="capacity">Capacity *</Label>
+                    <Input
+                      id="capacity"
+                      type="number"
+                      value={eventForm.requiredVolunteer}
+                      onChange={(e) => handleFormChange('requiredVolunteer', e.target.value)}
+                      placeholder="Maximum attendees"
+                    />
+                  </div>
+                </div>
+
+                <div className="space-y-2">
+                  <Label>Tags</Label>
+                  <div className="flex flex-wrap gap-2 mb-2">
+                    {eventForm.tags.map((tag, index) => (
+                      <Badge key={index} variant="secondary" className="flex items-center space-x-1">
+                        <span>{tag}</span>
+                        <button 
+                          onClick={() => removeTag(tag)}
+                          className="text-xs hover:text-destructive"
                         >
-                          <X className="h-4 w-4" />
-                        </Button>
-                      </div>
+                          <X className="h-3 w-3" />
+                        </button>
+                      </Badge>
                     ))}
                   </div>
-                )}
-                
-                {/* Add Requirement */}
-                <div className="flex space-x-2">
-                  <Input
-                    value={currentRequirement}
-                    onChange={(e) => setCurrentRequirement(e.target.value)}
-                    placeholder="Add a requirement (e.g., Must be 18+ years old)"
-                    onKeyPress={(e) => {
-                      if (e.key === 'Enter') {
-                        addToArray('requirements', currentRequirement);
-                        setCurrentRequirement('');
-                      }
-                    }}
-                  />
-                  <Button 
-                    type="button" 
-                    variant="outline" 
-                    onClick={() => {
-                      addToArray('requirements', currentRequirement);
-                      setCurrentRequirement('');
-                    }}
-                    disabled={!currentRequirement.trim()}
-                  >
-                    Add
-                  </Button>
+                  <div className="flex space-x-2">
+                    <Input
+                      value={currentTag}
+                      onChange={(e) => setCurrentTag(e.target.value)}
+                      placeholder="Add a tag"
+                      onKeyPress={(e) => e.key === 'Enter' && addTag()}
+                    />
+                    <Button type="button" variant="outline" onClick={addTag}>
+                      Add
+                    </Button>
+                  </div>
                 </div>
-              </div>
-            </CardContent>
-          </Card>
-        )}
+              </CardContent>
+            </Card>
+          </TabsContent>
 
-        {/* Step 3: Ticketing & Pricing */}
-        {currentStep === 3 && (
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center">
-                <DollarSign className="h-5 w-5 mr-2" />
-                Ticketing & Pricing
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-6">
-              <div className="flex items-center space-x-2">
-                <Checkbox
-                  id="hasTickets"
-                  checked={eventData.hasTickets}
-                  onCheckedChange={(checked) => handleInputChange('hasTickets', checked as boolean)}
-                />
-                <Label htmlFor="hasTickets">This is a paid event (requires tickets)</Label>
-              </div>
-
-              {eventData.hasTickets && (
-                <div className="space-y-4">
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <TabsContent value="details" className="mt-6">
+            <div className="space-y-6">
+              <Card>
+                <CardHeader>
+                  <CardTitle>Date & Time</CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-6">
+                  <div className="grid md:grid-cols-3 gap-6">
                     <div className="space-y-2">
-                      <Label htmlFor="ticketPrice">Ticket Price *</Label>
+                      <Label htmlFor="date">Event Date *</Label>
                       <Input
-                        id="ticketPrice"
+                        id="date"
+                        type="date"
+                        value={eventForm.date}
+                        onChange={(e) => handleFormChange('date', e.target.value)}
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="startTime">Start Time *</Label>
+                      <Input
+                        id="startTime"
+                        type="time"
+                        value={eventForm.startTime}
+                        onChange={(e) => handleFormChange('startTime', e.target.value)}
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="endTime">End Time *</Label>
+                      <Input
+                        id="endTime"
+                        type="time"
+                        value={eventForm.endTime}
+                        onChange={(e) => handleFormChange('endTime', e.target.value)}
+                      />
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+
+              <Card>
+                <CardHeader>
+                  <CardTitle>Location</CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-6">
+                  <div className="space-y-2">
+                    <Label htmlFor="location">Address *</Label>
+                    <Input
+                      id="location"
+                      value={eventForm.location}
+                      onChange={(e) => handleFormChange('location', e.target.value)}
+                      placeholder="Street address, city, state, zip code"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="venue">Venue Name</Label>
+                    <Input
+                      id="venue"
+                      value={eventForm.venue}
+                      onChange={(e) => handleFormChange('venue', e.target.value)}
+                      placeholder="Convention center, hotel, university, etc."
+                    />
+                  </div>
+                </CardContent>
+              </Card>
+
+              <Card>
+                <CardHeader>
+                  <CardTitle>Pricing</CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-6">
+                  <div className="grid md:grid-cols-2 gap-6">
+                    <div className="space-y-2">
+                      <Label htmlFor="price"> Price (Rs) *</Label>
+                      <Input
+                        id="price"
                         type="number"
-                        step="0.01"
-                        value={eventData.ticketPrice}
-                        onChange={(e) => handleInputChange('ticketPrice', e.target.value)}
+                        value={eventForm.price}
+                        onChange={(e) => handleFormChange('price', e.target.value)}
                         placeholder="0.00"
                       />
                     </div>
-
-                    <div className="space-y-2">
-                      <Label htmlFor="currency">Currency</Label>
-                      <Select value={eventData.currency} onValueChange={(value) => handleInputChange('currency', value)}>
-                        <SelectTrigger>
-                          <SelectValue />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {currencies.map(currency => (
-                            <SelectItem key={currency} value={currency}>{currency}</SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                    </div>
+                   
                   </div>
+                </CardContent>
+              </Card>
+            </div>
+          </TabsContent>
 
-                  <div className="flex items-center space-x-2">
-                    <Checkbox
-                      id="allowRefunds"
-                      checked={eventData.allowRefunds}
-                      onCheckedChange={(checked) => handleInputChange('allowRefunds', checked as boolean)}
-                    />
-                    <Label htmlFor="allowRefunds">Allow refunds</Label>
-                  </div>
-
-                  <Alert>
-                    <DollarSign className="h-4 w-4" />
-                    <AlertDescription>
-                      Payment processing fees will be automatically calculated and added to your ticket price.
-                      You'll receive payouts after the event concludes.
-                    </AlertDescription>
-                  </Alert>
-                </div>
-              )}
-
-              {!eventData.hasTickets && (
-                <Alert>
-                  <CheckCircle className="h-4 w-4" />
-                  <AlertDescription>
-                    This event is free to attend. Attendees will be able to register without payment.
-                  </AlertDescription>
-                </Alert>
-              )}
-            </CardContent>
-          </Card>
-        )}
-
-        {/* Step 4: Event Agenda */}
-        {currentStep === 4 && (
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center justify-between">
-                <div className="flex items-center">
-                  <Clock className="h-5 w-5 mr-2" />
-                  Event Agenda (Optional)
-                </div>
-                <Button
-                  type="button"
-                  variant="outline"
-                  size="sm"
-                  onClick={addAgendaItem}
-                  disabled={!currentAgendaItem.time || !currentAgendaItem.title}
-                >
-                  <Plus className="h-4 w-4 mr-2" />
-                  Add Item
-                </Button>
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-6">
-              {/* Add Agenda Item */}
-              <div className="border rounded-lg p-4 space-y-4">
-                <h4 className="font-medium">Add Agenda Item</h4>
-                
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div className="space-y-2">
-                    <Label>Time</Label>
-                    <Input
-                      type="time"
-                      value={currentAgendaItem.time}
-                      onChange={(e) => setCurrentAgendaItem(prev => ({ ...prev, time: e.target.value }))}
-                    />
-                  </div>
-
-                  <div className="space-y-2">
-                    <Label>Duration</Label>
-                    <Input
-                      value={currentAgendaItem.duration}
-                      onChange={(e) => setCurrentAgendaItem(prev => ({ ...prev, duration: e.target.value }))}
-                      placeholder="e.g., 45 minutes"
-                    />
-                  </div>
-                </div>
-
-                <div className="space-y-2">
-                  <Label>Title</Label>
-                  <Input
-                    value={currentAgendaItem.title}
-                    onChange={(e) => setCurrentAgendaItem(prev => ({ ...prev, title: e.target.value }))}
-                    placeholder="Session or activity title"
-                  />
-                </div>
-
-                <div className="space-y-2">
-                  <Label>Speaker/Presenter</Label>
-                  <Input
-                    value={currentAgendaItem.speaker}
-                    onChange={(e) => setCurrentAgendaItem(prev => ({ ...prev, speaker: e.target.value }))}
-                    placeholder="Name of speaker or presenter (optional)"
-                  />
-                </div>
-              </div>
-
-              {/* Current Agenda */}
-              {eventData.agenda.length > 0 && (
-                <div className="space-y-4">
-                  <h4 className="font-medium">Event Agenda</h4>
-                  <div className="space-y-2">
-                    {eventData.agenda.map((item, index) => (
-                      <div key={index} className="flex items-center justify-between bg-blue-50 p-3 rounded">
-                        <div className="flex-1">
-                          <div className="flex items-center space-x-4">
-                            <span className="font-medium text-blue-600">{item.time}</span>
-                            <span className="font-medium">{item.title}</span>
-                            {item.duration && (
-                              <span className="text-sm text-gray-500">({item.duration})</span>
-                            )}
-                          </div>
-                          {item.speaker && (
-                            <p className="text-sm text-gray-600 mt-1">Speaker: {item.speaker}</p>
-                          )}
-                        </div>
-                        <Button
-                          type="button"
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => removeAgendaItem(index)}
-                        >
-                          <X className="h-4 w-4" />
-                        </Button>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              )}
-
-              <Alert>
-                <Clock className="h-4 w-4" />
-                <AlertDescription>
-                  Adding an agenda helps attendees understand what to expect and plan their time. 
-                  You can always modify the agenda later as your event details evolve.
-                </AlertDescription>
-              </Alert>
-            </CardContent>
-          </Card>
-        )}
-
-        {/* Navigation */}
-        <div className="flex justify-between mt-8">
-          <Button 
-            variant="outline" 
-            onClick={prevStep}
-            disabled={currentStep === 1}
-          >
-            Previous
-          </Button>
           
-          {currentStep < totalSteps ? (
-            <Button 
-              onClick={nextStep}
-              disabled={!validateStep(currentStep)}
-            >
-              Next Step
-            </Button>
-          ) : (
-            <Button 
-              onClick={handleSubmit}
-              disabled={isSubmitting || !validateStep(currentStep)}
-              className="px-8"
-            >
-              {isSubmitting ? 'Creating Event...' : 'Create Event'}
-            </Button>
-          )}
-        </div>
+
+          
+
+          
+        </Tabs>
       </div>
     </div>
   );

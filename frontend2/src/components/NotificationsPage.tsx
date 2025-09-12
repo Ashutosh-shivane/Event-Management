@@ -1,9 +1,11 @@
 import React, { useState } from 'react';
 import { useAuth } from './AuthContext';
+import { useNotifications } from './NotificationContext';
 import { Card, CardHeader, CardTitle, CardContent } from './ui/card';
 import { Button } from './ui/button';
 import { Badge } from './ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from './ui/tabs';
+import { Input } from './ui/input';
 import { 
   Bell, 
   Calendar, 
@@ -14,271 +16,348 @@ import {
   Settings,
   Filter,
   MessageCircle,
-  AlertTriangle
+  AlertTriangle,
+  UserPlus,
+  Check,
+  Eye,
+  Crown,
+  Clock,
+  Mail,
+  Search
 } from 'lucide-react';
 
 export function NotificationsPage() {
   const { user } = useAuth();
+  const { 
+    getUserNotifications, 
+    getUnreadCount, 
+    markAsRead, 
+    markAllAsRead 
+  } = useNotifications();
   const [filter, setFilter] = useState('all');
+  const [searchQuery, setSearchQuery] = useState('');
 
-  const notifications = [
+  // Get user notifications from context
+  const userNotifications = user ? getUserNotifications(user.id) : [];
+  const unreadCount = user ? getUnreadCount(user.id) : 0;
+
+  // Add some default mock notifications if none exist (for demo purposes)
+  const mockNotifications = userNotifications.length === 0 ? [
     {
-      id: 1,
-      type: 'event',
-      title: 'New Event Registration',
-      message: 'Sarah Wilson registered for Tech Conference 2024',
-      time: '2 minutes ago',
+      id: 'mock-1',
+      title: 'Welcome to the Platform',
+      message: 'Welcome! Start by exploring the dashboard features.',
+      type: 'info' as const,
+      userId: user?.id || '',
+      userRole: user?.role || '',
+      timestamp: new Date(Date.now() - 10 * 60 * 1000), // 10 minutes ago
       read: false,
-      priority: 'normal',
-      icon: Calendar,
-      color: 'blue'
+      data: {}
     },
     {
-      id: 2,
-      type: 'payment',
-      title: 'Payment Received',
-      message: 'Received $2,500 payment for catering services',
-      time: '1 hour ago',
-      read: false,
-      priority: 'high',
-      icon: DollarSign,
-      color: 'green'
-    },
-    {
-      id: 3,
-      type: 'system',
-      title: 'Event Approval Required',
-      message: 'International Tech Summit requires your approval',
-      time: '3 hours ago',
-      read: false,
-      priority: 'high',
-      icon: AlertTriangle,
-      color: 'orange'
-    },
-    {
-      id: 4,
-      type: 'message',
-      title: 'New Message',
-      message: 'You have a new message from John Doe regarding venue booking',
-      time: '5 hours ago',
+      id: 'mock-2', 
+      title: 'System Update',
+      message: 'System has been updated with new features.',
+      type: 'success' as const,
+      userId: user?.id || '',
+      userRole: user?.role || '',
+      timestamp: new Date(Date.now() - 2 * 60 * 60 * 1000), // 2 hours ago
       read: true,
-      priority: 'normal',
-      icon: MessageCircle,
-      color: 'purple'
-    },
-    {
-      id: 5,
-      type: 'event',
-      title: 'Event Reminder',
-      message: 'Music Festival starts in 2 days - 450 attendees registered',
-      time: '1 day ago',
-      read: true,
-      priority: 'normal',
-      icon: Calendar,
-      color: 'blue'
-    },
-    {
-      id: 6,
-      type: 'user',
-      title: 'New Vendor Application',
-      message: 'Premium Catering Services submitted vendor application',
-      time: '2 days ago',
-      read: true,
-      priority: 'normal',
-      icon: Users,
-      color: 'indigo'
-    },
-    {
-      id: 7,
-      type: 'payment',
-      title: 'Payment Failed',
-      message: 'Payment for Art Workshop registration failed - retry required',
-      time: '3 days ago',
-      read: true,
-      priority: 'high',
-      icon: DollarSign,
-      color: 'red'
-    },
-    {
-      id: 8,
-      type: 'system',
-      title: 'System Maintenance',
-      message: 'Scheduled maintenance completed successfully',
-      time: '1 week ago',
-      read: true,
-      priority: 'low',
-      icon: Settings,
-      color: 'gray'
+      data: {}
     }
-  ];
+  ] : [];
 
-  const filteredNotifications = notifications.filter(notification => {
-    if (filter === 'all') return true;
-    if (filter === 'unread') return !notification.read;
-    return notification.type === filter;
-  });
+  const allNotifications = [...userNotifications, ...mockNotifications];
 
-  const unreadCount = notifications.filter(n => !n.read).length;
-
-  const getColorClasses = (color: string) => {
-    const colors = {
-      blue: 'bg-blue-100 text-blue-600',
-      green: 'bg-green-100 text-green-600',
-      orange: 'bg-orange-100 text-orange-600',
-      purple: 'bg-purple-100 text-purple-600',
-      indigo: 'bg-indigo-100 text-indigo-600',
-      red: 'bg-red-100 text-red-600',
-      gray: 'bg-gray-100 text-gray-600'
-    };
-    return colors[color as keyof typeof colors] || colors.blue;
+  // Helper function to get icon for notification type
+  const getNotificationIcon = (type: string) => {
+    switch (type) {
+      case 'invitation': return UserPlus;
+      case 'success': return CheckCircle;
+      case 'warning': return AlertTriangle;
+      case 'error': return X;
+      case 'info': 
+      default: return Bell;
+    }
   };
 
-  const getPriorityColor = (priority: string) => {
-    switch (priority) {
-      case 'high': return 'bg-red-100 text-red-800';
-      case 'normal': return 'bg-blue-100 text-blue-800';
-      case 'low': return 'bg-gray-100 text-gray-800';
-      default: return 'bg-gray-100 text-gray-800';
+  // Helper function to get color classes for notification type
+  const getNotificationColorClasses = (type: string) => {
+    switch (type) {
+      case 'invitation': 
+        return { bg: 'bg-blue-100', text: 'text-blue-600' };
+      case 'success': 
+        return { bg: 'bg-green-100', text: 'text-green-600' };
+      case 'warning': 
+        return { bg: 'bg-orange-100', text: 'text-orange-600' };
+      case 'error': 
+        return { bg: 'bg-red-100', text: 'text-red-600' };
+      case 'info':
+      default: 
+        return { bg: 'bg-gray-100', text: 'text-gray-600' };
     }
+  };
+
+  // Format time ago
+  const formatTimeAgo = (timestamp: Date) => {
+    const now = new Date();
+    const diffMs = now.getTime() - timestamp.getTime();
+    const diffMins = Math.floor(diffMs / 60000);
+    const diffHours = Math.floor(diffMs / 3600000);
+    const diffDays = Math.floor(diffMs / 86400000);
+
+    if (diffMins < 60) return `${diffMins} minutes ago`;
+    if (diffHours < 24) return `${diffHours} hours ago`;
+    return `${diffDays} days ago`;
+  };
+
+  // Filter notifications
+  const filteredNotifications = allNotifications.filter(notification => {
+    if (filter === 'unread' && notification.read) return false;
+    if (filter === 'invitations' && notification.type !== 'invitation') return false;
+    if (searchQuery && !notification.title.toLowerCase().includes(searchQuery.toLowerCase()) && 
+        !notification.message.toLowerCase().includes(searchQuery.toLowerCase())) return false;
+    return true;
+  });
+
+  const handleMarkAsRead = (notificationId: string) => {
+    markAsRead(notificationId);
+  };
+
+  const handleMarkAllAsRead = () => {
+    if (user) {
+      markAllAsRead(user.id);
+    }
+  };
+
+  const handleInvitationAction = (notification: any, action: 'accept' | 'decline') => {
+    if (notification.actions) {
+      if (action === 'accept' && notification.actions.accept) {
+        notification.actions.accept();
+      } else if (action === 'decline' && notification.actions.decline) {
+        notification.actions.decline();
+      }
+    }
+    handleMarkAsRead(notification.id);
   };
 
   return (
-    <div className="space-y-6">
-      <div className="flex justify-between items-center">
-        <div className="flex items-center space-x-3">
-          <h1 className="text-2xl font-bold text-gray-900">Notifications</h1>
-          {unreadCount > 0 && (
-            <Badge variant="destructive" className="rounded-full">
-              {unreadCount} new
-            </Badge>
-          )}
-        </div>
-        <div className="flex space-x-2">
-          <Button variant="outline">
-            <Settings size={16} className="mr-2" />
-            Settings
-          </Button>
-          <Button variant="outline">Mark All Read</Button>
-        </div>
-      </div>
-
-      {/* Filter Tabs */}
-      <Card>
-        <CardContent className="p-4">
-          <Tabs value={filter} onValueChange={setFilter} className="w-full">
-            <TabsList className="grid w-full grid-cols-6">
-              <TabsTrigger value="all">All</TabsTrigger>
-              <TabsTrigger value="unread">Unread</TabsTrigger>
-              <TabsTrigger value="event">Events</TabsTrigger>
-              <TabsTrigger value="payment">Payments</TabsTrigger>
-              <TabsTrigger value="message">Messages</TabsTrigger>
-              <TabsTrigger value="system">System</TabsTrigger>
-            </TabsList>
-          </Tabs>
-        </CardContent>
-      </Card>
-
-      {/* Notifications List */}
-      <div className="space-y-3">
-        {filteredNotifications.map((notification) => {
-          const Icon = notification.icon;
-          return (
-            <Card key={notification.id} className={`transition-all hover:shadow-md ${
-              !notification.read ? 'border-l-4 border-l-blue-500 bg-blue-50/30' : ''
-            }`}>
-              <CardContent className="p-4">
-                <div className="flex items-start space-x-4">
-                  <div className={`p-2 rounded-lg ${getColorClasses(notification.color)}`}>
-                    <Icon className="h-5 w-5" />
-                  </div>
-                  
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-start justify-between mb-1">
-                      <h3 className={`font-medium ${!notification.read ? 'text-gray-900' : 'text-gray-700'}`}>
-                        {notification.title}
-                      </h3>
-                      <div className="flex items-center space-x-2">
-                        <Badge className={getPriorityColor(notification.priority)} variant="secondary">
-                          {notification.priority}
-                        </Badge>
-                        {!notification.read && (
-                          <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
-                        )}
-                      </div>
-                    </div>
-                    
-                    <p className="text-sm text-gray-600 mb-2">{notification.message}</p>
-                    
-                    <div className="flex items-center justify-between">
-                      <span className="text-xs text-gray-400">{notification.time}</span>
-                      <div className="flex space-x-2">
-                        {!notification.read && (
-                          <Button size="sm" variant="outline">
-                            <CheckCircle size={14} className="mr-1" />
-                            Mark Read
-                          </Button>
-                        )}
-                        <Button size="sm" variant="ghost">
-                          <X size={14} />
-                        </Button>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          );
-        })}
-      </div>
-
-      {filteredNotifications.length === 0 && (
-        <Card>
-          <CardContent className="p-12 text-center">
-            <Bell size={48} className="mx-auto text-gray-400 mb-4" />
-            <h3 className="text-lg font-medium text-gray-900 mb-2">No notifications</h3>
-            <p className="text-gray-600">
-              {filter === 'all' 
-                ? "You're all caught up! No notifications to display."
-                : `No ${filter === 'unread' ? 'unread' : filter} notifications found.`
-              }
-            </p>
-          </CardContent>
-        </Card>
-      )}
-
-      {/* Notification Settings */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Notification Preferences</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="space-y-4">
-            <div className="flex items-center justify-between">
+    <div className="min-h-screen bg-gray-50 p-6">
+      <div className="max-w-4xl mx-auto">
+        {/* Header */}
+        <div className="mb-8">
+          <div className="flex items-center justify-between mb-4">
+            <div className="flex items-center space-x-3">
+              <Bell className="h-8 w-8 text-blue-600" />
               <div>
-                <h4 className="font-medium text-gray-900">Email Notifications</h4>
-                <p className="text-sm text-gray-600">Receive notifications via email</p>
+                <h1 className="text-3xl font-bold text-gray-900">Notifications</h1>
+                <p className="text-gray-600">Stay updated with your latest activities</p>
               </div>
-              <Button variant="outline" size="sm">Configure</Button>
             </div>
-            
-            <div className="flex items-center justify-between">
-              <div>
-                <h4 className="font-medium text-gray-900">Push Notifications</h4>
-                <p className="text-sm text-gray-600">Receive browser push notifications</p>
-              </div>
-              <Button variant="outline" size="sm">Configure</Button>
-            </div>
-            
-            <div className="flex items-center justify-between">
-              <div>
-                <h4 className="font-medium text-gray-900">SMS Notifications</h4>
-                <p className="text-sm text-gray-600">Receive important notifications via SMS</p>
-              </div>
-              <Button variant="outline" size="sm">Configure</Button>
+            <div className="flex items-center space-x-2">
+              <Badge variant="secondary">{unreadCount} unread</Badge>
+              {unreadCount > 0 && (
+                <Button variant="outline" size="sm" onClick={handleMarkAllAsRead}>
+                  Mark all as read
+                </Button>
+              )}
             </div>
           </div>
-        </CardContent>
-      </Card>
+
+          {/* Search and Filter */}
+          <div className="flex items-center space-x-4 mb-6">
+            <div className="relative flex-1 max-w-md">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
+              <Input
+                placeholder="Search notifications..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="pl-10"
+              />
+            </div>
+          </div>
+        </div>
+
+        {/* Notification Tabs */}
+        <Tabs value={filter} onValueChange={setFilter}>
+          <TabsList className="grid w-full grid-cols-4">
+            <TabsTrigger value="all">All</TabsTrigger>
+            <TabsTrigger value="unread">Unread ({unreadCount})</TabsTrigger>
+            <TabsTrigger value="invitations">
+              Invitations ({allNotifications.filter(n => n.type === 'invitation').length})
+            </TabsTrigger>
+            <TabsTrigger value="system">System</TabsTrigger>
+          </TabsList>
+
+          <TabsContent value={filter} className="mt-6">
+            <div className="space-y-4">
+              {filteredNotifications.length > 0 ? (
+                filteredNotifications.map((notification) => {
+                  const IconComponent = getNotificationIcon(notification.type);
+                  const colorClasses = getNotificationColorClasses(notification.type);
+                  
+                  return (
+                    <Card 
+                      key={notification.id} 
+                      className={`transition-all duration-200 hover:shadow-md ${
+                        !notification.read ? 'border-l-4 border-l-blue-500 bg-blue-50/30' : ''
+                      }`}
+                    >
+                      <CardContent className="p-4">
+                        <div className="flex items-start space-x-4">
+                          <div className={`p-2 rounded-full ${colorClasses.bg}`}>
+                            <IconComponent className={`h-5 w-5 ${colorClasses.text}`} />
+                          </div>
+                          
+                          <div className="flex-1 min-w-0">
+                            <div className="flex items-start justify-between">
+                              <div className="flex-1">
+                                <h3 className="font-medium text-gray-900 mb-1">
+                                  {notification.title}
+                                </h3>
+                                <p className="text-gray-600 mb-2">{notification.message}</p>
+                                
+                                {/* Custom message for invitations */}
+                                {notification.type === 'invitation' && notification.data?.customMessage && (
+                                  <div className="bg-gray-50 rounded-lg p-3 mb-2">
+                                    <p className="text-sm text-gray-700">
+                                      <strong>Personal message:</strong> "{notification.data.customMessage}"
+                                    </p>
+                                  </div>
+                                )}
+
+                                {/* Event details for invitations */}
+                                {notification.type === 'invitation' && notification.data && (
+                                  <div className="bg-blue-50 rounded-lg p-3 mb-3">
+                                    <div className="text-sm space-y-1">
+                                      <p><strong>Event:</strong> {notification.data.eventTitle}</p>
+                                      <p><strong>Organizer:</strong> {notification.data.organizerName}</p>
+                                      <p><strong>Role:</strong> {notification.data.assignedRole}</p>
+                                      {notification.data.permissions && notification.data.permissions.length > 0 && (
+                                        <div>
+                                          <strong>Permissions:</strong>
+                                          <div className="flex flex-wrap gap-1 mt-1">
+                                            {notification.data.permissions.map((permission: string, index: number) => (
+                                              <Badge key={index} variant="outline" className="text-xs">
+                                                {permission}
+                                              </Badge>
+                                            ))}
+                                          </div>
+                                        </div>
+                                      )}
+                                    </div>
+                                  </div>
+                                )}
+
+                                <div className="flex items-center justify-between">
+                                  <span className="text-sm text-gray-500">
+                                    {formatTimeAgo(notification.timestamp)}
+                                  </span>
+                                  
+                                  {!notification.read && (
+                                    <Badge variant="outline" className="text-xs">
+                                      New
+                                    </Badge>
+                                  )}
+                                </div>
+                              </div>
+                            </div>
+
+                            {/* Action buttons for invitations */}
+                            {notification.type === 'invitation' && !notification.read && (
+                              <div className="flex items-center space-x-2 mt-3">
+                                <Button 
+                                  size="sm" 
+                                  onClick={() => handleInvitationAction(notification, 'accept')}
+                                  className="bg-green-600 hover:bg-green-700"
+                                >
+                                  <Check className="h-4 w-4 mr-1" />
+                                  Accept
+                                </Button>
+                                <Button 
+                                  size="sm" 
+                                  variant="outline"
+                                  onClick={() => handleInvitationAction(notification, 'decline')}
+                                >
+                                  <X className="h-4 w-4 mr-1" />
+                                  Decline
+                                </Button>
+                                <Button 
+                                  size="sm" 
+                                  variant="ghost"
+                                  onClick={() => handleMarkAsRead(notification.id)}
+                                >
+                                  <Eye className="h-4 w-4 mr-1" />
+                                  Mark as Read
+                                </Button>
+                              </div>
+                            )}
+
+                            {/* General mark as read button */}
+                            {notification.type !== 'invitation' && !notification.read && (
+                              <div className="mt-3">
+                                <Button 
+                                  size="sm" 
+                                  variant="ghost"
+                                  onClick={() => handleMarkAsRead(notification.id)}
+                                >
+                                  <Eye className="h-4 w-4 mr-1" />
+                                  Mark as Read
+                                </Button>
+                              </div>
+                            )}
+                          </div>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  );
+                })
+              ) : (
+                <Card>
+                  <CardContent className="p-8 text-center">
+                    <Bell className="mx-auto h-12 w-12 text-gray-400 mb-4" />
+                    <h3 className="text-lg font-medium text-gray-900 mb-2">No notifications</h3>
+                    <p className="text-gray-500">
+                      {filter === 'all' 
+                        ? "You're all caught up! No notifications to show."
+                        : `No ${filter} notifications found.`
+                      }
+                    </p>
+                  </CardContent>
+                </Card>
+              )}
+            </div>
+          </TabsContent>
+        </Tabs>
+
+        {/* Quick Stats */}
+        {allNotifications.length > 0 && (
+          <div className="mt-8 grid grid-cols-1 md:grid-cols-3 gap-4">
+            <Card>
+              <CardContent className="p-4 text-center">
+                <div className="text-2xl font-bold text-blue-600">{allNotifications.length}</div>
+                <div className="text-sm text-gray-600">Total Notifications</div>
+              </CardContent>
+            </Card>
+            
+            <Card>
+              <CardContent className="p-4 text-center">
+                <div className="text-2xl font-bold text-orange-600">{unreadCount}</div>
+                <div className="text-sm text-gray-600">Unread</div>
+              </CardContent>
+            </Card>
+            
+            <Card>
+              <CardContent className="p-4 text-center">
+                <div className="text-2xl font-bold text-purple-600">
+                  {allNotifications.filter(n => n.type === 'invitation').length}
+                </div>
+                <div className="text-sm text-gray-600">Invitations</div>
+              </CardContent>
+            </Card>
+          </div>
+        )}
+      </div>
     </div>
   );
 }

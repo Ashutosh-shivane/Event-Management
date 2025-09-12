@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState,useEffect } from 'react';
 import { useAuth } from '../AuthContext';
 import { Card, CardHeader, CardTitle, CardContent } from '../ui/card';
 import { Button } from '../ui/button';
@@ -10,11 +10,11 @@ import { Badge } from '../ui/badge';
 import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '../ui/tabs';
 import { Progress } from '../ui/progress';
-import {
-  User,
-  Mail,
-  Phone,
-  MapPin,
+import { 
+  User, 
+  Mail, 
+  Phone, 
+  MapPin, 
   Calendar,
   Briefcase,
   Award,

@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
 import { ChevronLeft, Users, CheckCircle, Clock, Filter, Search, Check, X } from 'lucide-react';
 import { Button } from '../ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
@@ -9,7 +10,7 @@ import { Checkbox } from '../ui/checkbox';
 import { Alert, AlertDescription } from '../ui/alert';
 import { Avatar, AvatarFallback } from '../ui/avatar';
 import { toast } from 'sonner';
-import { PageType } from '../../App';
+
 
 interface Student {
   id: string;
@@ -33,12 +34,9 @@ interface Event {
   pendingApprovals: number;
 }
 
-interface ManagerStudentApprovalsPageProps {
-  onNavigate: (page: PageType) => void;
-  eventId?: string | null;
-}
-
-export function ManagerStudentApprovalsPage({ onNavigate, eventId }: ManagerStudentApprovalsPageProps) {
+export function ManagerStudentApprovalsPage() {
+  const navigate = useNavigate();
+  const { eventId } = useParams<{ eventId: string }>();
   // Mock data for events assigned to this manager
   const mockEvents: Event[] = [
     {
@@ -214,7 +212,7 @@ export function ManagerStudentApprovalsPage({ onNavigate, eventId }: ManagerStud
               <Button 
                 variant="ghost" 
                 size="sm" 
-                onClick={() => onNavigate('dashboard')}
+                onClick={() => navigate('/dashboard')}
                 className="text-gray-600 hover:text-gray-900"
               >
                 <ChevronLeft className="h-4 w-4 mr-1" />

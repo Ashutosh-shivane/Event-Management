@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { PageType } from '../../App';
+import { useNavigate } from 'react-router-dom';
 import { Card, CardHeader, CardTitle, CardContent } from '../ui/card';
 import { Button } from '../ui/button';
 import { Input } from '../ui/input';
@@ -24,11 +24,8 @@ import {
   CheckCircle
 } from 'lucide-react';
 
-interface ManagerEventAddPageProps {
-  onNavigate: (page: PageType) => void;
-}
-
-export function ManagerEventAddPage({ onNavigate }: ManagerEventAddPageProps) {
+export function ManagerEventAddPage() {
+  const navigate = useNavigate();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [currentStep, setCurrentStep] = useState(1);
   
@@ -165,7 +162,7 @@ export function ManagerEventAddPage({ onNavigate }: ManagerEventAddPageProps) {
       
       // Show success and redirect
       alert('Event created successfully! It has been submitted for review.');
-      onNavigate('dashboard');
+      navigate('/dashboard');
     } catch (error) {
       console.error('Event creation failed:', error);
       alert('Failed to create event. Please try again.');
@@ -181,7 +178,7 @@ export function ManagerEventAddPage({ onNavigate }: ManagerEventAddPageProps) {
         <div className="mb-8">
           <Button 
             variant="outline" 
-            onClick={() => onNavigate('dashboard')}
+            onClick={() => navigate('/dashboard')}
             className="mb-4"
           >
             <ArrowLeft className="h-4 w-4 mr-2" />

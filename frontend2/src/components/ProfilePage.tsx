@@ -3,6 +3,7 @@ import { useAuth } from './AuthContext';
 import { StudentProfilePage } from './student/StudentProfilePage';
 import { ManagerProfilePage } from './manager/ManagerProfilePage';
 import { OrganizerProfilePage } from './organizer/OrganizerProfilePage';
+import { VendorProfilePage } from './vendor/VendorProfilePage';
 
 // Generic profile page for other roles (Admin, Vendor)
 import { Card, CardHeader, CardTitle, CardContent } from './ui/card';
@@ -96,8 +97,10 @@ export function ProfilePage() {
       return <ManagerProfilePage />;
     case 'ORGANIZER':
       return <OrganizerProfilePage />;
-    case 'ADMIN':
     case 'VENDOR':
+      return <VendorProfilePage />;
+    case 'ADMIN':
+    
     default:
       return <DefaultProfilePage />;
   }

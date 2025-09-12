@@ -1,4 +1,5 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Card, CardHeader, CardTitle, CardContent } from '../ui/card';
 import { Button } from '../ui/button';
 import { Badge } from '../ui/badge';
@@ -14,12 +15,8 @@ import {
   CheckCircle
 } from 'lucide-react';
 
-interface VendorDashboardProps {
-  onNavigate: (page: string) => void;
-  onEventSelect: (eventId: string) => void;
-}
-
-export function VendorDashboard({ onNavigate, onEventSelect }: VendorDashboardProps) {
+export function VendorDashboard() {
+  const navigate = useNavigate();
   const activeContracts = [
     {
       id: 1,
@@ -97,7 +94,17 @@ export function VendorDashboard({ onNavigate, onEventSelect }: VendorDashboardPr
     <div className="space-y-6">
       <div className="flex justify-between items-center">
         <h1 className="text-2xl font-bold text-gray-900">Vendor Dashboard</h1>
-        <Button>Browse Opportunities</Button>
+        <div className="flex space-x-3">
+          <Button 
+            variant="outline"
+            onClick={() => navigate('/vendor/portfolio')}
+          >
+            Manage Portfolio
+          </Button>
+          <Button onClick={() => navigate('/vendor/bids')}>
+            Browse Opportunities
+          </Button>
+        </div>
       </div>
 
       {/* Stats Cards */}

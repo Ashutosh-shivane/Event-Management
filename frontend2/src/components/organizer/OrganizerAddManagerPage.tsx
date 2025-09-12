@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
-import { PageType } from '../../App';
+import { useNavigate, useParams } from 'react-router-dom';
 import { useAuth } from '../AuthContext';
-// import { useNotifications } from '../NotificationContext';
+import { useNotifications } from '../NotificationContext';
 import { Card, CardHeader, CardTitle, CardContent } from '../ui/card';
 import { Button } from '../ui/button';
 import { Input } from '../ui/input';
@@ -25,14 +25,11 @@ import {
   AlertTriangle
 } from 'lucide-react';
 
-interface OrganizerAddManagerPageProps {
-  onNavigate: (page: PageType) => void;
-  eventId: string | null;
-}
-
-export function OrganizerAddManagerPage({ onNavigate, eventId }: OrganizerAddManagerPageProps) {
+export function OrganizerAddManagerPage() {
+  const navigate = useNavigate();
+  const { eventId } = useParams<{ eventId: string }>();
   const { user } = useAuth();
-  // const { sendManagerInvitation } = useNotifications();
+  const { sendManagerInvitation } = useNotifications();
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedManagers, setSelectedManagers] = useState<any[]>([]);
   const [isInviting, setIsInviting] = useState(false);
@@ -200,7 +197,7 @@ export function OrganizerAddManagerPage({ onNavigate, eventId }: OrganizerAddMan
       await new Promise(resolve => setTimeout(resolve, 1500));
       
       alert(`Successfully sent invitations to ${selectedManagers.length} manager(s)! They will receive notifications.`);
-      onNavigate('organizer-manage-events');
+      navigate('/organizer/manage-events');
     } catch (error) {
       console.error('Failed to invite managers:', error);
       alert('Failed to send invitations. Please try again.');
@@ -216,7 +213,7 @@ export function OrganizerAddManagerPage({ onNavigate, eventId }: OrganizerAddMan
         <div className="mb-8">
           <Button 
             variant="outline" 
-            onClick={() => onNavigate('organizer-manage-events')}
+            onClick={() => navigate('/organizer/manage-events')}
             className="mb-4"
           >
             <ArrowLeft className="h-4 w-4 mr-2" />
