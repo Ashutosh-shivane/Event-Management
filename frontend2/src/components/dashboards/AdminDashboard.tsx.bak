@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Card, CardHeader, CardTitle, CardContent } from '../ui/card';
 import { Button } from '../ui/button';
@@ -18,11 +18,6 @@ import {
 
 export function AdminDashboard() {
   const navigate = useNavigate();
-
-  // Redirect to new admin dashboard
-  useEffect(() => {
-    navigate('/admin/dashboard');
-  }, [navigate]);
   const systemStats = [
     { label: 'Total Users', value: '2,847', change: '+12%', icon: Users, color: 'blue' },
     { label: 'Active Events', value: '156', change: '+8%', icon: Calendar, color: 'green' },
