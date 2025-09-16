@@ -1,4 +1,4 @@
-import React from 'react';
+import React,{useEffect} from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../AuthContext';
 import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
@@ -19,6 +19,7 @@ import {
   UserCheck,
   AlertCircle
 } from 'lucide-react';
+import axios from 'axios';
 
 interface Event {
   id: string;
@@ -26,9 +27,10 @@ interface Event {
   date: string;
   location: string;
   totalStudents: number;
-  pendingApprovals: number;
-  approvedStudents: number;
-  rejectedStudents: number;
+  required_volunteer:string;
+  pendingCount: number;
+  approvedCount: number;
+  rejectedCount: number;
   status: 'upcoming' | 'ongoing' | 'completed';
 }
 
@@ -39,52 +41,41 @@ export function ManagerApprovalsPage() {
   const [statusFilter, setStatusFilter] = React.useState('all');
 
   // Mock data for events assigned to this manager
-  const [events] = React.useState<Event[]>([
-    {
-      id: '1',
-      title: 'Tech Conference 2024',
-      date: '2024-03-15',
-      location: 'Convention Center',
-      totalStudents: 45,
-      pendingApprovals: 12,
-      approvedStudents: 28,
-      rejectedStudents: 5,
-      status: 'upcoming'
-    },
-    {
-      id: '2',
-      title: 'Career Fair Spring',
-      date: '2024-03-22',
-      location: 'University Campus',
-      totalStudents: 78,
-      pendingApprovals: 8,
-      approvedStudents: 65,
-      rejectedStudents: 5,
-      status: 'upcoming'
-    },
-    {
-      id: '3',
-      title: 'Innovation Summit',
-      date: '2024-02-28',
-      location: 'Business Center',
-      totalStudents: 32,
-      pendingApprovals: 0,
-      approvedStudents: 30,
-      rejectedStudents: 2,
-      status: 'completed'
-    },
-    {
-      id: '4',
-      title: 'AI Workshop Series',
-      date: '2024-04-05',
-      location: 'Tech Hub',
-      totalStudents: 25,
-      pendingApprovals: 15,
-      approvedStudents: 8,
-      rejectedStudents: 2,
-      status: 'upcoming'
-    }
+  const [events,setEvents] = React.useState<Event[]>([
   ]);
+
+
+
+
+  useEffect(()=>{
+
+    const fetchdata=async ()=>{
+
+
+    try{
+     const res= await axios.get("http://localhost:8080/SER/getstats");
+
+     console.log(res);
+
+     setEvents(res.data);
+
+    }catch(err){
+      console.log(err);
+
+    }
+
+
+
+  }
+    fetchdata();
+},[]);
+
+console.log(events);
+
+
+
+
+
 
   const filteredEvents = events.filter(event => {
     const matchesSearch = event.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -104,9 +95,9 @@ export function ManagerApprovalsPage() {
     }
   };
 
-  const totalPendingApprovals = events.reduce((sum, event) => sum + event.pendingApprovals, 0);
+  const totalPendingApprovals = events.reduce((sum, event) => sum + event.pendingCount, 0);
   const totalEvents = events.length;
-  const eventsWithPending = events.filter(event => event.pendingApprovals > 0).length;
+  const eventsWithPending = events.filter(event => event.pendingCount > 0).length;
 
   return (
     <div className="space-y-6">
@@ -233,16 +224,16 @@ export function ManagerApprovalsPage() {
                       <Badge className={getStatusColor(event.status)}>
                         {event.status}
                       </Badge>
-                      {event.pendingApprovals > 0 && (
+                      {event.pendingCount > 0 && (
                         <Badge className="bg-orange-100 text-orange-800">
-                          {event.pendingApprovals} Pending
+                          {event.pendingCount} Pending
                         </Badge>
                       )}
                     </div>
                     <div className="flex items-center space-x-4 text-sm text-muted-foreground">
                       <div className="flex items-center">
                         <Calendar className="h-4 w-4 mr-1" />
-                        {new Date(event.date).toLocaleDateString()}
+                        {new Date(event.startAt).toLocaleDateString()}
                       </div>
                       <div className="flex items-center">
                         <MapPin className="h-4 w-4 mr-1" />
@@ -250,7 +241,7 @@ export function ManagerApprovalsPage() {
                       </div>
                       <div className="flex items-center">
                         <Users className="h-4 w-4 mr-1" />
-                        {event.totalStudents} students
+                        {event.required_volunteer} students
                       </div>
                     </div>
                   </div>
@@ -259,15 +250,15 @@ export function ManagerApprovalsPage() {
                 {/* Statistics */}
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-4 py-4 border-t border-b border-gray-100">
                   <div className="text-center">
-                    <div className="text-2xl font-bold text-orange-600">{event.pendingApprovals}</div>
+                    <div className="text-2xl font-bold text-orange-600">{event.pendingCount}</div>
                     <div className="text-sm text-gray-600">Pending</div>
                   </div>
                   <div className="text-center">
-                    <div className="text-2xl font-bold text-green-600">{event.approvedStudents}</div>
+                    <div className="text-2xl font-bold text-green-600">{event.approvedCount}</div>
                     <div className="text-sm text-gray-600">Approved</div>
                   </div>
                   <div className="text-center">
-                    <div className="text-2xl font-bold text-red-600">{event.rejectedStudents}</div>
+                    <div className="text-2xl font-bold text-red-600">{event.rejectedCount}</div>
                     <div className="text-sm text-gray-600">Rejected</div>
                   </div>
                   <div className="text-center">
@@ -279,13 +270,13 @@ export function ManagerApprovalsPage() {
                 {/* Actions */}
                 <div className="flex justify-between items-center">
                   <div className="flex items-center space-x-2">
-                    {event.pendingApprovals > 0 && (
+                    {event.pendingCount > 0 && (
                       <div className="flex items-center text-sm text-orange-600">
                         <AlertCircle className="h-4 w-4 mr-1" />
                         Action Required
                       </div>
                     )}
-                    {event.pendingApprovals === 0 && event.status !== 'completed' && (
+                    {event.pendingCount === 0 && event.status !== 'completed' && (
                       <div className="flex items-center text-sm text-green-600">
                         <CheckCircle className="h-4 w-4 mr-1" />
                         All Approved
@@ -305,11 +296,11 @@ export function ManagerApprovalsPage() {
                     
                     <Button
                       size="sm"
-                      onClick={() => navigate(`/manager/events/${event.id}/approvals`)}
-                      disabled={event.pendingApprovals === 0}
+                      onClick={() => navigate(`/manager/events/${event.eventId}/approvals`)}
+                      disabled={event.pendingCount === 0}
                     >
                       <UserCheck className="h-4 w-4 mr-2" />
-                      {event.pendingApprovals > 0 ? 'Review Approvals' : 'View All Students'}
+                      {event.pendingCount > 0 ? 'Review Approvals' : 'View All Students'}
                     </Button>
                   </div>
                 </div>
@@ -347,7 +338,7 @@ export function ManagerApprovalsPage() {
               </div>
               <Button 
                 onClick={() => {
-                  const firstEventWithPending = events.find(e => e.pendingApprovals > 0);
+                  const firstEventWithPending = events.find(e => e.pendingCount > 0);
                   if (firstEventWithPending) {
                     navigate(`/manager/events/${firstEventWithPending.id}/approvals`);
                   }

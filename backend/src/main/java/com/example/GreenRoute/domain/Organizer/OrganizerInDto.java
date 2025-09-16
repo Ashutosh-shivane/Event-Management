@@ -10,7 +10,6 @@ import java.time.LocalDate;
 @Data
 public class OrganizerInDto {
 
-
     private Long usertestid;
 
 
@@ -64,8 +63,6 @@ public class OrganizerInDto {
     private String emergencyContactPhone;
 
     private String emergencyContactRelation;
-
-
 
 
 }

@@ -1,4 +1,4 @@
-import React from 'react';
+import React,{useEffect,useState} from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { 
   ChevronLeft, 
@@ -31,6 +31,8 @@ import { Alert, AlertDescription } from '../ui/alert';
 import { Avatar, AvatarFallback } from '../ui/avatar';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '../ui/tabs';
 import { toast } from 'sonner';
+
+import axios from 'axios';
 
 interface Student {
   id: string;
@@ -68,110 +70,192 @@ export function ManagerStudentApprovalsPage() {
   const [showBulkActions, setShowBulkActions] = React.useState(false);
   const [activeTab, setActiveTab] = React.useState('pending');
 
-  // Mock event data
-  const event: Event = {
-    id: eventId || '1',
-    title: 'Tech Conference 2024',
-    date: '2024-03-15',
-    location: 'Convention Center',
-    description: 'Annual technology conference focusing on emerging trends in AI and machine learning.',
-    capacity: 100,
-    requirements: ['Computer Science background', 'Basic programming knowledge', 'Team collaboration skills']
+ const [event, setEvent] = useState<Event>({
+  id: '0',
+  title: '',
+  date: '',
+  location: '',
+  description: '',
+  capacity: 0,
+  requirements: []
+});
+
+
+const [students, setStudents] = React.useState<Student[]>([]);
+
+
+
+    useEffect(()=>{
+
+    const fetchdata=async ()=>{
+
+
+    try{
+     const res= await axios.get(`http://localhost:8080/SER/getEventstats/${eventId}`);
+
+
+      const mappedEvent = mapBackendEventToFrontend(res.data.event);
+      setEvent(mappedEvent);
+
+      const mappedStudents: Student[] = res.data.students.map(mapBackendStudentToFrontend);
+      setStudents(mappedStudents);
+
+     console.log(res);
+
+    //  setEvents(res.data);
+
+    }catch(err){
+      console.log(err);
+
+    }
+
+
+
+  }
+    fetchdata();
+},[]);
+
+
+function mapBackendEventToFrontend(event: any): Event {
+  return {
+    id: String(event.id),
+    title: event.title,
+    date: new Date(event.startAt).toISOString().split("T")[0], // "YYYY-MM-DD"
+    location: event.location,
+    description: event.description,
+    capacity: Number(event.requiredVolunteer),
+    requirements: event.tags ? event.tags.split(",") : [] // map tags into requirements array
   };
 
+}
+
+function mapBackendStudentToFrontend(studentData: any): Student {
+  return {
+    id: String(studentData.id),
+    name: studentData.name || "",
+    email: studentData.username || "",
+    university: studentData.university || "",
+    course: studentData.degree || "",        // map backend "degree" to frontend "course"
+    year: studentData.currentYear || "",
+    registrationDate: "",                     // backend doesn’t provide this, set empty or map if available
+    status: studentData.status?.toLowerCase() || "pending",
+    skills: studentData.skills ? studentData.skills.split(",").map((s: string) => s.trim()) : [],
+    availability: studentData.availability || "",
+    gpa: studentData.marks || "",
+    experience: "",                           // backend doesn’t provide this
+    motivation: studentData.bio || ""        // map bio to motivation
+  };
+}
+
+
+
+ 
+
+
+  // // Mock event data
+  // const event: Event = {
+  //   id: eventId || '1',
+  //   title: 'Tech Conference 2024',
+  //   date: '2024-03-15',
+  //   location: 'Convention Center',
+  //   description: 'Annual technology conference focusing on emerging trends in AI and machine learning.',
+  //   capacity: 100,
+  //   requirements: ['Computer Science background', 'Basic programming knowledge', 'Team collaboration skills']
+  // };
+
   // Mock students data
-  const [students, setStudents] = React.useState<Student[]>([
-    {
-      id: '1',
-      name: 'Alice Johnson',
-      email: 'alice.johnson@university.edu',
-      university: 'University of Technology',
-      course: 'Computer Science',
-      year: '3rd Year',
-      registrationDate: '2024-02-15',
-      status: 'pending',
-      skills: ['JavaScript', 'React', 'Node.js'],
-      availability: 'Full time',
-      gpa: '3.8',
-      experience: '2 internships, 3 personal projects',
-      motivation: 'Passionate about AI and machine learning, looking to expand knowledge in emerging technologies.'
-    },
-    {
-      id: '2',
-      name: 'Bob Smith',
-      email: 'bob.smith@university.edu',
-      university: 'State University',
-      course: 'Software Engineering',
-      year: '4th Year',
-      registrationDate: '2024-02-14',
-      status: 'approved',
-      skills: ['Python', 'Django', 'PostgreSQL'],
-      availability: 'Part time',
-      gpa: '3.9',
-      experience: '1 internship, 5 personal projects',
-      motivation: 'Senior student eager to learn about industry best practices and network with professionals.'
-    },
-    {
-      id: '3',
-      name: 'Carol Davis',
-      email: 'carol.davis@university.edu',
-      university: 'Tech Institute',
-      course: 'Data Science',
-      year: '2nd Year',
-      registrationDate: '2024-02-16',
-      status: 'pending',
-      skills: ['Python', 'Machine Learning', 'SQL'],
-      availability: 'Full time',
-      gpa: '3.7',
-      experience: '1 research project, 2 personal projects',
-      motivation: 'Interested in applying data science concepts to real-world problems.'
-    },
-    {
-      id: '4',
-      name: 'David Wilson',
-      email: 'david.wilson@university.edu',
-      university: 'Metropolitan University',
-      course: 'Information Technology',
-      year: '3rd Year',
-      registrationDate: '2024-02-13',
-      status: 'rejected',
-      skills: ['Java', 'Spring Boot', 'MySQL'],
-      availability: 'Full time',
-      gpa: '3.5',
-      experience: '1 internship',
-      motivation: 'Looking to enhance technical skills and gain industry exposure.'
-    },
-    {
-      id: '5',
-      name: 'Eva Martinez',
-      email: 'eva.martinez@university.edu',
-      university: 'University of Technology',
-      course: 'Computer Engineering',
-      year: '4th Year',
-      registrationDate: '2024-02-17',
-      status: 'pending',
-      skills: ['C++', 'Embedded Systems', 'IoT'],
-      availability: 'Part time',
-      gpa: '3.9',
-      experience: '2 internships, 1 research project',
-      motivation: 'Excited to explore IoT applications and connect with industry leaders.'
-    },
-    {
-      id: '6',
-      name: 'Frank Brown',
-      email: 'frank.brown@university.edu',
-      university: 'State University',
-      course: 'Computer Science',
-      year: '2nd Year',
-      registrationDate: '2024-02-18',
-      status: 'approved',
-      skills: ['JavaScript', 'Vue.js', 'MongoDB'],
-      availability: 'Full time',
-      gpa: '3.6',
-      experience: '3 personal projects',
-      motivation: 'Passionate about web development and eager to learn from experienced developers.'
-    }
-  ]);
+  // const [students, setStudents] = React.useState<Student[]>([
+  //   {
+  //     id: '1',
+  //     name: 'Alice Johnson',
+  //     email: 'alice.johnson@university.edu',
+  //     university: 'University of Technology',
+  //     course: 'Computer Science',
+  //     year: '3rd Year',
+  //     registrationDate: '2024-02-15',
+  //     status: 'pending',
+  //     skills: ['JavaScript', 'React', 'Node.js'],
+  //     availability: 'Full time',
+  //     gpa: '3.8',
+  //     experience: '2 internships, 3 personal projects',
+  //     motivation: 'Passionate about AI and machine learning, looking to expand knowledge in emerging technologies.'
+  //   },
+  //   {
+  //     id: '2',
+  //     name: 'Bob Smith',
+  //     email: 'bob.smith@university.edu',
+  //     university: 'State University',
+  //     course: 'Software Engineering',
+  //     year: '4th Year',
+  //     registrationDate: '2024-02-14',
+  //     status: 'approved',
+  //     skills: ['Python', 'Django', 'PostgreSQL'],
+  //     availability: 'Part time',
+  //     gpa: '3.9',
+  //     experience: '1 internship, 5 personal projects',
+  //     motivation: 'Senior student eager to learn about industry best practices and network with professionals.'
+  //   },
+  //   {
+  //     id: '3',
+  //     name: 'Carol Davis',
+  //     email: 'carol.davis@university.edu',
+  //     university: 'Tech Institute',
+  //     course: 'Data Science',
+  //     year: '2nd Year',
+  //     registrationDate: '2024-02-16',
+  //     status: 'pending',
+  //     skills: ['Python', 'Machine Learning', 'SQL'],
+  //     availability: 'Full time',
+  //     gpa: '3.7',
+  //     experience: '1 research project, 2 personal projects',
+  //     motivation: 'Interested in applying data science concepts to real-world problems.'
+  //   },
+  //   {
+  //     id: '4',
+  //     name: 'David Wilson',
+  //     email: 'david.wilson@university.edu',
+  //     university: 'Metropolitan University',
+  //     course: 'Information Technology',
+  //     year: '3rd Year',
+  //     registrationDate: '2024-02-13',
+  //     status: 'rejected',
+  //     skills: ['Java', 'Spring Boot', 'MySQL'],
+  //     availability: 'Full time',
+  //     gpa: '3.5',
+  //     experience: '1 internship',
+  //     motivation: 'Looking to enhance technical skills and gain industry exposure.'
+  //   },
+  //   {
+  //     id: '5',
+  //     name: 'Eva Martinez',
+  //     email: 'eva.martinez@university.edu',
+  //     university: 'University of Technology',
+  //     course: 'Computer Engineering',
+  //     year: '4th Year',
+  //     registrationDate: '2024-02-17',
+  //     status: 'pending',
+  //     skills: ['C++', 'Embedded Systems', 'IoT'],
+  //     availability: 'Part time',
+  //     gpa: '3.9',
+  //     experience: '2 internships, 1 research project',
+  //     motivation: 'Excited to explore IoT applications and connect with industry leaders.'
+  //   },
+  //   {
+  //     id: '6',
+  //     name: 'Frank Brown',
+  //     email: 'frank.brown@university.edu',
+  //     university: 'State University',
+  //     course: 'Computer Science',
+  //     year: '2nd Year',
+  //     registrationDate: '2024-02-18',
+  //     status: 'approved',
+  //     skills: ['JavaScript', 'Vue.js', 'MongoDB'],
+  //     availability: 'Full time',
+  //     gpa: '3.6',
+  //     experience: '3 personal projects',
+  //     motivation: 'Passionate about web development and eager to learn from experienced developers.'
+  //   }
+  // ]);
 
   // Filter students by tab and search
   const getFilteredStudents = (status: string) => {
@@ -196,6 +280,8 @@ export function ManagerStudentApprovalsPage() {
         ? { ...student, status: action === 'approve' ? 'approved' : 'rejected' }
         : student
     ));
+
+    console.log(students);
     
     const student = students.find(s => s.id === studentId);
     toast.success(
@@ -214,6 +300,8 @@ export function ManagerStudentApprovalsPage() {
         ? { ...student, status: action === 'approve' ? 'approved' : 'rejected' }
         : student
     ));
+
+    console.log(students);
 
     toast.success(
       `${selectedStudents.length} students have been ${action === 'approve' ? 'approved' : 'rejected'}`
@@ -254,6 +342,41 @@ export function ManagerStudentApprovalsPage() {
     }
   };
 
+
+
+  const handleSaveAll = async () => {
+
+    console.log("here");
+
+    console.log(students);
+  try {
+
+    const studentStatusArray = students.map(student => ({
+  id: Number(student.id),
+  status: student.status.toUpperCase()
+}));
+
+console.log(studentStatusArray);
+
+
+    const res=await axios.patch(`http://localhost:8080/SER/saveEventstats/${eventId}/save`, studentStatusArray); // send current state
+    toast.success('All student statuses saved!');
+
+
+    console.log("here");
+
+    console.log(students);
+
+
+  } catch (err) {
+    toast.error('Failed to save statuses.');
+  }
+};
+
+
+
+
+
   React.useEffect(() => {
     setShowBulkActions(selectedStudents.length > 0);
   }, [selectedStudents]);
@@ -279,6 +402,11 @@ export function ManagerStudentApprovalsPage() {
                 <p className="text-sm text-gray-500">Student Registration Management</p>
               </div>
             </div>
+
+
+          
+
+
             <div className="flex items-center space-x-4">
               <div className="flex items-center space-x-2 text-sm text-gray-600">
                 <Calendar className="h-4 w-4" />
@@ -361,6 +489,17 @@ export function ManagerStudentApprovalsPage() {
                   <RefreshCw className="h-4 w-4 mr-2" />
                   Refresh
                 </Button>
+
+
+             <Button onClick={handleSaveAll} variant="outline" size="sm" className="text-green-600 border-green-600 hover:bg-green-600 hover:text-white">
+  <svg className="h-4 w-4 mr-2" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+    <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+  </svg>
+  Save Changes
+</Button>
+
+
+
               </div>
             </div>
           </CardContent>

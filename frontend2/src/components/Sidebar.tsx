@@ -44,28 +44,28 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
     ];
 
     // Add role-specific items
-    if (user?.role === 'admin') {
+    if (user?.role === 'ADMIN') {
       baseItems.push(
         { key: 'reports', label: 'Reports', icon: BarChart3, path: '/reports' },
         { key: 'users', label: 'User Management', icon: Users, path: '/users' }
       );
     }
 
-    if (user?.role === 'manager') {
+    if (user?.role === 'MANAGER') {
       baseItems.push(
         { key: 'add-event', label: 'Add Event', icon: Calendar, path: '/manager/add-event' },
         { key: 'approvals', label: 'Student Approvals', icon: Users, path: '/manager/approvals' }
       );
     }
 
-    if (user?.role === 'organizer') {
+    if (user?.role === 'ORGANIZER') {
       baseItems.push(
         { key: 'create-event', label: 'Create Event', icon: Calendar, path: '/organizer/create-event' },
         { key: 'manage-events', label: 'Manage Events', icon: BarChart3, path: '/organizer/manage-events' }
       );
     }
 
-    if (user?.role === 'vendor') {
+    if (user?.role === 'VENDOR') {
       baseItems.push(
         { key: 'bids', label: 'Bid Opportunities', icon: BarChart3, path: '/vendor/bids' },
         { key: 'portfolio', label: 'Portfolio', icon: User, path: '/vendor/portfolio' }
