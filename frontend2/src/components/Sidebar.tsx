@@ -14,7 +14,8 @@ import {
   Users,
   ChevronLeft,
   ChevronRight,
-  LogOut
+  LogOut,
+  Star
 } from 'lucide-react';
 
 interface SidebarProps {
@@ -53,6 +54,7 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
 
     if (user?.role === 'MANAGER') {
       baseItems.push(
+        { key: 'invitations', label: 'Invitations', icon: Bell, path: '/manager/invitations', badge: 2 },
         { key: 'add-event', label: 'Add Event', icon: Calendar, path: '/manager/add-event' },
         { key: 'approvals', label: 'Student Approvals', icon: Users, path: '/manager/approvals' }
       );

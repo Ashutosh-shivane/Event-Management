@@ -14,6 +14,7 @@ import { OrganizerEventCreatePage } from './components/organizer/OrganizerEventC
 import { OrganizerEventManagePage } from './components/organizer/OrganizerEventManagePage';
 import { OrganizerAddManagerPage } from './components/organizer/OrganizerAddManagerPage';
 import { ManagerStudentApprovalsPage } from './components/manager/ManagerStudentApprovalsPage';
+import { ManagerInvitationsPage } from './components/manager/ManagerInvitationsPage';
 import { ProfilePage } from './components/ProfilePage';
 import { TestNavigationPage } from './components/TestNavigationPage';
 import { ProjectStatusPage } from './components/ProjectStatusPage';
@@ -156,6 +157,14 @@ function AppRoutes() {
         element={
           <ProtectedRoute>
             <ManagerStudentApprovalsPage />
+          </ProtectedRoute>
+        } 
+      />
+      <Route 
+        path="/manager/invitations" 
+        element={
+          <ProtectedRoute>
+            <ManagerInvitationsPage />
           </ProtectedRoute>
         } 
       />

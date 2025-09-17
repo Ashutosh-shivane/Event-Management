@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState,useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Card, CardHeader, CardTitle, CardContent } from '../ui/card';
 import { Button } from '../ui/button';
@@ -20,83 +20,149 @@ import {
   AlertCircle,
   Clock3
 } from 'lucide-react';
+import axios from 'axios';
 
 export function OrganizerEventManagePage() {
   const navigate = useNavigate();
   const [selectedEvent, setSelectedEvent] = useState<string | null>(null);
 
-  // Mock data for organizer's events
-  const myEvents = [
-    {
-      id: '1',
-      title: 'Tech Conference 2024',
-      status: 'active',
-      registrations: 245,
-      capacity: 300,
-      revenue: 12250,
-      date: '2024-03-15',
-      time: '09:00 AM',
-      venue: 'Convention Center',
-      category: 'Technology',
-      managers: [
-        { id: '1', name: 'Sarah Johnson', email: 'sarah@example.com', role: 'Event Manager', status: 'active' },
-        { id: '2', name: 'Mike Chen', email: 'mike@example.com', role: 'Logistics Manager', status: 'pending' }
-      ],
-      isPublic: true,
-      ticketPrice: 50,
-      currency: 'USD'
-    },
-    {
-      id: '2',
-      title: 'Music Festival',
-      status: 'draft',
-      registrations: 0,
-      capacity: 500,
-      revenue: 0,
-      date: '2024-03-20',
-      time: '06:00 PM',
-      venue: 'Central Park',
-      category: 'Entertainment',
-      managers: [],
-      isPublic: true,
-      ticketPrice: 75,
-      currency: 'USD'
-    },
-    {
-      id: '3',
-      title: 'Career Fair',
-      status: 'completed',
-      registrations: 128,
-      capacity: 200,
-      revenue: 0,
-      date: '2024-02-25',
-      time: '10:00 AM',
-      venue: 'University Hall',
-      category: 'Career',
-      managers: [
-        { id: '3', name: 'Emily Davis', email: 'emily@example.com', role: 'Registration Manager', status: 'active' }
-      ],
-      isPublic: true,
-      ticketPrice: 0,
-      currency: 'USD'
-    },
-    {
-      id: '4',
-      title: 'Startup Pitch Event',
-      status: 'active',
-      registrations: 85,
-      capacity: 150,
-      revenue: 4250,
-      date: '2024-03-30',
-      time: '02:00 PM',
-      venue: 'Innovation Hub',
-      category: 'Business',
-      managers: [],
-      isPublic: true,
-      ticketPrice: 50,
-      currency: 'USD'
+
+  const [myEvents,setMyEvents]=useState([]);
+
+
+
+  useEffect(()=>{
+
+    try{
+
+      const userid=localStorage.getItem('id');
+
+      axios.get(`http://localhost:8080/OME/createdBy/${userid}`)
+      .then(res=>{
+        const data = res.data.map((row) => mapEvent(row));
+    setMyEvents(data);
+    console.log(data);
+
+
+      });
+      
+      
+    }catch(err){
+      console.log(err);
     }
-  ];
+
+
+
+  },[])
+
+  const mapEvent = (row) => {
+  const startDate = new Date(row.startAt);
+  const endDate = new Date(row.endAt);
+
+  return {
+    id: row.id?.toString(),
+    title: row.title,
+    status: row.status || "active", // default if missing
+    registrations: row.registrations || 0, // if backend doesn’t send it
+    capacity: row.requiredVolunteer || 0, 
+    revenue: row.revenue || 0, 
+    date: startDate.toLocaleDateString("en-GB", {
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit",
+    }),
+    time: startDate.toLocaleTimeString("en-US", {
+      hour: "2-digit",
+      minute: "2-digit",
+    }),
+    venue: row.location,
+    category: row.category || "General",
+    managers: row.managers || [], // backend may add this later
+    isPublic: row.isPublic ?? true,
+    ticketPrice: row.ticketPrice || 0,
+    currency: row.currency || "USD",
+    startAt: row.startAt,
+    endAt: row.endAt,
+  };
+};
+
+
+
+
+  // Mock data for organizer's events
+  // const myEvents = [
+  //   {
+  //     id: '1',
+  //     title: 'Tech Conference 2024',
+  //     status: 'active',
+  //     registrations: 245,
+  //     capacity: 300,
+  //     revenue: 12250,
+  //     date: '2024-03-15',
+  //     time: '09:00 AM',
+  //     venue: 'Convention Center',
+  //     category: 'Technology',
+  //     managers: [
+  //       { id: '1', name: 'Sarah Johnson', email: 'sarah@example.com', role: 'Event Manager', status: 'active' },
+  //       { id: '2', name: 'Mike Chen', email: 'mike@example.com', role: 'Logistics Manager', status: 'pending' }
+  //     ],
+  //     isPublic: true,
+  //     ticketPrice: 50,
+  //     currency: 'USD'
+  //   },
+  //   {
+  //     id: '2',
+  //     title: 'Music Festival',
+  //     status: 'draft',
+  //     registrations: 0,
+  //     capacity: 500,
+  //     revenue: 0,
+  //     date: '2024-03-20',
+  //     time: '06:00 PM',
+  //     venue: 'Central Park',
+  //     category: 'Entertainment',
+  //     managers: [],
+  //     isPublic: true,
+  //     ticketPrice: 75,
+  //     currency: 'USD'
+  //   },
+  //   {
+  //     id: '3',
+  //     title: 'Career Fair',
+  //     status: 'completed',
+  //     registrations: 128,
+  //     capacity: 200,
+  //     revenue: 0,
+  //     date: '2024-02-25',
+  //     time: '10:00 AM',
+  //     venue: 'University Hall',
+  //     category: 'Career',
+  //     managers: [
+  //       { id: '3', name: 'Emily Davis', email: 'emily@example.com', role: 'Registration Manager', status: 'active' }
+  //     ],
+  //     isPublic: true,
+  //     ticketPrice: 0,
+  //     currency: 'USD'
+  //   },
+  //   {
+  //     id: '4',
+  //     title: 'Startup Pitch Event',
+  //     status: 'active',
+  //     registrations: 85,
+  //     capacity: 150,
+  //     revenue: 4250,
+  //     date: '2024-03-30',
+  //     time: '02:00 PM',
+  //     venue: 'Innovation Hub',
+  //     category: 'Business',
+  //     managers: [],
+  //     isPublic: true,
+  //     ticketPrice: 50,
+  //     currency: 'USD'
+  //   }
+  // ];
+
+  
 
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -185,7 +251,7 @@ export function OrganizerEventManagePage() {
               
               <CardContent className="space-y-4">
                 {/* Event Metrics */}
-                <div className="grid grid-cols-2 gap-4">
+                {/* <div className="grid grid-cols-2 gap-4">
                   <div>
                     <div className="flex items-center justify-between mb-1">
                       <span className="text-sm text-gray-600">Registrations</span>
@@ -207,7 +273,7 @@ export function OrganizerEventManagePage() {
                       {event.ticketPrice > 0 ? `$${event.ticketPrice} per ticket` : 'No tickets required'}
                     </div>
                   </div>
-                </div>
+                </div> */}
 
                 {/* Managers Section */}
                 <div className="border-t pt-4">

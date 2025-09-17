@@ -71,12 +71,12 @@ public class DataInitializer implements CommandLineRunner {
             List<Event> events = new ArrayList<>();
             for (int i = 1; i <= 5; i++) {
                 Event event = Event.builder()
-                        .Title("Event " + i)
+                        .title("Event " + i)
                         .description("Description for event " + i)
                         .startAt(LocalDateTime.now().plusDays(i))
                         .endAt(LocalDateTime.now().plusDays(i).plusHours(2))
                         .location("Location " + i)
-                        .CreatedBy(manager)
+                        .createdBy(manager)
                         .requiredVolunteer(10)
                         .status("Event Created")
                         .managedbyManager(true)

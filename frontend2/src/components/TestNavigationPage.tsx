@@ -91,6 +91,12 @@ export function TestNavigationPage() {
       path: '/manager/add-event',
       icon: Calendar,
       description: 'Add new event to manage'
+    },
+    {
+      label: 'Manager Invitations (DEMO)',
+      path: '/manager/invitations',
+      icon: Bell,
+      description: '🎯 Test manager invitation system with demo data'
     }
   ] : [];
 
@@ -235,6 +241,10 @@ export function TestNavigationPage() {
                 <span>Vendor Profile Components</span>
                 <Badge className="bg-green-100 text-green-800">✅ Complete</Badge>
               </div>
+              <div className="flex items-center justify-between p-3 bg-green-50 rounded-lg">
+                <span>Manager Invitation System</span>
+                <Badge className="bg-green-100 text-green-800">✅ Complete</Badge>
+              </div>
             </div>
             
             <div className="mt-6 p-4 bg-blue-50 rounded-lg">
@@ -246,6 +256,22 @@ export function TestNavigationPage() {
                 system to React Router DOM. The application now supports proper URL-based 
                 navigation, browser history, and protected routes.
               </p>
+            </div>
+
+            <div className="mt-4 p-4 bg-purple-50 rounded-lg">
+              <h4 className="font-medium text-purple-900 mb-2">
+                🎯 Testing Manager Invitation System
+              </h4>
+              <p className="text-sm text-purple-800 mb-3">
+                Demo manager invitations are now available! To test the system:
+              </p>
+              <ul className="text-sm text-purple-800 space-y-1 list-disc list-inside">
+                <li><strong>Login as Manager:</strong> Use any email with "manager" role</li>
+                <li><strong>Check Notifications:</strong> Look for the notification bell with red badge</li>
+                <li><strong>View Invitations:</strong> Navigate to Manager Invitations page</li>
+                <li><strong>Test Features:</strong> Accept, decline, or send counter offers</li>
+                <li><strong>Demo Data:</strong> Two comprehensive invitations with full details</li>
+              </ul>
             </div>
           </CardContent>
         </Card>

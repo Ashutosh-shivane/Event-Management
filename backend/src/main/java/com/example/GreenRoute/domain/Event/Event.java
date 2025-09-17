@@ -19,7 +19,7 @@ public class Event {
     @Id@GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String Title;
+    private String title;
 
     @Column(length = 2000)
     private String description;
@@ -32,7 +32,7 @@ public class Event {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "created_by_id")
-    private User CreatedBy;
+    private User createdBy;
 //
 //    private User manager;
 
