@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState,useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useAuth } from '../AuthContext';
 import { useNotifications } from '../NotificationContext';
@@ -69,48 +69,48 @@ export function OrganizerAddManagerPage() {
   
   // Role definition state
   const [roleDefinitions, setRoleDefinitions] = useState<RoleDefinition[]>([
-    {
-      id: '1',
-      title: 'Event Manager',
-      description: 'Overall event coordination and management',
-      budget: 5000,
-      currency: 'USD',
-      responsibilities: ['Oversee event execution', 'Coordinate with vendors', 'Manage timeline'],
-      requirements: ['5+ years experience', 'Event management certification'],
-      deadline: '2024-03-01'
-    }
+    // {
+    //   id: '1',
+    //   title: 'Event Manager',
+    //   description: 'Overall event coordination and management',
+    //   budget: 5000,
+    //   currency: 'USD',
+    //   responsibilities: ['Oversee event execution', 'Coordinate with vendors', 'Manage timeline'],
+    //   requirements: ['5+ years experience', 'Event management certification'],
+    //   deadline: '2024-03-01'
+    // }
   ]);
   
   // Manager invitations state
-  const [managerInvitations, setManagerInvitations] = useState<ManagerInvitation[]>([
-    {
-      id: '1',
-      managerId: '1',
-      roleId: '1',
-      status: 'counter_offered',
-      originalBudget: 5000,
-      counterOffer: 6500,
-      counterMessage: 'Based on the scope of work, I believe this budget better reflects the requirements.',
-      sentAt: new Date('2024-02-15'),
-      respondedAt: new Date('2024-02-16')
-    },
-    {
-      id: '2',
-      managerId: '2',
-      roleId: '1',
-      status: 'accepted',
-      originalBudget: 5000,
-      sentAt: new Date('2024-02-15'),
-      respondedAt: new Date('2024-02-15')
-    },
-    {
-      id: '3',
-      managerId: '4',
-      roleId: '1',
-      status: 'pending',
-      originalBudget: 5000,
-      sentAt: new Date('2024-02-16')
-    }
+   const [managerInvitations, setManagerInvitations] = useState<ManagerInvitation[]>([
+  //   {
+  //     id: '1',
+  //     managerId: '1',
+  //     roleId: '1',
+  //     status: 'counter_offered',
+  //     originalBudget: 5000,
+  //     counterOffer: 6500,
+  //     counterMessage: 'Based on the scope of work, I believe this budget better reflects the requirements.',
+  //     sentAt: new Date('2024-02-15'),
+  //     respondedAt: new Date('2024-02-16')
+  //   },
+  //   {
+  //     id: '2',
+  //     managerId: '2',
+  //     roleId: '1',
+  //     status: 'accepted',
+  //     originalBudget: 5000,
+  //     sentAt: new Date('2024-02-15'),
+  //     respondedAt: new Date('2024-02-15')
+  //   },
+  //   {
+  //     id: '3',
+  //     managerId: '4',
+  //     roleId: '1',
+  //     status: 'pending',
+  //     originalBudget: 5000,
+  //     sentAt: new Date('2024-02-16')
+  //   }
   ]);
   
   // Form state for new role
@@ -125,71 +125,74 @@ export function OrganizerAddManagerPage() {
   });
 
   // Mock event data
-  const eventData = {
-    id: eventId || '1',
-    title: 'Tech Conference 2024',
-    date: '2024-03-15',
-    venue: 'Convention Center'
-  };
+  const [eventData,setEventData] =useState( {
+    id: eventId || '0',
+    title: '',
+    date: '',
+    venue: ''
+  });
 
   // Mock available managers
-  const availableManagers = [
-    { 
-      id: '1', 
-      name: 'Sarah Johnson', 
-      email: 'sarah.johnson@example.com', 
-      role: 'Event Manager',
-      experience: '5+ years',
-      specialties: ['Event Planning', 'Logistics', 'Vendor Management'],
-      rating: 4.8,
-      eventsManaged: 25,
-      available: true
-    },
-    { 
-      id: '2', 
-      name: 'Mike Chen', 
-      email: 'mike.chen@example.com', 
-      role: 'Logistics Manager',
-      experience: '3+ years',
-      specialties: ['Logistics', 'Operations', 'Team Coordination'],
-      rating: 4.6,
-      eventsManaged: 18,
-      available: true
-    },
-    { 
-      id: '3', 
-      name: 'Emily Davis', 
-      email: 'emily.davis@example.com', 
-      role: 'Registration Manager',
-      experience: '4+ years',
-      specialties: ['Registration', 'Customer Service', 'Data Management'],
-      rating: 4.9,
-      eventsManaged: 32,
-      available: false
-    },
-    { 
-      id: '4', 
-      name: 'David Wilson', 
-      email: 'david.wilson@example.com', 
-      role: 'Marketing Manager',
-      experience: '6+ years',
-      specialties: ['Marketing', 'Social Media', 'Promotion'],
-      rating: 4.7,
-      eventsManaged: 29,
-      available: true
-    },
-    { 
-      id: '5', 
-      name: 'Lisa Anderson', 
-      email: 'lisa.anderson@example.com', 
-      role: 'Financial Manager',
-      experience: '7+ years',
-      specialties: ['Finance', 'Budget Management', 'Reporting'],
-      rating: 4.8,
-      eventsManaged: 34,
-      available: true
-    }
-  ];
+
+  const[availableManagers,setAvailableManagers]=useState([]);
+
+  // const availableManagers = [
+  //   { 
+  //     id: '1', 
+  //     name: 'Sarah Johnson', 
+  //     email: 'sarah.johnson@example.com', 
+  //     role: 'Event Manager',
+  //     experience: '5+ years',
+  //     specialties: ['Event Planning', 'Logistics', 'Vendor Management'],
+  //     rating: 4.8,
+  //     eventsManaged: 25,
+  //     available: true
+  //   },
+  //   { 
+  //     id: '2', 
+  //     name: 'Mike Chen', 
+  //     email: 'mike.chen@example.com', 
+  //     role: 'Logistics Manager',
+  //     experience: '3+ years',
+  //     specialties: ['Logistics', 'Operations', 'Team Coordination'],
+  //     rating: 4.6,
+  //     eventsManaged: 18,
+  //     available: true
+  //   },
+  //   { 
+  //     id: '3', 
+  //     name: 'Emily Davis', 
+  //     email: 'emily.davis@example.com', 
+  //     role: 'Registration Manager',
+  //     experience: '4+ years',
+  //     specialties: ['Registration', 'Customer Service', 'Data Management'],
+  //     rating: 4.9,
+  //     eventsManaged: 32,
+  //     available: false
+  //   },
+  //   { 
+  //     id: '4', 
+  //     name: 'David Wilson', 
+  //     email: 'david.wilson@example.com', 
+  //     role: 'Marketing Manager',
+  //     experience: '6+ years',
+  //     specialties: ['Marketing', 'Social Media', 'Promotion'],
+  //     rating: 4.7,
+  //     eventsManaged: 29,
+  //     available: true
+  //   },
+  //   { 
+  //     id: '5', 
+  //     name: 'Lisa Anderson', 
+  //     email: 'lisa.anderson@example.com', 
+  //     role: 'Financial Manager',
+  //     experience: '7+ years',
+  //     specialties: ['Finance', 'Budget Management', 'Reporting'],
+  //     rating: 4.8,
+  //     eventsManaged: 34,
+  //     available: true
+  //   }
+  // ];
 
   const managerRoles = [
     'Event Manager',
@@ -214,6 +217,76 @@ export function OrganizerAddManagerPage() {
     'Access Financial Data',
     'Manage Marketing'
   ];
+
+  
+
+
+  function mapInvitations(invitationList:any): ManagerInvitation[] {
+  return invitationList.map(invite => ({
+    id: String(invite.id),
+    managerId: invite.userid,
+    roleId: invite.roleid,
+    status: invite.status || "pending",
+    originalBudget:  0,
+    counterOffer:   Number(invite.proposed_budget)? Number(invite.proposed_budget) : 0,
+    counterMessage: invite.manager_msg || undefined,
+    sentAt: invite.sentAt ? new Date(invite.sentAt) : new Date(),
+    respondedAt: invite.respondedAt ? new Date(invite.respondedAt) : undefined,
+  }));
+}
+
+
+  function mapManagers(managerlist) {
+  return managerlist.map(manager => ({
+    id: String(manager.id),
+    name: manager.name,
+    email: manager.username || "",
+    role: manager.role || "Manager",
+    experience: manager.years_exp ? `${manager.years_exp}+ years` : "Not specified",
+    specialties: manager.specializations ? manager.specializations.split(',') : [],
+    rating: manager.rating ? parseFloat(manager.rating) : 0,
+    eventsManaged:  "Not specified", // fake number until backend gives it
+    available: manager.availability !== null ? manager.availability : false
+  }));
+}
+
+
+
+  useEffect(()=>{
+    try{
+
+      axios.get(`http://localhost:8080/OME/GetData/${eventId}`)
+      .then((res)=>{
+        console.log(res.data);
+
+        const test=mapManagers(res.data.managerlist);
+        console.log(test);
+
+        const invitationlist=mapInvitations(res.data.invitationList);
+
+        const tempevent={
+           id: res.data.event.id,
+    title: res.data.event.title,
+    date: res.data.event.startAt,
+    venue: res.data.event.location
+
+        }
+
+        setManagerInvitations(invitationlist);
+
+        setAvailableManagers(test);
+
+        setEventData(tempevent);
+
+      })
+
+
+    }catch(err){
+      console.log(err);
+    }
+  },[]);
+
+
 
   const filteredManagers = availableManagers.filter(manager => 
     (manager.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
