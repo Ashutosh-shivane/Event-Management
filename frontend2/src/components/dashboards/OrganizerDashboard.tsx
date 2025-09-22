@@ -202,7 +202,7 @@ export function OrganizerDashboard({ onNavigate, onEventSelect }: OrganizerDashb
           </CardHeader>
           <CardContent>
             <div className="grid grid-cols-2 gap-4">
-              <Button className="h-20 flex flex-col items-center justify-center" onClick={() => onNavigate('add-event')}>
+              <Button className="h-20 flex flex-col items-center justify-center">
                 <Plus size={20} className="mb-2" />
                 Create Event
               </Button>

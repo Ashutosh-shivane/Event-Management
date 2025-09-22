@@ -1,4 +1,5 @@
-import React from 'react';
+import React, { useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Card, CardHeader, CardTitle, CardContent } from '../ui/card';
 import { Button } from '../ui/button';
 import { Badge } from '../ui/badge';
@@ -15,12 +16,13 @@ import {
   BarChart3
 } from 'lucide-react';
 
-interface AdminDashboardProps {
-  onNavigate: (page: string) => void;
-  onEventSelect: (eventId: string) => void;
-}
+export function AdminDashboard() {
+  const navigate = useNavigate();
 
-export function AdminDashboard({ onNavigate, onEventSelect }: AdminDashboardProps) {
+  // Redirect to new admin dashboard
+  useEffect(() => {
+    navigate('/admin/dashboard');
+  }, [navigate]);
   const systemStats = [
     { label: 'Total Users', value: '2,847', change: '+12%', icon: Users, color: 'blue' },
     { label: 'Active Events', value: '156', change: '+8%', icon: Calendar, color: 'green' },
@@ -260,21 +262,52 @@ export function AdminDashboard({ onNavigate, onEventSelect }: AdminDashboardProp
           </CardHeader>
           <CardContent>
             <div className="grid grid-cols-2 gap-4">
-              <Button className="h-20 flex flex-col items-center justify-center">
+              <Button 
+                className="h-20 flex flex-col items-center justify-center"
+                onClick={() => navigate('/users')}
+              >
                 <Users size={20} className="mb-2" />
                 User Management
               </Button>
-              <Button variant="outline" className="h-20 flex flex-col items-center justify-center">
+              <Button 
+                variant="outline" 
+                className="h-20 flex flex-col items-center justify-center"
+                onClick={() => navigate('/events')}
+              >
                 <Calendar size={20} className="mb-2" />
                 Event Oversight
               </Button>
-              <Button variant="outline" className="h-20 flex flex-col items-center justify-center">
+              <Button 
+                variant="outline" 
+                className="h-20 flex flex-col items-center justify-center"
+                onClick={() => navigate('/reports')}
+              >
                 <BarChart3 size={20} className="mb-2" />
                 Analytics
               </Button>
-              <Button variant="outline" className="h-20 flex flex-col items-center justify-center">
+              <Button 
+                variant="outline" 
+                className="h-20 flex flex-col items-center justify-center"
+                onClick={() => navigate('/notifications')}
+              >
                 <AlertTriangle size={20} className="mb-2" />
                 System Alerts
+              </Button>
+              <Button 
+                variant="outline" 
+                className="h-20 flex flex-col items-center justify-center"
+                onClick={() => navigate('/test-navigation')}
+              >
+                <Eye size={20} className="mb-2" />
+                Test Routes
+              </Button>
+              <Button 
+                variant="outline" 
+                className="h-20 flex flex-col items-center justify-center"
+                onClick={() => navigate('/project-status')}
+              >
+                <CheckCircle size={20} className="mb-2" />
+                Project Status
               </Button>
             </div>
           </CardContent>

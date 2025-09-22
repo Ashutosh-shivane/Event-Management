@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useAuth, UserRole } from './AuthContext';
-import { PageType } from '../App';
 import { Card } from './ui/card';
 import { Button } from './ui/button';
 import { Input } from './ui/input';
@@ -11,10 +11,10 @@ import { ArrowLeft, Calendar } from 'lucide-react';
 
 interface LoginFormProps {
   initialMode?: 'login' | 'signup';
-  onNavigate: (page: PageType) => void;
 }
 
-export function LoginForm({ initialMode = 'login', onNavigate }: LoginFormProps) {
+export function LoginForm({ initialMode = 'login' }: LoginFormProps) {
+  const navigate = useNavigate();
   const { login, signup } = useAuth();
   const [isLoading, setIsLoading] = useState(false);
   
@@ -69,7 +69,7 @@ export function LoginForm({ initialMode = 'login', onNavigate }: LoginFormProps)
           <Button 
             variant="ghost" 
             size="sm"
-            onClick={() => onNavigate('landing')}
+            onClick={() => navigate('/')}
             className="flex items-center space-x-2"
           >
             <ArrowLeft className="h-4 w-4" />

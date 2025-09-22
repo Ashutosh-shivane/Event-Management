@@ -1,5 +1,7 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useAuth } from './AuthContext';
+import { useNotifications } from './NotificationContext';
 import { Button } from './ui/button';
 import { Input } from './ui/input';
 import { Badge } from './ui/badge';
@@ -16,7 +18,11 @@ interface TopNavbarProps {
 }
 
 export function TopNavbar({ onToggleSidebar }: TopNavbarProps) {
+  const navigate = useNavigate();
   const { user } = useAuth();
+  const { getUnreadCount } = useNotifications();
+  
+  const unreadCount = user ? getUnreadCount(user.id) : 0;
 
   return (
     <header className="bg-white border-b border-gray-200 px-6 py-4">
@@ -42,20 +48,31 @@ export function TopNavbar({ onToggleSidebar }: TopNavbarProps) {
 
         <div className="flex items-center space-x-4">
           {(user?.role === 'organizer' || user?.role === 'admin') && (
-            <Button size="sm" className="flex items-center space-x-2">
+            <Button 
+              size="sm" 
+              className="flex items-center space-x-2"
+              onClick={() => navigate('/organizer/create-event')}
+            >
               <Plus size={16} />
               <span>Create Event</span>
             </Button>
           )}
 
-          <Button variant="ghost" size="sm" className="relative">
+          <Button 
+            variant="ghost" 
+            size="sm" 
+            className="relative"
+            onClick={() => navigate('/notifications')}
+          >
             <Bell size={20} />
-            <Badge 
-              variant="destructive" 
-              className="absolute -top-1 -right-1 h-5 w-5 rounded-full p-0 flex items-center justify-center text-xs"
-            >
-              3
-            </Badge>
+            {unreadCount > 0 && (
+              <Badge 
+                variant="destructive" 
+                className="absolute -top-1 -right-1 h-5 w-5 rounded-full p-0 flex items-center justify-center text-xs"
+              >
+                {unreadCount}
+              </Badge>
+            )}
           </Button>
 
           <Button variant="ghost" size="sm">

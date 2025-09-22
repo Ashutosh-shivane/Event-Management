@@ -1,4 +1,5 @@
 import React, { useState,useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useAuth } from './AuthContext';
 import { Card, CardHeader, CardTitle, CardContent } from './ui/card';
 import { Button } from './ui/button';
@@ -16,13 +17,9 @@ import {
   Clock
 } from 'lucide-react';
 
-import { PageType } from '../App';
 import axios from "axios";
 
-interface EventsPageProps {
-  onNavigate: (page: PageType) => void;
-  onEventSelect: (eventId: string) => void;
-}
+
 
 
 
@@ -55,7 +52,9 @@ function Spinner() {
 }
 
 
-export function EventsPage({ onNavigate, onEventSelect }: EventsPageProps) {
+export function EventsPage() {
+  const navigate = useNavigate();
+
   const { user } = useAuth();
   const [searchTerm, setSearchTerm] = useState('');
   const [filterCategory, setFilterCategory] = useState('all');
@@ -261,11 +260,19 @@ export function EventsPage({ onNavigate, onEventSelect }: EventsPageProps) {
               </div>
               
               <div className="flex space-x-2">
-                <Button className="flex-1  "   onClick={() => {
-    onEventSelect(event.id.toString());  // store selected event id
-    onNavigate('event-details');}} >View Details</Button>
+                <Button 
+                  className="flex-1"
+                  onClick={() => navigate(`/events/${event.id}`)}
+                >
+                  View Details
+                </Button>
                 {user?.role === 'student' && (
-                  <Button variant="outline">Register</Button>
+                  <Button 
+                    variant="outline"
+                    onClick={() => navigate(`/events/${event.id}/register`)}
+                  >
+                    Register
+                  </Button>
                 )}
               </div>
             </CardContent>

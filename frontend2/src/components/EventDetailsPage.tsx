@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { PageType } from '../App';
+import { useParams, useNavigate } from 'react-router-dom';
+import { useAuth } from './AuthContext';
 import { Button } from './ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
 import { Badge } from './ui/badge';
@@ -27,10 +28,7 @@ import {
 import { ImageWithFallback } from './figma/ImageWithFallback';
 import axios from 'axios';
 
-interface EventDetailsPageProps {
-  eventId: string | null;
-  onNavigate: (page: PageType) => void;
-}
+
 
 
 
@@ -62,8 +60,10 @@ function Spinner() {
   );
 }
 
-
-export function EventDetailsPage({ eventId, onNavigate }: EventDetailsPageProps) {
+export function EventDetailsPage() {
+  const { eventId } = useParams<{ eventId: string }>();
+  const navigate = useNavigate();
+  const { user } = useAuth();
   const [isRegistered, setIsRegistered] = useState(false);
   const [activeTab, setActiveTab] = useState("details");
   const [loading, setLoading] = useState(true);
@@ -92,6 +92,8 @@ export function EventDetailsPage({ eventId, onNavigate }: EventDetailsPageProps)
 
     // eventId="1";
 
+    localStorage.setItem("eventid", String(eventId));
+
 
   useEffect(() => {
     axios
@@ -103,7 +105,16 @@ export function EventDetailsPage({ eventId, onNavigate }: EventDetailsPageProps)
         // setEventdata( mapEvent(response.data[0])); // store events
         setLoading(false);
         console.log(response.data[0]);
-        console.log(mapped); // done loading
+        console.log(mapped); 
+
+        localStorage.setItem("eventDetails", JSON.stringify(mapped));
+
+        
+        
+        
+
+        
+        // done loading
       })
       .catch((err) => {
         console.error(err.message || "Something went wrong");
@@ -161,7 +172,7 @@ export function EventDetailsPage({ eventId, onNavigate }: EventDetailsPageProps)
               <Button
                 variant="ghost"
                 size="sm"
-                onClick={() => onNavigate('dashboard')}
+                onClick={() => navigate('/dashboard')}
                 className="flex items-center space-x-2"
               >
                 <ArrowLeft className="h-4 w-4" />
@@ -261,7 +272,13 @@ export function EventDetailsPage({ eventId, onNavigate }: EventDetailsPageProps)
             <Button
               size="lg"
               className="px-8"
-              onClick={() => setIsRegistered(!isRegistered)}
+               onClick={() => {
+                if (isRegistered) {
+                  setIsRegistered(false);
+                } else if (event.registered < event.capacity) {
+                  navigate(`/events/${eventId}/register`);
+                }
+              }}
               disabled={event.registered >= event.capacity}
             >
               {isRegistered ? (
