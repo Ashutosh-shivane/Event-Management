@@ -67,6 +67,12 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
       );
     }
 
+    if (user?.role === 'STUDENT') {
+      baseItems.push(
+        { key: 'feedback', label: 'Event Feedback', icon: Star, path: '/student/feedback' }
+      );
+    }
+
     if (user?.role === 'VENDOR') {
       baseItems.push(
         { key: 'bids', label: 'Bid Opportunities', icon: BarChart3, path: '/vendor/bids' },
