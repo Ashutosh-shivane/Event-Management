@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../AuthContext';
 import { useNotifications } from '../NotificationContext';
@@ -9,7 +9,7 @@ import { Label } from '../ui/label';
 import { Textarea } from '../ui/textarea';
 import { Badge } from '../ui/badge';
 import { Alert, AlertDescription } from '../ui/alert';
-import { 
+import {
   ArrowLeft,
   Clock,
   DollarSign,
@@ -21,126 +21,146 @@ import {
   User,
   FileText
 } from 'lucide-react';
+import axios from 'axios';
 
 export function ManagerInvitationsPage() {
   const navigate = useNavigate();
   const { user } = useAuth();
-  const { getUserNotifications, markAsRead, sendCounterOffer } = useNotifications();
-  const [counterOffers, setCounterOffers] = useState<{[key: string]: { amount: string; message: string }}>({});
+  const { markAsRead } = useNotifications();
+  const [counterOffers, setCounterOffers] = useState<{ [key: string]: { amount: string; message: string } }>({});
   const [isResponding, setIsResponding] = useState(false);
 
-  // Get manager invitations from notifications
-  const invitations = getUserNotifications(user?.id || '').filter(
-    notification => notification.type === 'invitation' && notification.userRole === 'manager'
-  );
+  const [counterOffer,setCounterOffer]=useState(0);
+  const [managermsg,setMangermsg]=useState("");
 
-  const handleAcceptInvitation = async (notificationId: string) => {
-    setIsResponding(true);
-    try {
-      // Mark notification as read
-      markAsRead(notificationId);
-      
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
-      alert('Invitation accepted successfully!');
-    } catch (error) {
-      console.error('Failed to accept invitation:', error);
-      alert('Failed to accept invitation. Please try again.');
-    } finally {
-      setIsResponding(false);
-    }
+
+  const Replied="REPLIED";
+
+  interface EventData {
+    id: any;
+    eventtitle: string;
+    organizername: string;
+    timestamp: Date | null;
+    read: boolean;
+    assignedRole: any;
+    roleDescription: string;
+    deadLine: Date | null;
+    budget: any;
+    custommessage: any;
+    responsibilities: any[];
+    requirments: any[];
+  }
+
+  const [invitations, setInvitations] = useState<EventData[]>([]);
+  const userid = localStorage.getItem('id');
+
+  function mapEventDataArray(dataArray: any[]) {
+    if (!Array.isArray(dataArray)) return [];
+
+    return dataArray.map(data => ({
+      id: data.id || null,
+      eventtitle: data.eventname,
+      organizername: data.organizername,
+      timestamp: data.sentAt ? new Date(data.sentAt) : null,
+      read: data.status === "READ",
+      assignedRole: data.rolename || null,
+      roleDescription: data.roleDesc,
+      deadLine: data.roleDeadline ? new Date(data.roleDeadline) : null,
+      budget: data.budget || "Not defined",
+      custommessage: data.managerMsg || "",
+      responsibilities: data.responsibilities.split(','),
+      requirments: data.requirments.split(',')
+    }));
+
+   
+  }
+
+  useEffect(() => {
+    axios
+      .get(`http://localhost:8080/OME/GetManagerInvitationData/${userid}`)
+      .then(res => {
+        console.log(res.data);
+        setInvitations(mapEventDataArray(res.data));
+      })
+      .catch(err => console.error(err));
+  }, [userid]);
+
+  const handleAcceptInvitation = async (invitationId: string) => {
+  markAsRead(invitationId);
+  const url = `http://localhost:8080/OME/accept/${invitationId}`;
+  await handleDbCallForButton("ACCEPT",invitationId);
+};
+
+
+  const handleDeclineInvitation = async (invitationId: string) => {
+  markAsRead(invitationId);
+  
+  await handleDbCallForButton("DECLINE",invitationId);
+};
+
+
+  const handleSendCounterOffer = async (invitationId: any) => {
+  markAsRead(invitationId);
+  await handleDbCallForButton("COUNTER_OFFER",invitationId);
+};
+
+
+
+ const handleDbCallForButton = async (caller: string,invitationId:any) => {
+  setIsResponding(true);
+
+  const payload={
+    id:invitationId,
+    counteroffer:caller=="COUNTER_OFFER"?counterOffers[invitationId].amount:0,
+    managermsg:caller=="COUNTER_OFFER"?counterOffers[invitationId].message:"",
+    caller:caller
   };
 
-  const handleDeclineInvitation = async (notificationId: string) => {
-    setIsResponding(true);
-    try {
-      // Mark notification as read
-      markAsRead(notificationId);
-      
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
-      alert('Invitation declined.');
-    } catch (error) {
-      console.error('Failed to decline invitation:', error);
-      alert('Failed to decline invitation. Please try again.');
-    } finally {
-      setIsResponding(false);
-    }
-  };
+  try {
+    const res = await axios.post("http://localhost:8080/OME/ManagerAcceptInvtation", payload );
+    console.log(`${caller} success:`, res.data);
+    alert(`${caller} successful!`);
+    return res.data;
+  } catch (error) {
+    console.error(`${caller} failed:`, error);
+    alert(`${caller} failed. Please try again.`);
+    throw error;
+  } finally {
+    setIsResponding(false);
+  }
+};
 
-  const handleSendCounterOffer = async (notification: any) => {
-    const counterOffer = counterOffers[notification.id];
-    if (!counterOffer?.amount || !counterOffer?.message) {
-      alert('Please enter both counter offer amount and message');
-      return;
-    }
 
-    setIsResponding(true);
-    try {
-      sendCounterOffer({
-        invitationId: notification.id,
-        managerId: user?.id || '',
-        organizerId: notification.data?.organizerId || '',
-        eventId: notification.data?.eventId || '',
-        eventTitle: notification.data?.eventTitle || '',
-        managerName: user?.name || '',
-        originalBudget: notification.data?.budget || 0,
-        counterOffer: parseFloat(counterOffer.amount),
-        counterMessage: counterOffer.message,
-        currency: notification.data?.currency || 'USD'
-      });
-
-      // Mark notification as read
-      markAsRead(notification.id);
-      
-      // Clear form
-      setCounterOffers(prev => ({
-        ...prev,
-        [notification.id]: { amount: '', message: '' }
-      }));
-      
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
-      alert('Counter offer sent successfully!');
-    } catch (error) {
-      console.error('Failed to send counter offer:', error);
-      alert('Failed to send counter offer. Please try again.');
-    } finally {
-      setIsResponding(false);
-    }
-  };
-
-  const updateCounterOffer = (notificationId: string, field: 'amount' | 'message', value: string) => {
+ const updateCounterOffer = (invitationId: string, field: 'amount' | 'message', value: string) => {
     setCounterOffers(prev => ({
       ...prev,
-      [notificationId]: {
-        ...prev[notificationId],
+      [invitationId]: {
+        ...prev[invitationId],
         [field]: value
       }
     }));
   };
 
-  const getCounterOffer = (notificationId: string) => {
-    return counterOffers[notificationId] || { amount: '', message: '' };
+  const getCounterOffer = (invitationId: string) => {
+    return counterOffers[invitationId] || { amount: '', message: '' };
   };
+
+
+
+  
+
+ 
 
   return (
     <div className="min-h-screen bg-gray-50 py-8">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
         <div className="mb-8">
-          <Button 
-            variant="outline" 
-            onClick={() => navigate('/dashboard')}
-            className="mb-4"
-          >
+          <Button variant="outline" onClick={() => navigate('/dashboard')} className="mb-4">
             <ArrowLeft className="h-4 w-4 mr-2" />
             Back to Dashboard
           </Button>
-          
+
           <div>
             <h1 className="text-3xl font-bold text-gray-900 mb-2">Manager Invitations</h1>
             <p className="text-gray-600">
@@ -152,23 +172,25 @@ export function ManagerInvitationsPage() {
         {/* Invitations */}
         <div className="space-y-6">
           {invitations.length > 0 ? (
-            invitations.map((invitation) => (
+            invitations.map(invitation => (
               <Card key={invitation.id} className="overflow-hidden">
                 <CardHeader className="bg-gradient-to-r from-blue-50 to-indigo-50">
                   <div className="flex items-start justify-between">
                     <div>
                       <CardTitle className="flex items-center">
                         <User className="h-5 w-5 mr-2" />
-                        {invitation.data?.eventTitle}
+                        {invitation.eventtitle}
                       </CardTitle>
                       <p className="text-sm text-gray-600 mt-1">
-                        Invited by {invitation.data?.organizerName}
+                        Invited by {invitation.organizername}
                       </p>
                     </div>
                     <div className="flex items-center space-x-2">
                       <Badge variant="outline" className="flex items-center">
                         <Clock className="h-3 w-3 mr-1" />
-                        {invitation.timestamp.toLocaleDateString()}
+                        {invitation.timestamp
+                          ? new Date(invitation.timestamp).toLocaleDateString()
+                          : 'N/A'}
                       </Badge>
                       {!invitation.read && (
                         <Badge variant="destructive">New</Badge>
@@ -183,45 +205,49 @@ export function ManagerInvitationsPage() {
                     <div className="space-y-4">
                       <div>
                         <Label className="text-sm font-medium text-gray-700">Role</Label>
-                        <p className="text-lg font-semibold">{invitation.data?.assignedRole}</p>
+                        <p className="text-lg font-semibold">{invitation.assignedRole}</p>
                       </div>
-                      
-                      {invitation.data?.roleDescription && (
+
+                      {invitation.roleDescription && (
                         <div>
                           <Label className="text-sm font-medium text-gray-700">Description</Label>
-                          <p className="text-sm text-gray-600">{invitation.data.roleDescription}</p>
+                          <p className="text-sm text-gray-600">{invitation.roleDescription}</p>
                         </div>
                       )}
 
-                      {invitation.data?.deadline && (
+                      {invitation.deadLine && (
                         <div>
                           <Label className="text-sm font-medium text-gray-700">Application Deadline</Label>
                           <div className="flex items-center">
                             <Calendar className="h-4 w-4 mr-2 text-gray-400" />
-                            <p className="text-sm">{invitation.data.deadline}</p>
+                            <p className="text-sm">
+                              {invitation.deadLine
+                                ? new Date(invitation.deadLine).toLocaleDateString()
+                                : 'N/A'}
+                            </p>
                           </div>
                         </div>
                       )}
                     </div>
 
                     <div className="space-y-4">
-                      {invitation.data?.budget && (
+                      {invitation.budget && (
                         <div>
                           <Label className="text-sm font-medium text-gray-700">Budget</Label>
                           <div className="flex items-center">
                             <DollarSign className="h-5 w-5 mr-2 text-green-600" />
                             <p className="text-xl font-bold text-green-600">
-                              {invitation.data.currency} {invitation.data.budget}
+                              ₹ {invitation.budget}
                             </p>
                           </div>
                         </div>
                       )}
 
-                      {invitation.data?.customMessage && (
+                      {invitation.custommessage && (
                         <div>
                           <Label className="text-sm font-medium text-gray-700">Message</Label>
                           <div className="bg-gray-50 p-3 rounded border-l-4 border-blue-500">
-                            <p className="text-sm">{invitation.data.customMessage}</p>
+                            <p className="text-sm">{invitation.custommessage}</p>
                           </div>
                         </div>
                       )}
@@ -229,30 +255,30 @@ export function ManagerInvitationsPage() {
                   </div>
 
                   {/* Responsibilities and Requirements */}
-                  {(invitation.data?.responsibilities || invitation.data?.requirements) && (
+                  {(invitation.responsibilities.length > 0 || invitation.requirments.length > 0) && (
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-4 border-t">
-                      {invitation.data.responsibilities && invitation.data.responsibilities.length > 0 && (
+                      {invitation.responsibilities.length > 0 && (
                         <div>
                           <Label className="text-sm font-medium text-gray-700 mb-2 block">Responsibilities</Label>
                           <ul className="space-y-1">
-                            {invitation.data.responsibilities.map((responsibility, index) => (
+                            {invitation.responsibilities.map((resp, index) => (
                               <li key={index} className="text-sm text-gray-600 flex items-start">
                                 <span className="w-1.5 h-1.5 bg-blue-500 rounded-full mt-2 mr-2 flex-shrink-0"></span>
-                                {responsibility}
+                                {resp}
                               </li>
                             ))}
                           </ul>
                         </div>
                       )}
 
-                      {invitation.data.requirements && invitation.data.requirements.length > 0 && (
+                      {invitation.requirments.length > 0 && (
                         <div>
                           <Label className="text-sm font-medium text-gray-700 mb-2 block">Requirements</Label>
                           <ul className="space-y-1">
-                            {invitation.data.requirements.map((requirement, index) => (
+                            {invitation.requirments.map((req, index) => (
                               <li key={index} className="text-sm text-gray-600 flex items-start">
                                 <span className="w-1.5 h-1.5 bg-orange-500 rounded-full mt-2 mr-2 flex-shrink-0"></span>
-                                {requirement}
+                                {req}
                               </li>
                             ))}
                           </ul>
@@ -264,29 +290,29 @@ export function ManagerInvitationsPage() {
                   {/* Counter Offer Section */}
                   <div className="pt-4 border-t space-y-4">
                     <Label className="text-sm font-medium text-gray-700">Send Counter Offer (Optional)</Label>
-                    
+
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       <div className="space-y-2">
                         <Label className="text-xs">Proposed Budget</Label>
                         <div className="flex">
                           <span className="inline-flex items-center px-3 rounded-l-md border border-r-0 border-gray-300 bg-gray-50 text-gray-500 text-sm">
-                            {invitation.data?.currency || 'USD'}
+                            ₹
                           </span>
                           <Input
                             type="number"
                             value={getCounterOffer(invitation.id).amount}
-                            onChange={(e) => updateCounterOffer(invitation.id, 'amount', e.target.value)}
+                            onChange={e => updateCounterOffer(invitation.id, 'amount', e.target.value)}
                             placeholder="Enter amount"
                             className="rounded-l-none"
                           />
                         </div>
                       </div>
-                      
+
                       <div className="space-y-2">
                         <Label className="text-xs">Justification Message</Label>
                         <Textarea
-                          value={getCounterOffer(invitation.id).message}
-                          onChange={(e) => updateCounterOffer(invitation.id, 'message', e.target.value)}
+                           value={getCounterOffer(invitation.id).message}
+                          onChange={e => updateCounterOffer(invitation.id, 'message', e.target.value)}
                           placeholder="Explain your counter offer..."
                           rows={3}
                         />
@@ -296,7 +322,7 @@ export function ManagerInvitationsPage() {
 
                   {/* Action Buttons */}
                   <div className="flex flex-wrap gap-3 pt-4 border-t">
-                    <Button 
+                    <Button
                       onClick={() => handleAcceptInvitation(invitation.id)}
                       disabled={isResponding}
                       className="flex items-center"
@@ -304,18 +330,22 @@ export function ManagerInvitationsPage() {
                       <CheckCircle className="h-4 w-4 mr-2" />
                       Accept Invitation
                     </Button>
-                    
-                    <Button 
+
+                    <Button
                       variant="outline"
-                      onClick={() => handleSendCounterOffer(invitation)}
-                      disabled={isResponding || !getCounterOffer(invitation.id).amount || !getCounterOffer(invitation.id).message}
+                      onClick={() => handleSendCounterOffer(invitation.id)}
+                      disabled={
+                        isResponding ||
+                        !getCounterOffer(invitation.id).amount ||
+                        !getCounterOffer(invitation.id).message
+                      }
                       className="flex items-center"
                     >
                       <TrendingUp className="h-4 w-4 mr-2" />
                       Send Counter Offer
                     </Button>
-                    
-                    <Button 
+
+                    <Button
                       variant="destructive"
                       onClick={() => handleDeclineInvitation(invitation.id)}
                       disabled={isResponding}

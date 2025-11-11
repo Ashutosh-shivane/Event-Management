@@ -14,6 +14,7 @@ import { UserManagementPage } from './UserManagementPage';
 import { VendorBidsPage } from './vendor/VendorBidsPage';
 import { VendorPortfolioPage } from './vendor/VendorPortfolioPage';
 import { ManagerApprovalsPage } from './manager/ManagerApprovalsPage';
+import {StudentAssignedEventPage} from './student/StudentAssignedEventPage';
 
 export function MainLayout() {
   const { user } = useAuth();
@@ -44,6 +45,9 @@ export function MainLayout() {
         return <VendorPortfolioPage />;
       case '/manager/approvals':
         return <ManagerApprovalsPage />;
+      case '/student/Assigned_Events':
+        <StudentAssignedEventPage />;
+      
       case '/dashboard':
       default:
         return <Dashboard />;

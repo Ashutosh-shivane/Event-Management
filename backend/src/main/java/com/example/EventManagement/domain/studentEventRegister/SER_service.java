@@ -25,8 +25,8 @@ public class SER_service {
     private final EventRepository eventRepository;
 
 
-    public List<SER_Eventlist_DTO> getEventStats() {
-        return serRepository.getEventStats();
+    public List<SER_Eventlist_DTO> getEventStats(String userid) {
+        return serRepository.getEventStats(userid);
     }
 
 

@@ -14,9 +14,9 @@ public class SER_Controller {
 
     private final SER_service serService;
 
-    @GetMapping("/getstats")
-    public List<SER_Eventlist_DTO> getEventStats() {
-        return serService.getEventStats();
+    @GetMapping("/getstats/{userid}")
+    public List<SER_Eventlist_DTO> getEventStats(@PathVariable String userid) {
+        return serService.getEventStats(userid);
     }
 
     @GetMapping("/getEventstats/{eventid}")

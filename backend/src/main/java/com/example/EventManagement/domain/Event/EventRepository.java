@@ -18,4 +18,21 @@ public interface EventRepository extends JpaRepository<Event,Long> {
             nativeQuery = true)
     List<Object[]> findEventDetailsNative(@Param("eventId") Long eventId);
 
+
+    @Query(value = """
+            SELECT events.* FROM events LEFT JOIN student_event_register s ON events.id=s.event_id
+            WHERE user_id=:userid
+            ;
+            """,nativeQuery = true)
+    List<Event> findByAssignedEventsStudent(@Param("userid") String userid);
+
+
+    @Query(value = """
+            SELECT  e.*
+                                 FROM events e
+                                 LEFT JOIN event_invitation ei ON e.id=ei.eventid
+                                 WHERE ei.selected=1 AND ei.userid=:userid
+            """,nativeQuery = true)
+    List<Event> findByAssignedEventsManager(@Param("userid") String userid);
+
 }

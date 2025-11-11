@@ -6,7 +6,7 @@ import java.time.LocalDateTime;
 
 @Data
 public class EventInvitationInDTO {
-    private Long id;
+//    private Long id;
 
     private String eventid;
 

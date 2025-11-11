@@ -161,7 +161,7 @@ export function StudentRegisterPage() {
     haveBike: formData.hasBike,                     // hasBike → haveBike
     transportMedium: formData.hasTransportation,    // hasTransportation → transportMedium
     dietaryRestrictions: formData.dietaryRestrictions, // dietaryRestrictions → dietaryRestrictions
-    status: "Applied"                               // default status
+    status: "PENDING"                               // default status
   };
 }
 

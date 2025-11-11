@@ -10,4 +10,9 @@ class GreenRouteApplicationTests {
 	void contextLoads() {
 	}
 
+	@Test
+	void test(){
+
+	}
+
 }
