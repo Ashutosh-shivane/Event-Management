@@ -1,5 +1,7 @@
 package com.example.EventManagement.domain.Manager;
 
+import com.example.EventManagement.domain.Event.EventOutDto;
+import com.example.EventManagement.domain.Event.EventRepository;
 import com.example.EventManagement.domain.entity.User;
 import com.example.EventManagement.domain.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -7,12 +9,15 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 public class ManagerService {
 
     private final ManagerRepository managerRepository;
     private final UserRepository userRepository;
+    private final EventRepository eventRepository;
 
     @Autowired
     private  ModelMapper modelMapper;
@@ -65,5 +70,13 @@ public class ManagerService {
         }
 
 
+    }
+
+    public List<EventOutDto> listAllAssignedEvent(String userid) {
+
+        return eventRepository.findByAssignedEventsManager(userid)
+                .stream()
+                .map(event -> modelMapper.map(event, EventOutDto.class))
+                .toList();
     }
 }

@@ -53,7 +53,10 @@ export function ManagerApprovalsPage() {
 
 
     try{
-     const res= await axios.get("http://localhost:8080/SER/getstats");
+
+      var userid=localStorage.getItem("id");
+
+     const res= await axios.get(`http://localhost:8080/SER/getstats/${userid}`);
 
      console.log(res);
 

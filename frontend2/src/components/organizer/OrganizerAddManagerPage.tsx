@@ -48,7 +48,7 @@ interface ManagerInvitation {
   id: string;
   managerId: string;
   roleId: string;
-  status: 'pending' | 'accepted' | 'declined' | 'counter_offered';
+  status: 'PENDING' | 'ACCEPT' | 'DECLINE' | 'COUNTER_OFFER';
   originalBudget: number;
   counterOffer?: number;
   counterMessage?: string;
@@ -69,48 +69,12 @@ export function OrganizerAddManagerPage() {
   
   // Role definition state
   const [roleDefinitions, setRoleDefinitions] = useState<RoleDefinition[]>([
-    // {
-    //   id: '1',
-    //   title: 'Event Manager',
-    //   description: 'Overall event coordination and management',
-    //   budget: 5000,
-    //   currency: 'USD',
-    //   responsibilities: ['Oversee event execution', 'Coordinate with vendors', 'Manage timeline'],
-    //   requirements: ['5+ years experience', 'Event management certification'],
-    //   deadline: '2024-03-01'
-    // }
+   
   ]);
   
   // Manager invitations state
    const [managerInvitations, setManagerInvitations] = useState<ManagerInvitation[]>([
-  //   {
-  //     id: '1',
-  //     managerId: '1',
-  //     roleId: '1',
-  //     status: 'counter_offered',
-  //     originalBudget: 5000,
-  //     counterOffer: 6500,
-  //     counterMessage: 'Based on the scope of work, I believe this budget better reflects the requirements.',
-  //     sentAt: new Date('2024-02-15'),
-  //     respondedAt: new Date('2024-02-16')
-  //   },
-  //   {
-  //     id: '2',
-  //     managerId: '2',
-  //     roleId: '1',
-  //     status: 'accepted',
-  //     originalBudget: 5000,
-  //     sentAt: new Date('2024-02-15'),
-  //     respondedAt: new Date('2024-02-15')
-  //   },
-  //   {
-  //     id: '3',
-  //     managerId: '4',
-  //     roleId: '1',
-  //     status: 'pending',
-  //     originalBudget: 5000,
-  //     sentAt: new Date('2024-02-16')
-  //   }
+  
   ]);
   
   // Form state for new role
@@ -136,63 +100,7 @@ export function OrganizerAddManagerPage() {
 
   const[availableManagers,setAvailableManagers]=useState([]);
 
-  // const availableManagers = [
-  //   { 
-  //     id: '1', 
-  //     name: 'Sarah Johnson', 
-  //     email: 'sarah.johnson@example.com', 
-  //     role: 'Event Manager',
-  //     experience: '5+ years',
-  //     specialties: ['Event Planning', 'Logistics', 'Vendor Management'],
-  //     rating: 4.8,
-  //     eventsManaged: 25,
-  //     available: true
-  //   },
-  //   { 
-  //     id: '2', 
-  //     name: 'Mike Chen', 
-  //     email: 'mike.chen@example.com', 
-  //     role: 'Logistics Manager',
-  //     experience: '3+ years',
-  //     specialties: ['Logistics', 'Operations', 'Team Coordination'],
-  //     rating: 4.6,
-  //     eventsManaged: 18,
-  //     available: true
-  //   },
-  //   { 
-  //     id: '3', 
-  //     name: 'Emily Davis', 
-  //     email: 'emily.davis@example.com', 
-  //     role: 'Registration Manager',
-  //     experience: '4+ years',
-  //     specialties: ['Registration', 'Customer Service', 'Data Management'],
-  //     rating: 4.9,
-  //     eventsManaged: 32,
-  //     available: false
-  //   },
-  //   { 
-  //     id: '4', 
-  //     name: 'David Wilson', 
-  //     email: 'david.wilson@example.com', 
-  //     role: 'Marketing Manager',
-  //     experience: '6+ years',
-  //     specialties: ['Marketing', 'Social Media', 'Promotion'],
-  //     rating: 4.7,
-  //     eventsManaged: 29,
-  //     available: true
-  //   },
-  //   { 
-  //     id: '5', 
-  //     name: 'Lisa Anderson', 
-  //     email: 'lisa.anderson@example.com', 
-  //     role: 'Financial Manager',
-  //     experience: '7+ years',
-  //     specialties: ['Finance', 'Budget Management', 'Reporting'],
-  //     rating: 4.8,
-  //     eventsManaged: 34,
-  //     available: true
-  //   }
-  // ];
+  
 
   const managerRoles = [
     'Event Manager',
@@ -226,7 +134,7 @@ export function OrganizerAddManagerPage() {
     id: String(invite.id),
     managerId: invite.userid,
     roleId: invite.roleid,
-    status: invite.status || "pending",
+    status: invite.status || "PENDING",
     originalBudget:  0,
     counterOffer:   Number(invite.proposed_budget)? Number(invite.proposed_budget) : 0,
     counterMessage: invite.manager_msg || undefined,
@@ -234,6 +142,21 @@ export function OrganizerAddManagerPage() {
     respondedAt: invite.respondedAt ? new Date(invite.respondedAt) : undefined,
   }));
 }
+
+function mapInvitationSingle(invite: any): ManagerInvitation {
+  return {
+    id: String(invite.id),
+    managerId: invite.userid,
+    roleId: invite.roleid,
+    status: invite.status || "PENDING",
+    originalBudget: 0,
+    counterOffer: Number(invite.proposed_budget) ? Number(invite.proposed_budget) : 0,
+    counterMessage: invite.manager_msg || undefined,
+    sentAt: invite.sentAt ? new Date(invite.sentAt) : new Date(),
+    respondedAt: invite.respondedAt ? new Date(invite.respondedAt) : undefined,
+  };
+}
+
 
 
   function mapManagers(managerlist) {
@@ -253,9 +176,13 @@ export function OrganizerAddManagerPage() {
 
 
   useEffect(()=>{
+
+     const fetchData = async () => {
     try{
 
-      axios.get(`http://localhost:8080/OME/GetData/${eventId}`)
+      console.log(eventId+"   here check eventid");
+
+       const res = await axios.get(`http://localhost:8080/OME/GetData/${eventId}`)
       .then((res)=>{
         console.log(res.data);
 
@@ -278,13 +205,33 @@ export function OrganizerAddManagerPage() {
 
         setEventData(tempevent);
 
+
+         const mappedRoles: RoleDefinition[] = res.data.rolelist.map((role: any) => ({
+  id: role.id ? role.id.toString() : Date.now().toString(),
+  title: role.title,
+  description: role.description,
+  budget: parseFloat(role.budget),
+  currency: role.currency,
+  responsibilities: role.responsibilities
+    ? role.responsibilities.split(",").map((r: string) => r.trim()).filter((r: string) => r !== "")
+    : [],
+  requirements: role.requirments
+    ? role.requirments.split(",").map((r: string) => r.trim()).filter((r: string) => r !== "")
+    : [],
+  deadline: role.deadline
+}));
+
+        setRoleDefinitions(mappedRoles);
+
       })
 
 
     }catch(err){
       console.log(err);
     }
-  },[]);
+  }
+      fetchData();
+  },[eventId]);
 
 
 
@@ -386,27 +333,7 @@ export function OrganizerAddManagerPage() {
 
  setRoleDefinitions(mappedRoles);
 
-    //   const role: RoleDefinition = {
-    //   id: Date.now().toString(),
-    //   title: newRole.title,
-    //   description: newRole.description,
-    //   budget: parseFloat(newRole.budget),
-    //   currency: newRole.currency,
-    //   responsibilities: newRole.responsibilities.filter(r => r.trim() !== ''),
-    //   requirements: newRole.requirements.filter(r => r.trim() !== ''),
-    //   deadline: newRole.deadline
-    // };
-
-    // setRoleDefinitions(prev => [...prev, role]);
-    // setNewRole({
-    //   title: '',
-    //   description: '',
-    //   budget: '',
-    //   currency: 'USD',
-    //   responsibilities: [''],
-    //   requirements: [''],
-    //   deadline: ''
-    // });
+    
     
     alert('Role created successfully!');
 
@@ -425,8 +352,14 @@ export function OrganizerAddManagerPage() {
   };
 
   const sendInvitationToManager = async (managerId: string, roleId: string) => {
+
+    console.log(managerId,roleId);
+
     const role = roleDefinitions.find(r => r.id === roleId);
     const manager = availableManagers.find(m => m.id === managerId);
+
+    console.log(role);
+    console.log(manager);
     
     if (!role || !manager) return;
 
@@ -443,39 +376,41 @@ export function OrganizerAddManagerPage() {
     setIsInviting(true);
     try {
       // Create new invitation
-      const invitation: ManagerInvitation = {
-        id: Date.now().toString(),
-        managerId,
-        roleId,
-        status: 'pending',
-        originalBudget: role.budget,
-        sentAt: new Date()
-      };
+      
+
+      const payload={
+        eventid:eventId,
+        roleid:roleId,
+        userid:managerId,
+        sentAt: new Date().toISOString(),
+        status:"SENT"
+
+      }
+
+      var invitation:ManagerInvitation;
+      try{
+      const res=await axios.post("http://localhost:8080/OME/SaveManagerInvitation",payload);
+
+     invitation =mapInvitationSingle(res.data);
+
+      }catch(error){
+        console.log(error);
+
+      }
+
+      
+
+
+
+    
+
+
 
       setManagerInvitations(prev => [...prev, invitation]);
 
-      // Send notification to manager
-      sendManagerInvitation({
-        managerId: manager.id,
-        managerName: manager.name,
-        managerEmail: manager.email,
-        eventId: eventData.id,
-        eventTitle: eventData.title,
-        organizerId: user?.id || '1',
-        organizerName: user?.name || 'Current Organizer',
-        assignedRole: role.title,
-        permissions: [],
-        customMessage: `Budget: ${role.currency} ${role.budget}`,
-        budget: role.budget,
-        currency: role.currency,
-        roleDescription: role.description,
-        responsibilities: role.responsibilities,
-        requirements: role.requirements,
-        deadline: role.deadline
-      });
+     
 
-      // Simulate network delay
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      
       
       alert(`Invitation sent to ${manager.name} for ${role.title} role!`);
     } catch (error) {
@@ -486,7 +421,7 @@ export function OrganizerAddManagerPage() {
     }
   };
 
-  const handleManagerSelection = (invitationId: string) => {
+  const handleManagerSelection = async (invitationId: string) => {
     const invitation = managerInvitations.find(inv => inv.id === invitationId);
     const manager = availableManagers.find(m => m.id === invitation?.managerId);
     const role = roleDefinitions.find(r => r.id === invitation?.roleId);
@@ -496,11 +431,45 @@ export function OrganizerAddManagerPage() {
       alert(`Selected ${manager.name} for ${role.title} role with budget ${role.currency} ${finalBudget}`);
       
       // Update invitation status to selected
+
+
+
+
+     
+      // Create new invitation
+      
+
+      
+
+      
+      try{
+      const res=await axios.patch(`http://localhost:8080/OME/SelectManagerByOrg/${invitationId}/${invitation?.managerId}`);
+
+
+       const invitationlist=mapInvitations(res.data);
+
+       console.log(invitationlist);
+
+
+        setManagerInvitations(invitationlist);
+
+       
+
+     
+
+      }catch(error){
+        console.log(error);
+
+      }
+
+      
+
+
       setManagerInvitations(prev => prev.map(inv => 
         inv.id === invitationId 
-          ? { ...inv, status: 'accepted' as const }
+          ? { ...inv, status: 'ACCEPT' as const }
           : inv.roleId === invitation.roleId 
-            ? { ...inv, status: 'declined' as const }
+            ? { ...inv, status: 'DECLINE' as const }
             : inv
       ));
     }
@@ -554,6 +523,10 @@ export function OrganizerAddManagerPage() {
 
 
   return (
+
+
+
+
     <div className="min-h-screen bg-gray-50 py-8">
 
       {isLoading && <LoaderPopup />}
@@ -853,16 +826,16 @@ export function OrganizerAddManagerPage() {
                                   {invitation ? (
                                     <Badge 
                                       variant={
-                                        invitation.status === 'accepted' ? 'default' :
-                                        invitation.status === 'counter_offered' ? 'secondary' :
-                                        invitation.status === 'declined' ? 'destructive' :
+                                        invitation.status === 'ACCEPT' ? 'default' :
+                                        invitation.status === 'COUNTER_OFFER' ? 'secondary' :
+                                        invitation.status === 'DECLINE' ? 'destructive' :
                                         'outline'
                                       }
                                     >
-                                      {invitation.status === 'accepted' ? 'Accepted' :
-                                       invitation.status === 'counter_offered' ? 'Counter Offer' :
-                                       invitation.status === 'declined' ? 'Declined' :
-                                       'Pending'}
+                                      {invitation.status === 'ACCEPT' ? 'ACCEPT' :
+                                       invitation.status === 'COUNTER_OFFER' ? 'Counter Offer' :
+                                       invitation.status === 'DECLINE' ? 'DECLINE' :
+                                       'PENDING'}
                                     </Badge>
                                   ) : (
                                     <Button
@@ -915,7 +888,12 @@ export function OrganizerAddManagerPage() {
                       if (!manager || !role) return null;
                       
                       return (
-                        <div key={invitation.id} className="border rounded-lg p-4 space-y-3">
+                      <div
+  key={invitation.id}
+  className={`border rounded-lg p-4 space-y-3 ${
+    invitation.status === 'SELECTED' ? 'bg-green-100' : 'bg-white'
+  }`}
+>
                           <div className="flex items-start justify-between">
                             <div className="flex-1">
                               <div className="flex items-center space-x-2 mb-2">
@@ -923,16 +901,18 @@ export function OrganizerAddManagerPage() {
                                 <Badge variant="outline">{role.title}</Badge>
                                 <Badge 
                                   variant={
-                                    invitation.status === 'accepted' ? 'default' :
-                                    invitation.status === 'counter_offered' ? 'secondary' :
-                                    invitation.status === 'declined' ? 'destructive' :
+                                    invitation.status === 'ACCEPT' ? 'default' :
+                                    invitation.status === 'COUNTER_OFFER' ? 'secondary' :
+                                    invitation.status === 'DECLINE' ? 'destructive' :
+                                    invitation.status === 'SELECTED' ? 'success' :
                                     'outline'
                                   }
                                 >
-                                  {invitation.status === 'accepted' ? 'Accepted' :
-                                   invitation.status === 'counter_offered' ? 'Counter Offer' :
-                                   invitation.status === 'declined' ? 'Declined' :
-                                   'Pending'}
+                                  {invitation.status === 'ACCEPT' ? 'ACCEPT' :
+                                   invitation.status === 'COUNTER_OFFER' ? 'Counter Offer' :
+                                   invitation.status === 'DECLINE' ? 'DECLINE' :
+                                   invitation.status === 'SELECTED' ? 'SELECTED' :
+                                   'PENDING'}
                                 </Badge>
                               </div>
                               
@@ -964,7 +944,7 @@ export function OrganizerAddManagerPage() {
                             </div>
                             
                             <div className="flex gap-2">
-                              {(invitation.status === 'accepted' || invitation.status === 'counter_offered') && (
+                              {(invitation.status === 'ACCEPT' || invitation.status === 'COUNTER_OFFER') && (
                                 <Button
                                   size="sm"
                                   onClick={() => handleManagerSelection(invitation.id)}

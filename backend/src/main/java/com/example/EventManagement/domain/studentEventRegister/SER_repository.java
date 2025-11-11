@@ -12,21 +12,23 @@ import java.util.List;
 public interface SER_repository extends JpaRepository<Event,Long> {
 
     @Query(value = """
-        SELECT 
-            e.id AS eventId,
-            e.title AS title,
-            e.location AS location,
-            DATE(e.start_at) AS start_at,
-            e.required_volunteer,
-            COUNT(s.id) AS totalStudents,
-            COUNT(CASE WHEN s.status = 'PENDING' THEN 1 END) AS pendingCount,
-            COUNT(CASE WHEN s.status = 'APPROVED' THEN 1 END) AS approvedCount,
-            COUNT(CASE WHEN s.status = 'REJECTED' THEN 1 END) AS rejectedCount
-        FROM events e
-        LEFT JOIN student_event_register s ON e.id = s.event_id
-        GROUP BY e.id, e.title, e.location, e.start_at
+             SELECT
+                        e.id AS eventId,
+                        e.title AS title,
+                        e.location AS location,
+                        DATE(e.start_at) AS start_at,
+                        e.required_volunteer,
+                        COUNT(s.id) AS totalStudents,
+                        COUNT(CASE WHEN s.status = 'PENDING' THEN 1 END) AS pendingCount,
+                        COUNT(CASE WHEN s.status = 'APPROVED' THEN 1 END) AS approvedCount,
+                        COUNT(CASE WHEN s.status = 'REJECTED' THEN 1 END) AS rejectedCount
+                    FROM events e
+                    LEFT JOIN student_event_register s ON e.id = s.event_id
+                    LEFT JOIN event_invitation ei ON e.id=ei.eventid
+                    WHERE ei.selected=1 AND ei.userid=:userid
+                    GROUP BY e.id, e.title, e.location, e.start_at
         """, nativeQuery = true)
-    List<SER_Eventlist_DTO> getEventStats();
+    List<SER_Eventlist_DTO> getEventStats(@Param("userid") String userid);
 
 
 

@@ -1,6 +1,7 @@
 package com.example.EventManagement.domain.Student;
 
 import com.example.EventManagement.domain.Event.Event;
+import com.example.EventManagement.domain.Event.EventOutDto;
 import com.example.EventManagement.domain.Event.EventRepository;
 import com.example.EventManagement.domain.entity.User;
 import com.example.EventManagement.domain.repository.UserRepository;
@@ -11,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -182,5 +184,14 @@ public class StudentService {
 
 
 
+    }
+
+    public List<EventOutDto> listAllAssignedEvent(String userid) {
+
+
+        return eventRepository.findByAssignedEventsStudent(userid)
+                .stream()
+                .map(event -> modelMapper.map(event, EventOutDto.class))
+                .toList();
     }
 }

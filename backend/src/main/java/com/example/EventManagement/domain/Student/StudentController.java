@@ -1,9 +1,11 @@
 package com.example.EventManagement.domain.Student;
 
+import com.example.EventManagement.domain.Event.EventOutDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -36,6 +38,13 @@ public class StudentController {
 
         return ResponseEntity.ok(studentService.registerForEvent(studentEventRegisterInDto));
 
+    }
+
+
+    @GetMapping("/Assigneventlist/{userid}")
+    public ResponseEntity<List<EventOutDto>> AllEvent(@PathVariable String userid){
+
+        return ResponseEntity.ok(studentService.listAllAssignedEvent(userid));
     }
 
 }

@@ -56,6 +56,7 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
       baseItems.push(
         { key: 'invitations', label: 'Invitations', icon: Bell, path: '/manager/invitations', badge: 2 },
         { key: 'add-event', label: 'Add Event', icon: Calendar, path: '/manager/add-event' },
+          { key: 'Assigned_Events', label: 'Assigned Events', icon: Calendar, path: '/manager/Assigned_Events' },
         { key: 'approvals', label: 'Student Approvals', icon: Users, path: '/manager/approvals' }
       );
     }
@@ -69,7 +70,9 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
 
     if (user?.role === 'STUDENT') {
       baseItems.push(
+         { key: 'Assigned_Events', label: 'Assigned Events', icon: Calendar, path: '/student/Assigned_Events' },
         { key: 'feedback', label: 'Event Feedback', icon: Star, path: '/student/feedback' }
+        
       );
     }
 

@@ -33,6 +33,10 @@ import { Button } from './components/ui/button';
 import { ArrowLeft } from 'lucide-react';
 import { Toaster } from './components/ui/sonner';
 
+
+import {StudentAssignedEventPage} from './components/student/StudentAssignedEventPage';
+import {ManagerAssignedEventPage} from './components/manager/ManagerAssignedEventPage';
+
 // Protected Route Component
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
   const { isAuthenticated } = useAuth();
@@ -395,6 +399,35 @@ function AppRoutes() {
             <div className="min-h-screen bg-gray-50">
               <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
                 <AdminNotificationManagementPage />
+              </div>
+            </div>
+          </ProtectedRoute>
+        } 
+      />
+
+
+
+
+      <Route 
+        path="/student/Assigned_Events" 
+        element={
+          <ProtectedRoute>
+            <div className="min-h-screen bg-gray-50">
+              <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+                <StudentAssignedEventPage />
+              </div>
+            </div>
+          </ProtectedRoute>
+        } 
+      />
+
+       <Route 
+        path="/manager/Assigned_Events" 
+        element={
+          <ProtectedRoute>
+            <div className="min-h-screen bg-gray-50">
+              <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+                <ManagerAssignedEventPage />
               </div>
             </div>
           </ProtectedRoute>
