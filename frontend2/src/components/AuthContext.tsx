@@ -58,6 +58,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       setIsAuthenticated(true);
     } catch (err) {
       console.error("Login failed", err);
+      alert("Incorrect username and password");
       throw err;
     }
 
@@ -84,6 +85,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       
     } catch (err) {
       console.error("Signup/Login failed", err);
+      alert("Username already Exists");
       throw err;
     }
   };
