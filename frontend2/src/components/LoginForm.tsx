@@ -122,7 +122,7 @@ export function LoginForm({ initialMode = 'login' }: LoginFormProps) {
                 />
               </div>
 
-              <div className="space-y-2">
+              {/* <div className="space-y-2">
                 <Label htmlFor="login-role">Role</Label>
                 <Select value={loginRole} onValueChange={(value) => setLoginRole(value as UserRole)}>
                   <SelectTrigger>
@@ -136,7 +136,7 @@ export function LoginForm({ initialMode = 'login' }: LoginFormProps) {
                     ))}
                   </SelectContent>
                 </Select>
-              </div>
+              </div> */}
 
               <Button type="submit" className="w-full" disabled={isLoading}>
                 {isLoading ? 'Signing in...' : 'Sign In'}
