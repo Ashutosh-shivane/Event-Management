@@ -144,11 +144,11 @@ public class OME_service {
                 break;
 
             case "DECLINE":
-                invitation.setStatus("DECLINED");
+                invitation.setStatus("DECLINE");
                 break;
 
             case "ACCEPT":
-                invitation.setStatus("ACCEPTED");
+                invitation.setStatus("ACCEPT");
                 break;
 
             default:

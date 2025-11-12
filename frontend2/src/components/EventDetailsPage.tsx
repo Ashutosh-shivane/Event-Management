@@ -70,6 +70,8 @@ export function EventDetailsPage() {
 
   const [eventdata, setEventdata] = useState({});
 
+  const userrole=localStorage.getItem('userrole');
+
   console.log(eventId);
 
    const mapEvent = (row) => ({
@@ -268,7 +270,9 @@ export function EventDetailsPage() {
           
 
           {/* Register Button */}
-          <div className="flex justify-center mb-8">
+
+          
+          <div className="flex justify-center mb-8"   style={{ display: userrole === "STUDENT" ? "flex" : "none" }}>
             <Button
               size="lg"
               className="px-8"
@@ -280,6 +284,8 @@ export function EventDetailsPage() {
                 }
               }}
               disabled={event.registered >= event.capacity}
+
+              
             >
               {isRegistered ? (
                 <>

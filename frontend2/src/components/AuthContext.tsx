@@ -52,6 +52,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
       localStorage.setItem("token", data.jwt);
       localStorage.setItem("id", data.userid);
+      localStorage.setItem("userrole", data.role);
+      localStorage.setItem("useremail", data.role);
       setUser(loggedInUser);
       setIsAuthenticated(true);
     } catch (err) {
