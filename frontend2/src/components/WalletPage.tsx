@@ -14,7 +14,8 @@ import {
   Plus,
   ArrowUpRight,
   ArrowDownLeft,
-  Calendar
+  Calendar,
+  IndianRupee
 } from 'lucide-react';
 
 export function WalletPage() {
@@ -26,47 +27,47 @@ export function WalletPage() {
       id: 1,
       type: 'income',
       description: 'Event registration: Tech Conference 2024',
-      amount: 50.00,
+      amount: 50.0,
       date: '2024-03-10',
       status: 'completed',
-      method: 'Credit Card'
+      method: 'Credit Card',
     },
     {
       id: 2,
       type: 'expense',
       description: 'Service fee for Music Festival',
-      amount: -5.00,
+      amount: -5.0,
       date: '2024-03-09',
       status: 'completed',
-      method: 'Wallet Balance'
+      method: 'Wallet Balance',
     },
     {
       id: 3,
       type: 'income',
       description: 'Vendor payment: Catering Services',
-      amount: 2500.00,
+      amount: 2500.0,
       date: '2024-03-08',
       status: 'completed',
-      method: 'Bank Transfer'
+      method: 'Bank Transfer',
     },
     {
       id: 4,
       type: 'expense',
       description: 'Event ticket: Career Fair 2024',
-      amount: -25.00,
+      amount: -25.0,
       date: '2024-03-07',
       status: 'pending',
-      method: 'Credit Card'
+      method: 'Credit Card',
     },
     {
       id: 5,
       type: 'income',
       description: 'Refund: Workshop cancellation',
-      amount: 120.00,
+      amount: 120.0,
       date: '2024-03-06',
       status: 'completed',
-      method: 'Original Payment Method'
-    }
+      method: 'Original Payment Method',
+    },
   ];
 
   const paymentMethods = [
@@ -75,42 +76,48 @@ export function WalletPage() {
       type: 'card',
       name: 'Visa ending in 4242',
       isDefault: true,
-      expiryDate: '12/26'
+      expiryDate: '12/26',
     },
     {
       id: 2,
       type: 'card',
       name: 'MasterCard ending in 8888',
       isDefault: false,
-      expiryDate: '08/25'
+      expiryDate: '08/25',
     },
     {
       id: 3,
       type: 'bank',
       name: 'Bank Account ending in 1234',
       isDefault: false,
-      expiryDate: null
-    }
+      expiryDate: null,
+    },
   ];
 
   const monthlyStats = [
     { month: 'Jan', income: 1200, expenses: 300 },
     { month: 'Feb', income: 1800, expenses: 450 },
-    { month: 'Mar', income: 2100, expenses: 380 }
+    { month: 'Mar', income: 2100, expenses: 380 },
   ];
 
   const getTransactionIcon = (type: string) => {
-    return type === 'income' ? 
-      <ArrowDownLeft className="h-4 w-4 text-green-600" /> : 
-      <ArrowUpRight className="h-4 w-4 text-red-600" />;
+    return type === 'income' ? (
+      <ArrowDownLeft className="h-4 w-4 text-green-600" />
+    ) : (
+      <ArrowUpRight className="h-4 w-4 text-red-600" />
+    );
   };
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case 'completed': return 'bg-green-100 text-green-800';
-      case 'pending': return 'bg-yellow-100 text-yellow-800';
-      case 'failed': return 'bg-red-100 text-red-800';
-      default: return 'bg-gray-100 text-gray-800';
+      case 'completed':
+        return 'bg-green-100 text-green-800';
+      case 'pending':
+        return 'bg-yellow-100 text-yellow-800';
+      case 'failed':
+        return 'bg-red-100 text-red-800';
+      default:
+        return 'bg-gray-100 text-gray-800';
     }
   };
 
@@ -140,7 +147,7 @@ export function WalletPage() {
               </div>
               <div className="ml-4">
                 <p className="text-sm text-gray-600">Current Balance</p>
-                <p className="text-2xl font-semibold">${balance.toFixed(2)}</p>
+                <p className="text-2xl font-semibold">₹{balance.toFixed(2)}</p>
                 <p className="text-xs text-green-600">+12.5% this month</p>
               </div>
             </div>
@@ -155,7 +162,7 @@ export function WalletPage() {
               </div>
               <div className="ml-4">
                 <p className="text-sm text-gray-600">This Month Income</p>
-                <p className="text-2xl font-semibold">$2,100</p>
+                <p className="text-2xl font-semibold">₹2,100</p>
                 <p className="text-xs text-green-600">+16.7% from last month</p>
               </div>
             </div>
@@ -166,11 +173,12 @@ export function WalletPage() {
           <CardContent className="p-6">
             <div className="flex items-center">
               <div className="p-2 bg-red-100 rounded-lg">
-                <DollarSign className="h-6 w-6 text-red-600" />
+                {/* <DollarSign className="h-6 w-6 text-red-600" /> */}
+                <IndianRupee className="h-6 w-6 text-red-600" />
               </div>
               <div className="ml-4">
                 <p className="text-sm text-gray-600">This Month Expenses</p>
-                <p className="text-2xl font-semibold">$380</p>
+                <p className="text-2xl font-semibold">₹380</p>
                 <p className="text-xs text-red-600">-15.6% from last month</p>
               </div>
             </div>
@@ -187,11 +195,16 @@ export function WalletPage() {
           <CardContent>
             <div className="space-y-4">
               {transactions.slice(0, 5).map((transaction) => (
-                <div key={transaction.id} className="flex items-center justify-between p-4 border rounded-lg">
+                <div
+                  key={transaction.id}
+                  className="flex items-center justify-between p-4 border rounded-lg"
+                >
                   <div className="flex items-center space-x-3">
                     {getTransactionIcon(transaction.type)}
                     <div className="flex-1">
-                      <p className="font-medium text-gray-900">{transaction.description}</p>
+                      <p className="font-medium text-gray-900">
+                        {transaction.description}
+                      </p>
                       <div className="flex items-center space-x-2 text-sm text-gray-600">
                         <Calendar className="h-3 w-3" />
                         <span>{transaction.date}</span>
@@ -200,21 +213,29 @@ export function WalletPage() {
                       </div>
                     </div>
                   </div>
-                  
+
                   <div className="text-right">
-                    <p className={`font-semibold ${
-                      transaction.type === 'income' ? 'text-green-600' : 'text-red-600'
-                    }`}>
-                      {transaction.type === 'income' ? '+' : ''}${Math.abs(transaction.amount).toFixed(2)}
+                    <p
+                      className={`font-semibold ${
+                        transaction.type === 'income'
+                          ? 'text-green-600'
+                          : 'text-red-600'
+                      }`}
+                    >
+                      {transaction.type === 'income' ? '+' : ''}₹
+                      {Math.abs(transaction.amount).toFixed(2)}
                     </p>
-                    <Badge className={getStatusColor(transaction.status)} variant="secondary">
+                    <Badge
+                      className={getStatusColor(transaction.status)}
+                      variant="secondary"
+                    >
                       {transaction.status}
                     </Badge>
                   </div>
                 </div>
               ))}
             </div>
-            
+
             <div className="mt-4 text-center">
               <Button variant="outline">View All Transactions</Button>
             </div>
@@ -229,7 +250,10 @@ export function WalletPage() {
           <CardContent>
             <div className="space-y-4">
               {paymentMethods.map((method) => (
-                <div key={method.id} className="flex items-center justify-between p-4 border rounded-lg">
+                <div
+                  key={method.id}
+                  className="flex items-center justify-between p-4 border rounded-lg"
+                >
                   <div className="flex items-center space-x-3">
                     <div className="p-2 bg-gray-100 rounded-lg">
                       <CreditCard className="h-5 w-5 text-gray-600" />
@@ -237,21 +261,23 @@ export function WalletPage() {
                     <div>
                       <p className="font-medium text-gray-900">{method.name}</p>
                       {method.expiryDate && (
-                        <p className="text-sm text-gray-600">Expires {method.expiryDate}</p>
+                        <p className="text-sm text-gray-600">
+                          Expires {method.expiryDate}
+                        </p>
                       )}
                     </div>
                   </div>
-                  
+
                   <div className="flex items-center space-x-2">
-                    {method.isDefault && (
-                      <Badge variant="secondary">Default</Badge>
-                    )}
-                    <Button variant="outline" size="sm">Edit</Button>
+                    {method.isDefault && <Badge variant="secondary">Default</Badge>}
+                    <Button variant="outline" size="sm">
+                      Edit
+                    </Button>
                   </div>
                 </div>
               ))}
             </div>
-            
+
             <div className="mt-4">
               <Button variant="outline" className="w-full">
                 <Plus size={16} className="mr-2" />
@@ -273,28 +299,34 @@ export function WalletPage() {
               <TabsTrigger value="monthly">Monthly</TabsTrigger>
               <TabsTrigger value="yearly">Yearly</TabsTrigger>
             </TabsList>
-            
+
             <TabsContent value="monthly" className="mt-6">
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                 {monthlyStats.map((stat, index) => (
                   <div key={index} className="border rounded-lg p-4">
-                    <h3 className="font-semibold text-gray-900 mb-3">{stat.month} 2024</h3>
-                    
+                    <h3 className="font-semibold text-gray-900 mb-3">
+                      {stat.month} 2024
+                    </h3>
+
                     <div className="space-y-2">
                       <div className="flex justify-between items-center">
                         <span className="text-sm text-gray-600">Income</span>
-                        <span className="font-medium text-green-600">${stat.income}</span>
+                        <span className="font-medium text-green-600">
+                          ₹{stat.income}
+                        </span>
                       </div>
-                      
+
                       <div className="flex justify-between items-center">
                         <span className="text-sm text-gray-600">Expenses</span>
-                        <span className="font-medium text-red-600">${stat.expenses}</span>
+                        <span className="font-medium text-red-600">
+                          ₹{stat.expenses}
+                        </span>
                       </div>
-                      
+
                       <div className="flex justify-between items-center pt-2 border-t">
                         <span className="font-medium text-gray-900">Net</span>
                         <span className="font-semibold text-blue-600">
-                          ${stat.income - stat.expenses}
+                          ₹{stat.income - stat.expenses}
                         </span>
                       </div>
                     </div>
@@ -302,11 +334,16 @@ export function WalletPage() {
                 ))}
               </div>
             </TabsContent>
-            
+
             <TabsContent value="yearly" className="mt-6">
               <div className="text-center py-12">
-                <TrendingUp size={48} className="mx-auto text-gray-400 mb-4" />
-                <p className="text-gray-600">Yearly financial data visualization would be displayed here</p>
+                <TrendingUp
+                  size={48}
+                  className="mx-auto text-gray-400 mb-4"
+                />
+                <p className="text-gray-600">
+                  Yearly financial data visualization would be displayed here
+                </p>
               </div>
             </TabsContent>
           </Tabs>

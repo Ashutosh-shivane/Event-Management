@@ -242,9 +242,9 @@ export function OrganizerEventManagePage() {
                       {getStatusIcon(event.status)}
                       <span>{event.status.charAt(0).toUpperCase() + event.status.slice(1)}</span>
                     </Badge>
-                    <Button variant="ghost" size="sm">
+                    {/* <Button variant="ghost" size="sm">
                       <MoreHorizontal className="h-4 w-4" />
-                    </Button>
+                    </Button> */}
                   </div>
                 </div>
               </CardHeader>
@@ -337,12 +337,12 @@ export function OrganizerEventManagePage() {
                     <Edit className="h-4 w-4 mr-1" />
                     Edit Event
                   </Button>
-                  <Button 
+                  {/* <Button 
                     size="sm" 
                     variant="outline"
                   >
                     <Settings className="h-4 w-4" />
-                  </Button>
+                  </Button> */}
                 </div>
               </CardContent>
             </Card>
@@ -379,7 +379,7 @@ export function OrganizerEventManagePage() {
           <Card>
             <CardContent className="p-6 text-center">
               <div className="text-2xl font-bold text-orange-600">
-                ${myEvents.reduce((sum, event) => sum + event.revenue, 0).toLocaleString()}
+                Rs. {myEvents.reduce((sum, event) => sum + event.revenue, 0).toLocaleString()}
               </div>
               <div className="text-sm text-gray-600">Total Revenue</div>
             </CardContent>
