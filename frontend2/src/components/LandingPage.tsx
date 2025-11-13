@@ -328,7 +328,7 @@ export function LandingPage() {
             {[
               {
                 name: "Starter",
-                price: "$29",
+                price: "₹ 299",
                 period: "/month",
                 description: "Perfect for small events and organizations",
                 features: [
@@ -341,7 +341,7 @@ export function LandingPage() {
               },
               {
                 name: "Professional",
-                price: "$79",
+                price: "₹ 799",
                 period: "/month",
                 description: "Ideal for growing event management companies",
                 features: [

@@ -18,8 +18,21 @@ public class DashboardController {
 
 
     @GetMapping("student/{userid}")
-    public ResponseEntity<Map<String,Object>> getStudentDate(@PathVariable String userid){
+    public ResponseEntity<Map<String,Object>> getStudentData(@PathVariable String userid){
         return ResponseEntity.ok(dashboardService.getStudentDate(userid));
+
+    }
+
+
+    @GetMapping("manager/{userid}")
+    public ResponseEntity<Map<String,Object>> getManagerData(@PathVariable String userid){
+        return ResponseEntity.ok(dashboardService.getManagerData(userid));
+
+    }
+
+    @GetMapping("organizer/{userid}")
+    public ResponseEntity<Map<String,Object>> getOrganizerData(@PathVariable String userid){
+        return ResponseEntity.ok(dashboardService.getOrganizerData(userid));
 
     }
 

@@ -1,4 +1,5 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
+import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../AuthContext';
 import { Card, CardHeader, CardTitle, CardContent } from '../ui/card';
@@ -6,129 +7,119 @@ import { Button } from '../ui/button';
 import { Badge } from '../ui/badge';
 import { Progress } from '../ui/progress';
 import { Alert, AlertDescription } from '../ui/alert';
-import { 
-  Calendar, 
-  Users, 
-  CheckCircle, 
+import {
+  Calendar,
+  Users,
+  CheckCircle,
   Clock,
   AlertTriangle,
-  UserCheck,
-  Building,
-  Plus,
   User,
-  AlertCircle
+  Plus,
+  AlertCircle,
 } from 'lucide-react';
+
+interface EventOutDto {
+  id: number;
+  title: string;
+  description: string;
+  startAt: string;
+  endAt: string;
+  location: string;
+  status: string;
+  cost: string;
+  requiredVolunteer: string;
+  category: string;
+}
+
+interface UpcomingEventStat {
+  eventId: number;
+  title: string;
+  location: string;
+  startAt: string;
+  totalStudents: number;
+  pendingCount: number;
+  approvedCount: number;
+  rejectedCount: number;
+  required_volunteer: string;
+}
+
+interface DashboardResponse {
+  past_event_count: string;
+  upcoming_event_count: string;
+  approved_upcoming_event_count: string;
+  assigned_events: EventOutDto[];
+  upcoming_event_stats: UpcomingEventStat[];
+}
 
 export function ManagerDashboard() {
   const navigate = useNavigate();
   const { user } = useAuth();
 
-  const assignedEvents = [
-    {
-      id: 1,
-      title: 'Tech Conference 2024',
-      organizer: 'John Doe',
-      status: 'in-progress',
-      progress: 75,
-      volunteers: 12,
-      vendors: 5,
-      date: '2024-03-15',
-      tasks: { completed: 8, total: 12 }
-    },
-    {
-      id: 2,
-      title: 'Music Festival',
-      organizer: 'Jane Smith',
-      status: 'planning',
-      progress: 45,
-      volunteers: 0,
-      vendors: 2,
-      date: '2024-03-20',
-      tasks: { completed: 3, total: 8 }
-    },
-    {
-      id: 3,
-      title: 'Career Fair',
-      organizer: 'Mike Johnson',
-      status: 'approved',
-      progress: 90,
-      volunteers: 8,
-      vendors: 3,
-      date: '2024-03-25',
-      tasks: { completed: 10, total: 11 }
-    }
-  ];
+  const [data, setData] = useState<DashboardResponse | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
 
-  const pendingApprovals = [
-    { id: 1, type: 'vendor', name: 'Catering Solutions Inc.', event: 'Tech Conference 2024', amount: '$2,500' },
-    { id: 2, type: 'volunteer', name: 'Sarah Wilson', event: 'Music Festival', role: 'Registration Assistant' },
-    { id: 3, type: 'budget', name: 'Audio Equipment', event: 'Career Fair', amount: '$1,200' }
-  ];
+  // 🧩 Fetch data from backend
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const res = await axios.get<DashboardResponse>(
+          `http://localhost:8080/Dashboard/manager/${user?.id}`
+        );
+        setData(res.data);
+      } catch (err: any) {
+        console.error(err);
+        setError('Failed to load dashboard data');
+      } finally {
+        setLoading(false);
+      }
+    };
+    if (user?.id) fetchData();
+  }, [user]);
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case 'in-progress': return 'bg-blue-100 text-blue-800';
-      case 'planning': return 'bg-yellow-100 text-yellow-800';
-      case 'approved': return 'bg-green-100 text-green-800';
-      case 'pending': return 'bg-orange-100 text-orange-800';
-      default: return 'bg-gray-100 text-gray-800';
+      case 'APPROVED':
+      case 'Event Completed':
+        return 'bg-green-100 text-green-800';
+      case 'Event Created':
+      case 'UPCOMING':
+        return 'bg-blue-100 text-blue-800';
+      case 'REJECTED':
+        return 'bg-red-100 text-red-800';
+      default:
+        return 'bg-gray-100 text-gray-800';
     }
   };
 
+  if (loading)
+    return <p className="text-center mt-10 text-gray-600">Loading dashboard...</p>;
+  if (error)
+    return <p className="text-center text-red-500 mt-10">{error}</p>;
+  if (!data)
+    return <p className="text-center text-gray-600 mt-10">No data available.</p>;
+
   return (
     <div className="space-y-6">
+      {/* Header */}
       <div className="flex justify-between items-center">
         <h1 className="text-2xl font-bold text-gray-900">Manager Dashboard</h1>
         <div className="flex space-x-3">
-          <Button 
+          <Button
             onClick={() => navigate('/manager/add-event')}
             className="flex items-center space-x-2"
           >
             <Plus className="h-4 w-4" />
             <span>Create Event</span>
           </Button>
-          <Button variant="outline">View All Events</Button>
+          <Button variant="outline" onClick={() => navigate('/events')}>
+            View All Events
+          </Button>
         </div>
       </div>
 
-      {/* Profile Completion Alert */}
-      {!user?.profileCompleted && user?.role === 'manager' && (
-        <Alert className="border-orange-200 bg-orange-50">
-          <AlertCircle className="h-4 w-4 text-orange-600" />
-          <AlertDescription className="flex items-center justify-between">
-            <div>
-              <strong className="text-orange-800">Complete your manager profile</strong>
-              <p className="text-orange-700 mt-1">
-                Help us understand your management expertise and connect you with suitable teams and opportunities.
-              </p>
-            </div>
-            <Button 
-              size="sm" 
-              className="ml-4 bg-orange-600 hover:bg-orange-700"
-              onClick={() => navigate('/profile')}
-            >
-              <User className="h-4 w-4 mr-2" />
-              Complete Profile
-            </Button>
-          </AlertDescription>
-        </Alert>
-      )}
-
-      {/* Profile Completed Success */}
-      {user?.profileCompleted && user.role === 'manager' && (
-        <Alert className="border-green-200 bg-green-50">
-          <CheckCircle className="h-4 w-4 text-green-600" />
-          <AlertDescription>
-            <strong className="text-green-800">Profile completed!</strong>
-            <span className="text-green-700 ml-2">
-              Your manager profile is complete and you'll receive relevant event management opportunities.
-            </span>
-          </AlertDescription>
-        </Alert>
-      )}
-
       {/* Stats Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         <Card>
           <CardContent className="p-6">
             <div className="flex items-center">
@@ -136,9 +127,8 @@ export function ManagerDashboard() {
                 <Calendar className="h-6 w-6 text-blue-600" />
               </div>
               <div className="ml-4">
-                <p className="text-sm text-gray-600">Assigned Events</p>
-                <p className="text-2xl font-semibold">8</p>
-                <p className="text-xs text-blue-600">3 active</p>
+                <p className="text-sm text-gray-600">Upcoming Events</p>
+                <p className="text-2xl font-semibold">{data.upcoming_event_count}</p>
               </div>
             </div>
           </CardContent>
@@ -151,24 +141,8 @@ export function ManagerDashboard() {
                 <CheckCircle className="h-6 w-6 text-green-600" />
               </div>
               <div className="ml-4">
-                <p className="text-sm text-gray-600">Completed Tasks</p>
-                <p className="text-2xl font-semibold">24</p>
-                <p className="text-xs text-green-600">92% completion rate</p>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card className="cursor-pointer hover:shadow-md transition-shadow" onClick={() => onNavigate('manager-student-approvals')}>
-          <CardContent className="p-6">
-            <div className="flex items-center">
-              <div className="p-2 bg-orange-100 rounded-lg">
-                <Clock className="h-6 w-6 text-orange-600" />
-              </div>
-              <div className="ml-4">
-                <p className="text-sm text-gray-600">Student Approvals</p>
-                <p className="text-2xl font-semibold">35</p>
-                <p className="text-xs text-orange-600">Needs attention</p>
+                <p className="text-sm text-gray-600">Approved Upcoming Events</p>
+                <p className="text-2xl font-semibold">{data.approved_upcoming_event_count}</p>
               </div>
             </div>
           </CardContent>
@@ -177,158 +151,99 @@ export function ManagerDashboard() {
         <Card>
           <CardContent className="p-6">
             <div className="flex items-center">
-              <div className="p-2 bg-purple-100 rounded-lg">
-                <Users className="h-6 w-6 text-purple-600" />
+              <div className="p-2 bg-gray-100 rounded-lg">
+                <Clock className="h-6 w-6 text-gray-600" />
               </div>
               <div className="ml-4">
-                <p className="text-sm text-gray-600">Team Members</p>
-                <p className="text-2xl font-semibold">35</p>
-                <p className="text-xs text-purple-600">Volunteers & Vendors</p>
+                <p className="text-sm text-gray-600">Past Events</p>
+                <p className="text-2xl font-semibold">{data.past_event_count}</p>
               </div>
             </div>
           </CardContent>
         </Card>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Assigned Events */}
-        <Card>
-          <CardHeader>
-            <CardTitle>Assigned Events</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-4">
-              {assignedEvents.map((event) => (
-                <div key={event.id} className="border rounded-lg p-4">
-                  <div className="flex justify-between items-start mb-3">
-                    <div>
-                      <h3 className="font-semibold text-gray-900">{event.title}</h3>
-                      <p className="text-sm text-gray-600">by {event.organizer}</p>
-                    </div>
-                    <Badge className={getStatusColor(event.status)}>
-                      {event.status}
-                    </Badge>
-                  </div>
-                  
-                  <div className="space-y-2 mb-3">
-                    <div className="flex justify-between text-sm">
-                      <span className="text-gray-600">Progress</span>
-                      <span className="font-medium">{event.progress}%</span>
-                    </div>
-                    <Progress value={event.progress} className="h-2" />
-                  </div>
-                  
-                  <div className="grid grid-cols-3 gap-4 mb-3">
-                    <div className="text-center">
-                      <p className="text-sm text-gray-600">Tasks</p>
-                      <p className="font-semibold">{event.tasks.completed}/{event.tasks.total}</p>
-                    </div>
-                    <div className="text-center">
-                      <p className="text-sm text-gray-600">Volunteers</p>
-                      <p className="font-semibold">{event.volunteers}</p>
-                    </div>
-                    <div className="text-center">
-                      <p className="text-sm text-gray-600">Vendors</p>
-                      <p className="font-semibold">{event.vendors}</p>
-                    </div>
-                  </div>
-                  
-                  <div className="flex space-x-2">
-                    <Button 
-                      size="sm" 
-                      variant="outline"
-                      onClick={() => navigate(`/events/${event.id}`)}
-                    >
-                      Manage
-                    </Button>
-                    <Button 
-                      size="sm" 
-                      variant="outline"
-                      onClick={() => navigate(`/manager/events/${event.id}/approvals`)}
-                    >
-                      Students
-                    </Button>
-                    <Button size="sm" variant="outline">Tasks</Button>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* Pending Approvals */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center">
-              <AlertTriangle className="h-5 w-5 text-orange-500 mr-2" />
-              Pending Approvals
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-4">
-              {pendingApprovals.map((approval) => (
-                <div key={approval.id} className="border rounded-lg p-4">
-                  <div className="flex items-start justify-between mb-2">
-                    <div className="flex items-center">
-                      {approval.type === 'vendor' && <Building className="h-4 w-4 text-blue-500 mr-2" />}
-                      {approval.type === 'volunteer' && <UserCheck className="h-4 w-4 text-green-500 mr-2" />}
-                      {approval.type === 'budget' && <Clock className="h-4 w-4 text-orange-500 mr-2" />}
-                      <div>
-                        <p className="font-medium text-gray-900">{approval.name}</p>
-                        <p className="text-sm text-gray-600">{approval.event}</p>
-                        {approval.role && <p className="text-xs text-gray-500">{approval.role}</p>}
-                      </div>
-                    </div>
-                    {approval.amount && (
-                      <span className="font-semibold text-green-600">{approval.amount}</span>
-                    )}
-                  </div>
-                  
-                  <div className="flex space-x-2">
-                    <Button size="sm" className="bg-green-600 hover:bg-green-700">Approve</Button>
-                    <Button size="sm" variant="outline" className="text-red-600 border-red-600 hover:bg-red-50">Reject</Button>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </CardContent>
-        </Card>
-      </div>
-
-      {/* Task Overview */}
+      {/* Assigned Events */}
       <Card>
         <CardHeader>
-          <CardTitle>Task Overview</CardTitle>
+          <CardTitle>Assigned Events</CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div className="text-center">
-              <div className="bg-blue-100 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-3">
-                <Clock className="h-8 w-8 text-blue-600" />
-              </div>
-              <h3 className="font-semibold text-gray-900 mb-1">In Progress</h3>
-              <p className="text-2xl font-bold text-blue-600">12</p>
-              <p className="text-sm text-gray-600">Active tasks</p>
+          {data.assigned_events.length > 0 ? (
+            <div className="space-y-4">
+              {data.assigned_events.map((event) => (
+                <div key={event.id} className="border rounded-lg p-4">
+                  <div className="flex justify-between items-start mb-2">
+                    <div>
+                      <h3 className="font-semibold text-gray-900">{event.title}</h3>
+                      <p className="text-sm text-gray-600">{event.location}</p>
+                    </div>
+                    <Badge className={getStatusColor(event.status)}>{event.status}</Badge>
+                  </div>
+                  <p className="text-sm text-gray-700 mb-2">{event.description}</p>
+                  <div className="flex justify-between text-sm text-gray-500">
+                    <span>Start: {new Date(event.startAt).toLocaleString()}</span>
+                    <span>End: {new Date(event.endAt).toLocaleString()}</span>
+                  </div>
+                </div>
+              ))}
             </div>
-            
-            <div className="text-center">
-              <div className="bg-green-100 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-3">
-                <CheckCircle className="h-8 w-8 text-green-600" />
-              </div>
-              <h3 className="font-semibold text-gray-900 mb-1">Completed</h3>
-              <p className="text-2xl font-bold text-green-600">24</p>
-              <p className="text-sm text-gray-600">This month</p>
+          ) : (
+            <p className="text-gray-600">No assigned events.</p>
+          )}
+        </CardContent>
+      </Card>
+
+      {/* Upcoming Event Stats */}
+      <Card>
+        <CardHeader>
+          <CardTitle>Upcoming Event Stats</CardTitle>
+        </CardHeader>
+        <CardContent>
+          {data.upcoming_event_stats.length > 0 ? (
+            <div className="overflow-x-auto">
+              <table className="min-w-full text-sm border">
+                <thead className="bg-gray-100">
+                  <tr>
+                    <th className="px-4 py-2 text-left">Title</th>
+                    <th className="px-4 py-2 text-left">Location</th>
+                    <th className="px-4 py-2">Total</th>
+                    <th className="px-4 py-2 text-green-600">Approved</th>
+                    <th className="px-4 py-2 text-yellow-600">Pending</th>
+                    <th className="px-4 py-2 text-red-600">Rejected</th>
+                    <th className="px-4 py-2">Volunteers</th>
+                    <th className="px-4 py-2">Start Date</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {data.upcoming_event_stats.map((stat) => (
+                    <tr key={stat.eventId} className="border-t">
+                      <td className="px-4 py-2">{stat.title}</td>
+                      <td className="px-4 py-2">{stat.location}</td>
+                      <td className="px-4 py-2 text-center">{stat.totalStudents}</td>
+                      <td className="px-4 py-2 text-center text-green-600">
+                        {stat.approvedCount}
+                      </td>
+                      <td className="px-4 py-2 text-center text-yellow-600">
+                        {stat.pendingCount}
+                      </td>
+                      <td className="px-4 py-2 text-center text-red-600">
+                        {stat.rejectedCount}
+                      </td>
+                      <td className="px-4 py-2 text-center">
+                        {stat.required_volunteer}
+                      </td>
+                      <td className="px-4 py-2">
+                        {new Date(stat.startAt).toLocaleDateString()}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
             </div>
-            
-            <div className="text-center">
-              <div className="bg-orange-100 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-3">
-                <AlertTriangle className="h-8 w-8 text-orange-600" />
-              </div>
-              <h3 className="font-semibold text-gray-900 mb-1">Overdue</h3>
-              <p className="text-2xl font-bold text-orange-600">3</p>
-              <p className="text-sm text-gray-600">Need attention</p>
-            </div>
-          </div>
+          ) : (
+            <p className="text-gray-600">No upcoming event stats.</p>
+          )}
         </CardContent>
       </Card>
     </div>

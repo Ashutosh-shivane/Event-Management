@@ -71,7 +71,7 @@ export function AboutPage() {
                   Worldwide
                 </h1>
                 <p className="text-xl text-muted-foreground leading-relaxed">
-                  Founded in 2023, EventHub has grown from a simple idea to a comprehensive platform serving thousands of event professionals worldwide. Our mission is to make event management accessible, efficient, and enjoyable for everyone.
+                  Founded in 2025, EventHub has grown from a simple idea to a comprehensive platform serving thousands of event professionals worldwide. Our mission is to make event management accessible, efficient, and enjoyable for everyone.
                 </p>
               </div>
             </div>
