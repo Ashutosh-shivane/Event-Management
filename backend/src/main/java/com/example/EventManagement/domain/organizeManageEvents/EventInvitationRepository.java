@@ -46,7 +46,7 @@ public interface EventInvitationRepository extends JpaRepository<EventInvitation
     LEFT JOIN manager_role mr ON mr.id = ei.roleid
     LEFT JOIN events e ON e.id = ei.eventid
     LEFT JOIN user ON e.created_by_id = user.id
-    WHERE ei.userid = :userid
+    WHERE ei.userid = :userid order by ei.id desc
     """, nativeQuery = true)
     List<EventInvitationProjection> findByUserid(@Param("userid") String userid);
 

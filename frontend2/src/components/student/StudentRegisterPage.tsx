@@ -290,7 +290,7 @@ export function StudentRegisterPage() {
           </p>
           <Button 
             variant="outline" 
-            onClick={() => onNavigate('dashboard')}
+             onClick={() => navigate('/dashboard')}
             className="mt-4"
           >
             <ArrowLeft className="h-4 w-4 mr-2" />

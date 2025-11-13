@@ -54,7 +54,7 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
 
     if (user?.role === 'MANAGER') {
       baseItems.push(
-        { key: 'invitations', label: 'Invitations', icon: Bell, path: '/manager/invitations', badge: 2 },
+        { key: 'invitations', label: 'Invitations', icon: Bell, path: '/manager/invitations' },
         { key: 'add-event', label: 'Add Event', icon: Calendar, path: '/manager/add-event' },
           { key: 'Assigned_Events', label: 'Assigned Events', icon: Calendar, path: '/manager/Assigned_Events' },
         { key: 'approvals', label: 'Student Approvals', icon: Users, path: '/manager/approvals' }
