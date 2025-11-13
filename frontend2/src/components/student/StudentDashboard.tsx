@@ -1,4 +1,5 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
+import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../AuthContext';
 import { Card, CardHeader, CardTitle, CardContent } from '../ui/card';
@@ -14,67 +15,63 @@ import {
   AlertTriangle,
   UserCheck,
   Building,
-  User,
-  MapPin,
-  Star
+  User
 } from 'lucide-react';
 
 export function StudentDashboard() {
   const navigate = useNavigate();
   const { user } = useAuth();
 
-  const registeredEvents = [
-    {
-      id: 1,
-      title: 'Tech Conference 2024',
-      organizer: 'Tech Society',
-      role: 'Registration Volunteer',
-      date: 'Jan 15, 2024',
-      hours: 4,
-      status: 'confirmed'
-    },
-    {
-      id: 2,
-      title: 'Cultural Festival',
-      organizer: 'Cultural Committee',
-      role: 'Stage Management',
-      date: 'Jan 25, 2024',
-      hours: 6,
-      status: 'pending'
+  // ✅ Backend data state
+  const [dashboardData, setDashboardData] = useState({
+    past_event_count: "0",
+    upcoming_event_count: "0",
+    total_hours: "0",
+    active_events: [],
+    register_events: []
+  });
+
+  const [loading, setLoading] = useState(true);
+
+  const userid=localStorage.getItem('id');
+
+  // ✅ Fetch dashboard data
+  useEffect(() => {
+    const fetchDashboardData = async () => {
+      try {
+        const res = await axios.get(`http://localhost:8080/Dashboard/student/${userid}`);
+        setDashboardData(res.data);
+      } catch (err) {
+        console.error("Error fetching dashboard data:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    if (user?.id) {
+      fetchDashboardData();
     }
-  ];
+  }, [user]);
 
-  const availableEvents = [
-    {
-      id: 3,
-      title: 'Career Fair 2024',
-      organizer: 'Career Services',
-      date: 'Feb 10, 2024',
-      location: 'Main Auditorium',
-      volunteers: 8,
-      maxVolunteers: 15,
-      hours: 5,
-      description: 'Help students connect with potential employers'
-    },
-    {
-      id: 4,
-      title: 'Science Exhibition',
-      organizer: 'Science Department',
-      date: 'Feb 20, 2024',
-      location: 'Science Building',
-      volunteers: 12,
-      maxVolunteers: 12,
-      hours: 4,
-      description: 'Assist with setup and visitor guidance'
-    }
-  ];
+  if (loading) {
+    return (
+      <div className="p-8 text-center text-gray-500">
+        Loading dashboard...
+      </div>
+    );
+  }
 
-  const completedHours = registeredEvents
-    .filter(event => event.status === 'confirmed')
-    .reduce((total, event) => total + event.hours, 0);
+  const { 
+    past_event_count, 
+    upcoming_event_count, 
+    total_hours, 
+    active_events, 
+    register_events 
+  } = dashboardData;
 
-  const getStatusColor = (status: string) => {
-    switch (status) {
+  const getStatusColor = (status) => {
+    switch (status?.toLowerCase()) {
+      case 'approved':
       case 'confirmed':
         return 'bg-green-100 text-green-800 border-green-200';
       case 'pending':
@@ -99,40 +96,6 @@ export function StudentDashboard() {
         </Button>
       </div>
 
-      {/* Profile Completion Alert */}
-      {!user?.profileCompleted && user?.role === 'student' && (
-        <Alert className="border-orange-200 bg-orange-50">
-          <AlertTriangle className="h-4 w-4 text-orange-600" />
-          <AlertDescription className="flex items-center justify-between">
-            <div>
-              <strong className="text-orange-800">Complete your profile to unlock all features!</strong>
-              <p className="text-orange-700 mt-1">
-                Add your skills, availability, and interests to get matched with the best volunteer opportunities.
-              </p>
-            </div>
-            <Button 
-              size="sm" 
-              className="ml-4 bg-orange-600 hover:bg-orange-700"
-              onClick={() => navigate('/profile')}
-            >
-              <User className="h-4 w-4 mr-2" />
-              Complete Profile
-            </Button>
-          </AlertDescription>
-        </Alert>
-      )}
-
-      {/* Profile Completed Success */}
-      {user?.profileCompleted && user.role === 'student' && (
-        <Alert className="border-green-200 bg-green-50">
-          <CheckCircle className="h-4 w-4 text-green-600" />
-          <AlertDescription>
-            <strong className="text-green-800">Profile completed!</strong>
-            <span className="text-green-700 ml-2">You're now eligible for all volunteer opportunities.</span>
-          </AlertDescription>
-        </Alert>
-      )}
-
       {/* Stats Cards */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         <Card>
@@ -142,9 +105,9 @@ export function StudentDashboard() {
                 <Calendar className="h-6 w-6 text-blue-600" />
               </div>
               <div className="ml-4">
-                <p className="text-sm text-gray-600">Active Registrations</p>
-                <p className="text-2xl font-semibold">{registeredEvents.length}</p>
-                <p className="text-xs text-blue-600">This semester</p>
+                <p className="text-sm text-gray-600">Upcoming Events</p>
+                <p className="text-2xl font-semibold">{upcoming_event_count}</p>
+                <p className="text-xs text-blue-600">In the future</p>
               </div>
             </div>
           </CardContent>
@@ -157,9 +120,9 @@ export function StudentDashboard() {
                 <CheckCircle className="h-6 w-6 text-green-600" />
               </div>
               <div className="ml-4">
-                <p className="text-sm text-gray-600">Completed Events</p>
-                <p className="text-2xl font-semibold">1</p>
-                <p className="text-xs text-green-600">This semester</p>
+                <p className="text-sm text-gray-600">Past Events</p>
+                <p className="text-2xl font-semibold">{past_event_count}</p>
+                <p className="text-xs text-green-600">Already completed</p>
               </div>
             </div>
           </CardContent>
@@ -173,7 +136,7 @@ export function StudentDashboard() {
               </div>
               <div className="ml-4">
                 <p className="text-sm text-gray-600">Volunteer Hours</p>
-                <p className="text-2xl font-semibold">{completedHours}</p>
+                <p className="text-2xl font-semibold">{total_hours}</p>
                 <p className="text-xs text-purple-600">Total earned</p>
               </div>
             </div>
@@ -182,154 +145,84 @@ export function StudentDashboard() {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-        {/* My Registrations */}
+        {/* Active Events */}
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center">
               <UserCheck className="h-5 w-5 mr-2" />
-              My Registrations
+              Approved Future Events
             </CardTitle>
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
-              {registeredEvents.map((event) => (
-                <div key={event.id} className="border border-gray-200 rounded-lg p-4">
-                  <div className="flex justify-between items-start mb-3">
-                    <div>
-                      <h3 className="font-semibold text-gray-900">{event.title}</h3>
-                      <p className="text-sm text-gray-600">by {event.organizer}</p>
-                      <p className="text-sm text-gray-500">{event.role}</p>
+              {active_events.length === 0 ? (
+                <p className="text-gray-500 text-sm">No active events available.</p>
+              ) : (
+                active_events.map((event) => (
+                  <div key={event.id} className="border border-gray-200 rounded-lg p-4">
+                    <div className="flex justify-between items-start mb-3">
+                      <div>
+                        <h3 className="font-semibold text-gray-900">{event.title}</h3>
+                        <p className="text-sm text-gray-600">{event.category}</p>
+                      </div>
+                      <Badge className={getStatusColor(event.status)}>
+                        {event.status}
+                      </Badge>
                     </div>
-                    <Badge className={getStatusColor(event.status)}>
-                      {event.status}
-                    </Badge>
+                    <div className="flex justify-between text-sm text-gray-600">
+                      <span>📅 {new Date(event.startAt).toLocaleString()}</span>
+                      <span>📍 {event.location}</span>
+                    </div>
                   </div>
-                  
-                  <div className="flex justify-between items-center mb-3">
-                    <span className="text-sm text-gray-600">
-                      📅 {event.date}
-                    </span>
-                    <span className="text-sm font-medium">
-                      {event.hours} hours
-                    </span>
-                  </div>
-                  
-                  <div className="flex space-x-2">
-                    <Button 
-                      size="sm" 
-                      variant="outline"
-                      onClick={() => navigate(`/events/${event.id}`)}
-                    >
-                      View Details
-                    </Button>
-                    {event.status === 'confirmed' && (
-                      <Button size="sm" variant="outline">Check In</Button>
-                    )}
-                  </div>
-                </div>
-              ))}
+                ))
+              )}
             </div>
           </CardContent>
         </Card>
 
-        {/* Available Events */}
+        {/* Registered Events */}
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center">
               <Building className="h-5 w-5 mr-2" />
-              Available Opportunities
+              Register Upcoming Events
             </CardTitle>
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
-              {availableEvents.map((event) => (
-                <div key={event.id} className="border border-gray-200 rounded-lg p-4">
-                  <div className="mb-3">
-                    <h3 className="font-semibold text-gray-900">{event.title}</h3>
-                    <p className="text-sm text-gray-600">by {event.organizer}</p>
-                    <p className="text-sm text-gray-500 mt-1">{event.description}</p>
-                  </div>
-                  
-                  <div className="flex justify-between items-center mb-3 text-sm text-gray-600">
-                    <span>📅 {event.date}</span>
-                    <span>📍 {event.location}</span>
-                    <span>⏰ {event.hours} hours</span>
-                  </div>
-                  
-                  <div className="mb-3">
-                    <div className="flex justify-between text-sm text-gray-600 mb-1">
-                      <span>Volunteers needed</span>
-                      <span>{event.volunteers}/{event.maxVolunteers}</span>
+              {register_events.length === 0 ? (
+                <p className="text-gray-500 text-sm">You haven’t registered for any events yet.</p>
+              ) : (
+                register_events.map((event) => (
+                  <div key={event.id} className="border border-gray-200 rounded-lg p-4">
+                    <div className="flex justify-between items-start mb-3">
+                      <div>
+                        <h3 className="font-semibold text-gray-900">{event.title}</h3>
+                        <p className="text-sm text-gray-600">{event.category}</p>
+                      </div>
+                      <Badge className={getStatusColor(event.status)}>
+                        {event.status}
+                      </Badge>
                     </div>
-                    <Progress 
-                      value={(event.volunteers / event.maxVolunteers) * 100} 
-                      className="h-2"
-                    />
-                  </div>
-                  
-                  <div className="flex space-x-2">
-                    <Button 
-                      size="sm"
-                      onClick={() => navigate(`/events/${event.id}/register`)}
-                      disabled={event.volunteers >= event.maxVolunteers}
-                    >
-                      {event.volunteers >= event.maxVolunteers ? 'Full' : 'Register'}
-                    </Button>
+                    <div className="flex justify-between text-sm text-gray-600">
+                      <span>📅 {new Date(event.startAt).toLocaleString()}</span>
+                      <span>📍 {event.location}</span>
+                    </div>
                     <Button 
                       size="sm" 
                       variant="outline"
                       onClick={() => navigate(`/events/${event.id}`)}
+                      className="mt-2"
                     >
-                      Learn More
+                      View Details
                     </Button>
                   </div>
-                </div>
-              ))}
+                ))
+              )}
             </div>
           </CardContent>
         </Card>
       </div>
-
-      {/* Quick Actions */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Quick Actions</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <Button 
-              variant="outline" 
-              className="flex items-center justify-center h-24"
-              onClick={() => navigate('/events')}
-            >
-              <div className="text-center">
-                <Calendar className="h-6 w-6 mx-auto mb-2" />
-                <span>Browse All Events</span>
-              </div>
-            </Button>
-            <Button 
-              variant="outline" 
-              className="flex items-center justify-center h-24"
-              onClick={() => navigate('/profile')}
-            >
-              <div className="text-center">
-                <User className="h-6 w-6 mx-auto mb-2" />
-                <span>Update Profile</span>
-              </div>
-            </Button>
-            <Button 
-              variant="outline" 
-              className="flex items-center justify-center h-24"
-              onClick={() => navigate('/chat')}
-            >
-              <div className="text-center">
-                <Users className="h-6 w-6 mx-auto mb-2" />
-                <span>Community Chat</span>
-              </div>
-            </Button>
-          </div>
-        </CardContent>
-      </Card>
     </div>
   );
 }

@@ -297,7 +297,7 @@ export function EventDetailsPage() {
               ) : (
                 <>
                   <UserPlus className="h-5 w-5 mr-2" />
-                  Register for Rs. {eventdata.cost}
+                  Apply for Rs. {eventdata.cost}
                 </>
               )}
             </Button>

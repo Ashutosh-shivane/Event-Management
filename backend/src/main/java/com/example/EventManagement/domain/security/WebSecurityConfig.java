@@ -28,7 +28,7 @@ public class WebSecurityConfig {
                 .sessionManagement(sessionConfig ->
                         sessionConfig.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth->auth
-                                .requestMatchers("/Public/**","/auth/**","/Event/**","/Student/**","/Manager/**","/Organizer/**","/SER/**","/OME/**").permitAll()
+                                .requestMatchers("/Public/**","/auth/**","/Event/**","/Student/**","/Manager/**","/Organizer/**","/SER/**","/OME/**","/Dashboard/**").permitAll()
 //                                .requestMatchers("/admin/**").hasRole("ADMIN")
 //                                .requestMatchers("/stationOwner/**").hasRole("STATIONOWNER")
                                 .anyRequest().authenticated()
