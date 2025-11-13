@@ -30,4 +30,21 @@ public class EventController {
         return ResponseEntity.ok(eventService.find(id));
     }
 
+
+
+    @GetMapping("/update/{eventid}/{userid}")
+    public ResponseEntity<EventOutDto> GetEventDataForUpdate(@PathVariable Long eventid,@PathVariable String userid){
+
+        return ResponseEntity.ok(eventService.GetEventDataForUpdate(eventid,userid));
+    }
+
+
+
+    @PutMapping("/update/{eventid}/{userid}")
+    public ResponseEntity<EventOutDto> SaveUpdatedEventData(@PathVariable Long eventid,@PathVariable String userid,@RequestBody EventInDto eventInDto){
+
+        return ResponseEntity.ok(eventService.SaveUpdatedEventData(eventid,userid,eventInDto));
+    }
+
+
 }

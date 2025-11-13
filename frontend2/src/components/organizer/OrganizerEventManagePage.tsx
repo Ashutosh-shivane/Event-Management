@@ -333,6 +333,7 @@ export function OrganizerEventManagePage() {
                     size="sm" 
                     variant="outline" 
                     className="flex-1"
+                    onClick={() => navigate(`/organizer/events/${event.id}/edit`)}
                   >
                     <Edit className="h-4 w-4 mr-1" />
                     Edit Event

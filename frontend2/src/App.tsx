@@ -37,6 +37,8 @@ import { Toaster } from './components/ui/sonner';
 import {StudentAssignedEventPage} from './components/student/StudentAssignedEventPage';
 import {ManagerAssignedEventPage} from './components/manager/ManagerAssignedEventPage';
 
+import {OrganizerEventEditPage} from './components/organizer/OrganizerEventEditPage';
+
 // Protected Route Component
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
   const { isAuthenticated } = useAuth();
@@ -192,7 +194,7 @@ function AppRoutes() {
         path="/organizer/events/:eventId/edit" 
         element={
           <ProtectedRoute>
-            <OrganizerEventCreatePage />
+            <OrganizerEventEditPage />
           </ProtectedRoute>
         } 
       />

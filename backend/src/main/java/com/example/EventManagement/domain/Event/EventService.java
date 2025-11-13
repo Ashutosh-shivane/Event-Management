@@ -64,4 +64,35 @@ public class EventService {
         return eventRepository.save(event);
     }
 
+    public EventOutDto GetEventDataForUpdate(Long eventid, String userid) {
+
+        Event event=eventRepository.findByIdAndCreatedById(eventid,Long.parseLong(userid)).orElse(null);
+
+        EventOutDto eventOutDto= new EventOutDto();
+
+        if(event!=null){
+
+            modelMapper.map(event,eventOutDto);
+
+        }
+
+        return eventOutDto;
+    }
+
+    public EventOutDto SaveUpdatedEventData(Long eventid, String userid,EventInDto eventInDto) {
+
+        Event event=eventRepository.findByIdAndCreatedById(eventid,Long.parseLong(userid)).orElse(null);
+
+        if(event!=null){
+            modelMapper.map(eventInDto,event);
+            event.setId(eventid);
+//            event.set
+            event.setStatus("EVENT UPDATED");
+        }
+
+        eventRepository.save(event);
+
+
+        return new EventOutDto();
+    }
 }
