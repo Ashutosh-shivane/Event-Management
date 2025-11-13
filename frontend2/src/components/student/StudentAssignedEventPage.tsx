@@ -7,6 +7,7 @@ import { Input } from '../ui/input';
 import { Badge } from '../ui/badge';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select';
 import { 
+  ArrowLeft,
   Calendar, 
   MapPin, 
   Users, 
@@ -158,7 +159,24 @@ var userid=localStorage.getItem("id");
 
   return (
     <div className="space-y-6">
+
+
+<div className="flex items-center ">
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => navigate('/dashboard')}
+                 className="flex items-center space-x-2 border border-gray-300 rounded-md"
+              >
+                <ArrowLeft className="h-4 w-4" />
+                <span>Back to Dashboard</span>
+              </Button>
+            </div>
+
       <div className="flex justify-between items-center">
+ 
+
+
         <h1 className="text-2xl font-bold text-gray-900">Events</h1>
         {canCreateEvent && (
           <Button className="flex items-center space-x-2">
@@ -254,7 +272,7 @@ var userid=localStorage.getItem("id");
                   {event.price > 0 ? (
                     <span className="text-lg font-semibold text-green-600">${event.price}</span>
                   ) : (
-                    <span className="text-lg font-semibold text-blue-600">Free</span>
+                    <span className="text-lg font-semibold text-blue-600"></span>
                   )}
                 </div>
               </div>

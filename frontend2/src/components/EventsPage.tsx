@@ -254,7 +254,7 @@ export function EventsPage() {
                   {event.price > 0 ? (
                     <span className="text-lg font-semibold text-green-600">${event.price}</span>
                   ) : (
-                    <span className="text-lg font-semibold text-blue-600">Free</span>
+                    <span className="text-lg font-semibold text-blue-600"></span>
                   )}
                 </div>
               </div>

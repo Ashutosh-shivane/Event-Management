@@ -70,6 +70,8 @@ export function EventDetailsPage() {
 
   const [eventdata, setEventdata] = useState({});
 
+  const userrole=localStorage.getItem('userrole');
+
   console.log(eventId);
 
    const mapEvent = (row) => ({
@@ -180,7 +182,7 @@ export function EventDetailsPage() {
               </Button>
             </div>
             <div className="flex items-center space-x-4">
-              <Button variant="outline" size="sm">
+              {/* <Button variant="outline" size="sm">
                 <Share2 className="h-4 w-4 mr-2" />
                 Share
               </Button>
@@ -191,7 +193,7 @@ export function EventDetailsPage() {
               <Button variant="outline" size="sm">
                 <Edit className="h-4 w-4 mr-2" />
                 Edit
-              </Button>
+              </Button> */}
             </div>
           </div>
         </div>
@@ -268,7 +270,9 @@ export function EventDetailsPage() {
           
 
           {/* Register Button */}
-          <div className="flex justify-center mb-8">
+
+          
+          <div className="flex justify-center mb-8"   style={{ display: userrole === "STUDENT" ? "flex" : "none" }}>
             <Button
               size="lg"
               className="px-8"
@@ -280,6 +284,8 @@ export function EventDetailsPage() {
                 }
               }}
               disabled={event.registered >= event.capacity}
+
+              
             >
               {isRegistered ? (
                 <>
@@ -371,7 +377,7 @@ export function EventDetailsPage() {
                         {/* <span className="text-sm text-muted-foreground">rating</span> */}
                       </div>
 
-                      <Button variant="outline" className="w-full">
+                      <Button variant="outline" className="w-full"  onClick={() => navigate('/chat')}>
                         <MessageCircle className="h-4 w-4 mr-2" />
                         Contact Organizer
                       </Button>

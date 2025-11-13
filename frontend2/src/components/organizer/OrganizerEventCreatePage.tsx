@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
 
 import { Button } from '../ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
@@ -59,6 +60,7 @@ interface VendorRequirement {
 export function OrganizerEventCreatePage() {
   const [activeTab, setActiveTab] = useState("basic");
   const [currentTag, setCurrentTag] = useState("");
+   const navigate = useNavigate();
   const [eventForm, setEventForm] = useState<EventForm>({
     title: "",
     description: "",
@@ -204,7 +206,7 @@ async function createEvent(eventForm:any) {
               <Button 
                 variant="ghost" 
                 size="sm"
-                onClick={() => onNavigate('dashboard')}
+                onClick={() => navigate('/dashboard')}
                 className="flex items-center space-x-2"
               >
                 <ArrowLeft className="h-4 w-4" />
@@ -213,14 +215,14 @@ async function createEvent(eventForm:any) {
               <h1 className="text-xl font-semibold">Create New Event</h1>
             </div>
             <div className="flex items-center space-x-4">
-              <Button variant="outline" onClick={handleSaveDraft}>
+              {/* <Button variant="outline" onClick={handleSaveDraft}>
                 <Save className="h-4 w-4 mr-2" />
                 Save Draft
               </Button>
               <Button variant="outline" onClick={handlePreview}>
                 <Eye className="h-4 w-4 mr-2" />
                 Preview
-              </Button>
+              </Button> */}
               <Button onClick={handlePublish}>
                 <Send className="h-4 w-4 mr-2" />
                 Publish Event

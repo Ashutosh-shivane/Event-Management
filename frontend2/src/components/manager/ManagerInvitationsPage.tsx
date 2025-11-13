@@ -235,7 +235,7 @@ export function ManagerInvitationsPage() {
                         <div>
                           <Label className="text-sm font-medium text-gray-700">Budget</Label>
                           <div className="flex items-center">
-                            <DollarSign className="h-5 w-5 mr-2 text-green-600" />
+                            {/* <DollarSign className="h-5 w-5 mr-2 text-green-600" /> */}
                             <p className="text-xl font-bold text-green-600">
                               ₹ {invitation.budget}
                             </p>

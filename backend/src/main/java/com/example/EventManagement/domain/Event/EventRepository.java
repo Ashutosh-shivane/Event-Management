@@ -5,6 +5,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface EventRepository extends JpaRepository<Event,Long> {
 
@@ -34,5 +35,10 @@ public interface EventRepository extends JpaRepository<Event,Long> {
                                  WHERE ei.selected=1 AND ei.userid=:userid
             """,nativeQuery = true)
     List<Event> findByAssignedEventsManager(@Param("userid") String userid);
+
+
+    @Query("SELECT e FROM Event e WHERE e.id = :id AND e.createdBy.id = :userId")
+    Optional<Event> findByIdAndCreatedById(@Param("id") Long id, @Param("userId") Long userId);
+
 
 }

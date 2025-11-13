@@ -608,9 +608,9 @@ function mapInvitationSingle(invite: any): ManagerInvitation {
                           <SelectValue />
                         </SelectTrigger>
                         <SelectContent>
+                          <SelectItem value="Rs">Rs</SelectItem>
                           <SelectItem value="USD">USD</SelectItem>
                           <SelectItem value="EUR">EUR</SelectItem>
-                          <SelectItem value="GBP">GBP</SelectItem>
                         </SelectContent>
                       </Select>
                     </div>
@@ -717,7 +717,10 @@ function mapInvitationSingle(invite: any): ManagerInvitation {
                           
                           <div className="flex items-center gap-4 text-sm">
                             <div className="flex items-center">
-                              <DollarSign className="h-4 w-4 mr-1" />
+                              {/* <DollarSign className="h-4 w-4 mr-1" />
+                               */}
+
+                               RS.
                               {role.currency} {role.budget}
                             </div>
                             <div className="flex items-center">
