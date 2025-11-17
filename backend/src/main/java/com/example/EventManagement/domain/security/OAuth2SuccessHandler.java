@@ -1,6 +1,7 @@
 package com.example.EventManagement.domain.security;
 
 import com.example.EventManagement.domain.dto.LoginResponceDTO;
+import com.example.EventManagement.domain.entity.type.UserType;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -39,16 +40,27 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
 
 
         String jwtToken = loginResponceDTO.getBody().getJwt();
+        Long id = loginResponceDTO.getBody().getUserid();
+
+//
+        String name=loginResponceDTO.getBody().getName();
+        String username=loginResponceDTO.getBody().getUsername();
+        UserType role=loginResponceDTO.getBody().getRole();
+        String profileCompleted=loginResponceDTO.getBody().getProfileCompleted();
         // Make sure your DTO has a getToken() method
 
-        String name = oAuth2User.getAttribute("name");
+//        String name = oAuth2User.getAttribute("name");
         String email = oAuth2User.getAttribute("email");
 
+
         String redirectUrl = UriComponentsBuilder
-                .fromUriString("http://localhost:3000/oauth2/success")
+                .fromUriString("http://localhost:3000/oauth2/success/google")
                 .queryParam("token", jwtToken) // now using actual token
+                .queryParam("username", username)
                 .queryParam("name", name)
-                .queryParam("email", email)
+                .queryParam("userid", id)
+                .queryParam("role", role)
+                .queryParam("profileCompleted", profileCompleted)
                 .build()
                 .toUriString();
 

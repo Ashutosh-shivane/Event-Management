@@ -39,6 +39,8 @@ import {ManagerAssignedEventPage} from './components/manager/ManagerAssignedEven
 
 import {OrganizerEventEditPage} from './components/organizer/OrganizerEventEditPage';
 
+import OAuth2Success from './components/oauth/OAuthSuccess';
+
 // Protected Route Component
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
   const { isAuthenticated } = useAuth();
@@ -113,6 +115,15 @@ function AppRoutes() {
         element={
           <PublicRoute>
             <LoginForm initialMode="signup" />
+          </PublicRoute>
+        } 
+      />
+
+      <Route 
+        path="/oauth2/success/google" 
+        element={
+          <PublicRoute>
+            <OAuth2Success  />
           </PublicRoute>
         } 
       />

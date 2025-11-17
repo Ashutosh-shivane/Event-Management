@@ -15,7 +15,7 @@ interface LoginFormProps {
 
 export function LoginForm({ initialMode = 'login' }: LoginFormProps) {
   const navigate = useNavigate();
-  const { login, signup } = useAuth();
+  const { login, signup,handleGoogleLogin } = useAuth();
   const [isLoading, setIsLoading] = useState(false);
   
   // Login form state
@@ -53,6 +53,8 @@ export function LoginForm({ initialMode = 'login' }: LoginFormProps) {
       setIsLoading(false);
     }
   };
+
+  
 
   const roleOptions = [
     { value: 'STUDENT', label: 'Student' },
@@ -204,6 +206,8 @@ export function LoginForm({ initialMode = 'login' }: LoginFormProps) {
             </form>
           </TabsContent>
         </Tabs>
+
+         <button onClick={handleGoogleLogin}>Login with Google</button>
       </Card>
     </div>
   );
