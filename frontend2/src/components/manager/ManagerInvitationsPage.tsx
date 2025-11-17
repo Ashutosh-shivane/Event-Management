@@ -21,7 +21,11 @@ import {
   User,
   FileText
 } from 'lucide-react';
+
 import axios from 'axios';
+
+import API from '../config/axiosConfig';
+
 
 export function ManagerInvitationsPage() {
   const navigate = useNavigate();
@@ -76,8 +80,8 @@ export function ManagerInvitationsPage() {
   }
 
   useEffect(() => {
-    axios
-      .get(`http://localhost:8080/OME/GetManagerInvitationData/${userid}`)
+    API
+      .get(`/OME/GetManagerInvitationData/${userid}`)
       .then(res => {
         console.log(res.data);
         setInvitations(mapEventDataArray(res.data));
@@ -87,7 +91,7 @@ export function ManagerInvitationsPage() {
 
   const handleAcceptInvitation = async (invitationId: string) => {
   markAsRead(invitationId);
-  const url = `http://localhost:8080/OME/accept/${invitationId}`;
+  
   await handleDbCallForButton("ACCEPT",invitationId);
 };
 
@@ -117,7 +121,7 @@ export function ManagerInvitationsPage() {
   };
 
   try {
-    const res = await axios.post("http://localhost:8080/OME/ManagerAcceptInvtation", payload );
+    const res = await API.post("/OME/ManagerAcceptInvtation", payload );
     console.log(`${caller} success:`, res.data);
     alert(`${caller} successful!`);
     return res.data;

@@ -19,6 +19,7 @@ import {
 } from 'lucide-react';
 
 import axios from "axios";
+import API from '../config/axiosConfig';
 
 
 
@@ -67,8 +68,8 @@ export function ManagerAssignedEventPage() {
 var userid=localStorage.getItem("id");
   
  useEffect(() => {
-    axios
-      .get(`http://localhost:8080/Manager/Assigneventlist/${userid}`) // replace with your backend URL
+    API
+      .get(`/Manager/Assigneventlist/${userid}`) // replace with your backend URL
       .then((response) => {
         setEvents(response.data); // store events
         setLoading(false);

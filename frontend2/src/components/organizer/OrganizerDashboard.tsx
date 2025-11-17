@@ -16,6 +16,8 @@ import {
 } from 'lucide-react';
 import axios from 'axios';
 
+import API from '../config/axiosConfig';
+
 export function OrganizerDashboard() {
   const navigate = useNavigate();
 
@@ -30,7 +32,7 @@ export function OrganizerDashboard() {
     const fetchDashboard = async () => {
       try {
         // Replace with your actual endpoint
-        const res = await axios.get(`http://localhost:8080/Dashboard/organizer/${userid}`);
+        const res = await API.get(`/Dashboard/organizer/${userid}`);
         setDashboardData(res.data);
       } catch (err) {
         console.error('Error fetching dashboard:', err);

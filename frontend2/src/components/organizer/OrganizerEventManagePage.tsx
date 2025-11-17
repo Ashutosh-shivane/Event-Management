@@ -21,6 +21,7 @@ import {
   Clock3
 } from 'lucide-react';
 import axios from 'axios';
+import API from '../config/axiosConfig';
 
 export function OrganizerEventManagePage() {
   const navigate = useNavigate();
@@ -37,7 +38,7 @@ export function OrganizerEventManagePage() {
 
       const userid=localStorage.getItem('id');
 
-      axios.get(`http://localhost:8080/OME/createdBy/${userid}`)
+      API.get(`/OME/createdBy/${userid}`)
       .then(res=>{
         const data = res.data.map((row) => mapEvent(row));
     setMyEvents(data);

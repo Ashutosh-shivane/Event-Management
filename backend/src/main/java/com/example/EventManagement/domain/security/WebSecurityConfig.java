@@ -25,10 +25,11 @@ public class WebSecurityConfig {
 
         httpSecurity
                 .csrf(csrfConfig ->csrfConfig.disable())
+                .cors(cors -> cors.configure(httpSecurity))
                 .sessionManagement(sessionConfig ->
                         sessionConfig.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth->auth
-                                .requestMatchers("/Public/**","/auth/**","/Event/**","/Student/**","/Manager/**","/Organizer/**","/SER/**","/OME/**","/Dashboard/**").permitAll()
+                                .requestMatchers("/Public/**","/auth/**").permitAll()
 //                                .requestMatchers("/admin/**").hasRole("ADMIN")
 //                                .requestMatchers("/stationOwner/**").hasRole("STATIONOWNER")
                                 .anyRequest().authenticated()

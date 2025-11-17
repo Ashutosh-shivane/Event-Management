@@ -27,6 +27,7 @@ import {
 } from 'lucide-react';
 import { ImageWithFallback } from './figma/ImageWithFallback';
 import axios from 'axios';
+import API from './config/axiosConfig';
 
 
 
@@ -98,8 +99,8 @@ export function EventDetailsPage() {
 
 
   useEffect(() => {
-    axios
-      .get(`http://localhost:8080/Event/${eventId}`) // replace with your backend URL
+    API
+      .get(`/Event/${eventId}`) // replace with your backend URL
       .then((response) => {
 
         const mapped = mapEvent(response.data[0]);

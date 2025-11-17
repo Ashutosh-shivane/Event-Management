@@ -18,6 +18,7 @@ import {
 } from 'lucide-react';
 
 import axios from "axios";
+import API from './config/axiosConfig';
 
 
 
@@ -66,8 +67,8 @@ export function EventsPage() {
 
   
  useEffect(() => {
-    axios
-      .get("http://localhost:8080/Event/eventlist") // replace with your backend URL
+    API
+      .get("/Event/eventlist") // replace with your backend URL
       .then((response) => {
         setEvents(response.data); // store events
         setLoading(false);

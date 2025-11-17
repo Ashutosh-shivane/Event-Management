@@ -32,6 +32,7 @@ import {
 } from 'lucide-react';
 
 import axios from 'axios';
+import API from '../config/axiosConfig';
 
 export function OrganizerProfilePage() {
   const { user, updateUser } = useAuth();
@@ -56,7 +57,7 @@ export function OrganizerProfilePage() {
 
 
 
-    axios.get(`http://localhost:8080/Organizer/${userId}`)
+    API.get(`/Organizer/${userId}`)
       .then((response) => {
         // setStudentdata(response.data);
 
@@ -258,8 +259,8 @@ export function OrganizerProfilePage() {
       // Simulate API call
       
 
-        const response = await axios.post(
-      `http://localhost:8080/Organizer/save`,
+        const response = await API.post(
+      `/Organizer/save`,
      indata
     );
       

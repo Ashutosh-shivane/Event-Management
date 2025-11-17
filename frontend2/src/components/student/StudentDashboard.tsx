@@ -17,6 +17,7 @@ import {
   Building,
   User
 } from 'lucide-react';
+import API from '../config/axiosConfig';
 
 export function StudentDashboard() {
   const navigate = useNavigate();
@@ -39,7 +40,7 @@ export function StudentDashboard() {
   useEffect(() => {
     const fetchDashboardData = async () => {
       try {
-        const res = await axios.get(`http://localhost:8080/Dashboard/student/${userid}`);
+        const res = await API.get(`/Dashboard/student/${userid}`);
         setDashboardData(res.data);
       } catch (err) {
         console.error("Error fetching dashboard data:", err);

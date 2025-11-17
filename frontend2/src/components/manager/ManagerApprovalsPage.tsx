@@ -21,6 +21,8 @@ import {
 } from 'lucide-react';
 import axios from 'axios';
 
+import API from '../config/axiosConfig';
+
 interface Event {
   id: string;
   title: string;
@@ -56,7 +58,7 @@ export function ManagerApprovalsPage() {
 
       var userid=localStorage.getItem("id");
 
-     const res= await axios.get(`http://localhost:8080/SER/getstats/${userid}`);
+     const res= await API.get(`/SER/getstats/${userid}`);
 
      console.log(res);
 

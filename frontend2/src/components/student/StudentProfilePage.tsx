@@ -27,6 +27,7 @@ import {
 } from 'lucide-react';
 
 import axios from 'axios';
+import API from '../config/axiosConfig';
 
 
 export function StudentProfilePage() {
@@ -55,7 +56,7 @@ export function StudentProfilePage() {
 
     
 
-    axios.get(`http://localhost:8080/Student/${userId}`)
+    API.get(`/Student/${userId}`)
     .then((response)=>{
       // setStudentdata(response.data);
 
@@ -275,8 +276,8 @@ export function StudentProfilePage() {
 
     try {
       // Simulate API call
-      const response = await axios.post(
-      `http://localhost:8080/Student/save`,
+      const response = await API.post(
+      `/Student/save`,
      indata
     );
       

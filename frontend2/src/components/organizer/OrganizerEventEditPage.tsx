@@ -16,6 +16,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from ".
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../ui/tabs";
 import { Badge } from "../ui/badge";
 
+import API from '../config/axiosConfig';
+
 interface EventForm {
   title: string;
   description: string;
@@ -65,7 +67,7 @@ export function OrganizerEventEditPage() {
   useEffect(() => {
     const fetchEvent = async () => {
       try {
-        const res = await axios.get(`http://localhost:8080/Event/update/${eventId}/${userid}`);
+        const res = await API.get(`/Event/update/${eventId}/${userid}`);
         const data = res.data;
 
         console.log("here");
@@ -137,8 +139,8 @@ export function OrganizerEventEditPage() {
         updatedBy: localStorage.getItem("id"),
       };
 
-      const res = await axios.put(
-        `http://localhost:8080/Event/update/${eventId}/${userid}`,
+      const res = await API.put(
+        `/Event/update/${eventId}/${userid}`,
         payload,
         
       );

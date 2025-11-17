@@ -32,6 +32,7 @@ import {
   Eye
 } from 'lucide-react';
 import axios from 'axios';
+import API from '../config/axiosConfig';
 
 interface RoleDefinition {
   id: string;
@@ -182,7 +183,7 @@ function mapInvitationSingle(invite: any): ManagerInvitation {
 
       console.log(eventId+"   here check eventid");
 
-       const res = await axios.get(`http://localhost:8080/OME/GetData/${eventId}`)
+       const res = await API.get(`/OME/GetData/${eventId}`)
       .then((res)=>{
         console.log(res.data);
 
@@ -309,7 +310,7 @@ function mapInvitationSingle(invite: any): ManagerInvitation {
 };
 
 
-     const res=await  axios.post("http://localhost:8080/OME/save/Role",payload);
+     const res=await  API.post("/OME/save/Role",payload);
 
      console.log(res.data);
 
@@ -389,7 +390,7 @@ function mapInvitationSingle(invite: any): ManagerInvitation {
 
       var invitation:ManagerInvitation;
       try{
-      const res=await axios.post("http://localhost:8080/OME/SaveManagerInvitation",payload);
+      const res=await API.post("/OME/SaveManagerInvitation",payload);
 
      invitation =mapInvitationSingle(res.data);
 
@@ -443,7 +444,7 @@ function mapInvitationSingle(invite: any): ManagerInvitation {
 
       
       try{
-      const res=await axios.patch(`http://localhost:8080/OME/SelectManagerByOrg/${invitationId}/${invitation?.managerId}`);
+      const res=await API.patch(`/OME/SelectManagerByOrg/${invitationId}/${invitation?.managerId}`);
 
 
        const invitationlist=mapInvitations(res.data);

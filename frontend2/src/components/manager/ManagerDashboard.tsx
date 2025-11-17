@@ -17,6 +17,7 @@ import {
   Plus,
   AlertCircle,
 } from 'lucide-react';
+import API from '../config/axiosConfig';
 
 interface EventOutDto {
   id: number;
@@ -60,11 +61,13 @@ export function ManagerDashboard() {
   const [error, setError] = useState('');
 
   // 🧩 Fetch data from backend
+
+  var userid = localStorage.getItem("id");
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const res = await axios.get<DashboardResponse>(
-          `http://localhost:8080/Dashboard/manager/${user?.id}`
+        const res = await API.get<DashboardResponse>(
+          `/Dashboard/manager/${userid}`
         );
         setData(res.data);
       } catch (err: any) {
@@ -74,8 +77,8 @@ export function ManagerDashboard() {
         setLoading(false);
       }
     };
-    if (user?.id) fetchData();
-  }, [user]);
+   fetchData();
+  }, []);
 
   const getStatusColor = (status: string) => {
     switch (status) {

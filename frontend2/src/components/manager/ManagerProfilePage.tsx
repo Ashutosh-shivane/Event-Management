@@ -30,6 +30,7 @@ import {
 } from 'lucide-react';
 
 import axios from 'axios';
+import API from '../config/axiosConfig';
 
 export function ManagerProfilePage() {
   const { user, updateUser } = useAuth();
@@ -53,7 +54,7 @@ export function ManagerProfilePage() {
 
 
 
-    axios.get(`http://localhost:8080/Manager/${userId}`)
+    API.get(`/Manager/${userId}`)
       .then((response) => {
         // setStudentdata(response.data);
 
@@ -271,8 +272,8 @@ export function ManagerProfilePage() {
      let indata=mapFormDataToManagerInDto(formData,localStorage.getItem("id"));
     try {
       // Simulate API call
-      const response = await axios.post(
-      `http://localhost:8080/Manager/save`,
+      const response = await API.post(
+      `/Manager/save`,
      indata
     );
 
