@@ -41,6 +41,10 @@ import {OrganizerEventEditPage} from './components/organizer/OrganizerEventEditP
 
 import OAuth2Success from './components/oauth/OAuthSuccess';
 
+
+import ChatbotIcon from './components/chatbot/ChatbotIcon';
+import ChatbotDialog from './components/chatbot/ChatbotDialog';
+
 // Protected Route Component
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
   const { isAuthenticated } = useAuth();
@@ -457,12 +461,21 @@ function AppRoutes() {
 }
 
 export default function App() {
+  const [isChatbotOpen, setIsChatbotOpen] = React.useState(false);
   return (
     <Router>
       <AuthProvider>
         <NotificationProvider>
           <AppRoutes />
           <Toaster />
+          <ChatbotIcon 
+            isOpen={isChatbotOpen} 
+            onClick={() => setIsChatbotOpen(!isChatbotOpen)} 
+          />
+          <ChatbotDialog 
+            isOpen={isChatbotOpen} 
+            onClose={() => setIsChatbotOpen(false)} 
+          />
         </NotificationProvider>
       </AuthProvider>
     </Router>
