@@ -314,6 +314,17 @@ export function ManagerProfilePage() {
     'Logistics Manager', 'Budget Manager', 'Vendor Manager', 'Team Lead'
   ];
 
+
+  
+    const getMaxDOB = () => {
+  const d = new Date();
+  d.setFullYear(d.getFullYear() - 18);
+  const yyyy = d.getFullYear();
+  const mm = String(d.getMonth() + 1).padStart(2, '0');
+  const dd = String(d.getDate()).padStart(2, '0');
+  return `${yyyy}-${mm}-${dd}`;
+};
+
   return (
     <div className="min-h-screen bg-gray-50 p-6">
       <div className="max-w-4xl mx-auto">
@@ -417,7 +428,20 @@ export function ManagerProfilePage() {
                     <Input
                       id="phone"
                       value={formData.phone}
-                      onChange={(e) => handleInputChange('phone', e.target.value)}
+                      // onChange={(e) => handleInputChange('phone', e.target.value)}
+                       onChange={
+                        
+
+                        
+                        (e) => {
+                          
+                           const value = e.target.value.replace(/\D/g, ""); // remove non-numbers
+    if (value.length <= 10) {
+      handleInputChange("phone", value);
+    }
+                          
+                        }}
+
                       disabled={!isEditing}
                     />
                   </div>
@@ -427,6 +451,7 @@ export function ManagerProfilePage() {
                     <Input
                       id="dateOfBirth"
                       type="date"
+                         max={getMaxDOB()}
                       value={formData.dateOfBirth}
                       onChange={(e) => handleInputChange('dateOfBirth', e.target.value)}
                       disabled={!isEditing}

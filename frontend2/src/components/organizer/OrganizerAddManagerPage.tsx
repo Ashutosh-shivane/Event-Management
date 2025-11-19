@@ -83,11 +83,21 @@ export function OrganizerAddManagerPage() {
     title: '',
     description: '',
     budget: '',
-    currency: 'USD',
+    currency: 'Rs',
     responsibilities: [''],
     requirements: [''],
     deadline: ''
   });
+
+  const intial_role={
+     title: '',
+    description: '',
+    budget: '',
+    currency: 'Rs',
+    responsibilities: [''],
+    requirements: [''],
+    deadline: ''
+  };
 
   // Mock event data
   const [eventData,setEventData] =useState( {
@@ -338,6 +348,8 @@ function mapInvitationSingle(invite: any): ManagerInvitation {
     
     alert('Role created successfully!');
 
+    setNewRole(intial_role);
+
     }catch(err){
       console.log(err);
     }
@@ -521,6 +533,10 @@ function mapInvitationSingle(invite: any): ManagerInvitation {
   </div>
 );
 
+ const today = new Date().toISOString().split("T")[0];
+
+
+ 
 
 
   return (
@@ -622,6 +638,7 @@ function mapInvitationSingle(invite: any): ManagerInvitation {
                     <Input
                       type="date"
                       value={newRole.deadline}
+                      min={today}
                       onChange={(e) => setNewRole(prev => ({ ...prev, deadline: e.target.value }))}
                     />
                   </div>

@@ -77,6 +77,24 @@ export function OrganizerEventCreatePage() {
     tags: []
   });
 
+
+  const initialForm: EventForm = {
+  title: "",
+  description: "",
+  category: "",
+  date: "",
+  startTime: "",
+  endTime: "",
+  location: "",
+  venue: "",
+  requiredVolunteer: 0,
+  capacity: "",
+  price: "",
+  earlyBirdPrice: "",
+  earlyBirdDeadline: "",
+  tags: []
+};
+
  
 
   
@@ -135,10 +153,21 @@ export function OrganizerEventCreatePage() {
   };
 
  const handlePublish = async () => {
+
+   const validationErrors = validateEventForm(eventForm);
+
+  if (validationErrors.length > 0) {
+    alert("Please fix the following errors:\n\n" + validationErrors.join("\n"));
+    return;
+  }
+
+
     try {
       console.log("Publishing event...", eventForm);
       const res = await createEvent(eventForm);
       alert("Event created successfully! ID: " + res.id);
+
+      setEventForm(initialForm);
      
     } catch (err) {
       alert("Error while creating event");
@@ -148,6 +177,9 @@ export function OrganizerEventCreatePage() {
 
   // helper function
 async function createEvent(eventForm:any) {
+
+ 
+
   try {
 
     const API_BASE = "/Event";
@@ -189,6 +221,30 @@ async function createEvent(eventForm:any) {
     throw err;
   }
 }
+
+function validateEventForm(form: EventForm) {
+  const errors: string[] = [];
+
+  if (!form.title.trim()) errors.push("Event title is required");
+  if (!form.description.trim()) errors.push("Event description is required");
+  if (!form.category.trim()) errors.push("Category is required");
+
+  if (!form.date) errors.push("Event date is required");
+  if (!form.startTime) errors.push("Start time is required");
+  if (!form.endTime) errors.push("End time is required");
+
+  if (!form.location.trim()) errors.push("Location is required");
+  if (!form.venue.trim()) errors.push("Venue name is required");
+
+  if (!form.requiredVolunteer) errors.push("Capacity / required volunteers is required");
+
+  if (!form.price) errors.push("Volunteer price per day is required");
+
+  return errors;
+}
+
+const today = new Date().toISOString().split("T")[0];
+
 
 
 
@@ -335,6 +391,7 @@ async function createEvent(eventForm:any) {
                         id="date"
                         type="date"
                         value={eventForm.date}
+                          min={today}
                         onChange={(e) => handleFormChange('date', e.target.value)}
                       />
                     </div>
