@@ -60,7 +60,7 @@ export function LoginForm({ initialMode = 'login' }: LoginFormProps) {
     { value: 'STUDENT', label: 'Student' },
     { value: 'ORGANIZER', label: 'Event Organizer' },
     { value: 'MANAGER', label: 'Event Manager' },
-    { value: 'vendor', label: 'Vendor' },
+    { value: 'VENDOR', label: 'Vendor' },
     { value: 'ADMIN', label: 'Administrator' },
   ];
 
