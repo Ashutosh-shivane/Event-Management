@@ -146,7 +146,10 @@ export function EventsPage() {
   //   }
   // ];
 
-  const categories = ['all', 'Technology', 'Entertainment', 'Career', 'Education', 'Sports', 'Business'];
+   const categories = [
+    "Technology", "Business", "Education", "Arts & Culture",
+    "Sports", "Health & Wellness", "Networking", "Conference", "Workshop",
+  ];
 
   const filteredEvents = events.filter(event => {
     const matchesSearch = event.title.toLowerCase().includes(searchTerm.toLowerCase()) ||

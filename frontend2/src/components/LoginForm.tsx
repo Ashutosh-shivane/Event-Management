@@ -21,13 +21,13 @@ export function LoginForm({ initialMode = 'login' }: LoginFormProps) {
   // Login form state
   const [loginEmail, setLoginEmail] = useState('');
   const [loginPassword, setLoginPassword] = useState('');
-  const [loginRole, setLoginRole] = useState<UserRole>('student');
+  const [loginRole, setLoginRole] = useState<UserRole>('STUDENT');
 
   // Signup form state
   const [signupName, setSignupName] = useState('');
   const [signupEmail, setSignupEmail] = useState('');
   const [signupPassword, setSignupPassword] = useState('');
-  const [signupRole, setSignupRole] = useState<UserRole>('student');
+  const [signupRole, setSignupRole] = useState<UserRole>('STUDENT');
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -44,6 +44,14 @@ export function LoginForm({ initialMode = 'login' }: LoginFormProps) {
   const handleSignup = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
+
+    console.log(signupRole);
+
+      if (!signupRole) {
+    alert("Please select a role");
+    return;
+  }
+
      console.log("Signup button clicked");
     try {
       await signup(signupName, signupEmail, signupPassword, signupRole);

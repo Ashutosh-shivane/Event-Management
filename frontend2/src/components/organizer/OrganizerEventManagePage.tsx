@@ -8,7 +8,7 @@ import {
   ArrowLeft,
   Calendar,
   Users,
-  DollarSign,
+  IndianRupee ,
   MapPin,
   Clock,
   Edit,

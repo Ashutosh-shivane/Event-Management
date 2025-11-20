@@ -28,7 +28,7 @@ import {
   Users,
   TrendingUp,
   Globe,
-  DollarSign
+  IndianRupee 
 } from 'lucide-react';
 
 import axios from 'axios';
@@ -698,7 +698,7 @@ export function OrganizerProfilePage() {
             <Card>
               <CardHeader>
                 <CardTitle className="flex items-center">
-                  <DollarSign className="h-5 w-5 mr-2" />
+                  <IndianRupee  className="h-5 w-5 mr-2" />
                   Business Information
                 </CardTitle>
               </CardHeader>

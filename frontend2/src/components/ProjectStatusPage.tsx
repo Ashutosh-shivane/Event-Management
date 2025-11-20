@@ -11,7 +11,7 @@ import {
   Users,
   Calendar,
   MessageCircle,
-  DollarSign,
+  IndianRupee ,
   BarChart3,
   Shield,
   Package,

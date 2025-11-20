@@ -12,7 +12,7 @@ import {
   MapPin,
   Users,
   Clock,
-  DollarSign,
+  IndianRupee ,
   Star,
   MessageCircle,
   Share2,
@@ -208,7 +208,7 @@ export function EventDetailsPage({ eventId, onNavigate }: EventDetailsPageProps)
               <CardContent className="p-6">
                 <div className="flex items-center space-x-4">
                   <div className="h-12 w-12 bg-green-100 rounded-lg flex items-center justify-center">
-                    <DollarSign className="h-6 w-6 text-green-600" />
+                    <IndianRupee  className="h-6 w-6 text-green-600" />
                   </div>
                   <div>
                     <div className="text-2xl font-bold">${event.price}</div>

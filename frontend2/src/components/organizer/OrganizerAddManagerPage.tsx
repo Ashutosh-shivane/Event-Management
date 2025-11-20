@@ -24,7 +24,7 @@ import {
   Crown,
   Settings,
   AlertTriangle,
-  DollarSign,
+  IndianRupee ,
   Clock,
   MessageSquare,
   TrendingUp,
@@ -735,7 +735,7 @@ function mapInvitationSingle(invite: any): ManagerInvitation {
                           
                           <div className="flex items-center gap-4 text-sm">
                             <div className="flex items-center">
-                              {/* <DollarSign className="h-4 w-4 mr-1" />
+                              {/* <IndianRupee  className="h-4 w-4 mr-1" />
                                */}
 
                                RS.

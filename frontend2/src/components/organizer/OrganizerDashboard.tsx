@@ -7,12 +7,12 @@ import { Progress } from '../ui/progress';
 import { 
   Calendar, 
   Users, 
-  DollarSign, 
   TrendingUp,
   Plus,
   Eye,
   Edit,
-  MoreHorizontal
+  MoreHorizontal,
+  IndianRupee 
 } from 'lucide-react';
 import axios from 'axios';
 
@@ -150,7 +150,7 @@ export function OrganizerDashboard() {
           <CardContent className="p-6">
             <div className="flex items-center">
               <div className="p-2 bg-orange-100 rounded-lg">
-                <DollarSign className="h-6 w-6 text-orange-600" />
+                <IndianRupee  className="h-6 w-6 text-orange-600" />
               </div>
               <div className="ml-4">
                 <p className="text-sm text-gray-600">Total Spent</p>

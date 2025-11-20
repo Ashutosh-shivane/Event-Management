@@ -45,6 +45,9 @@ import OAuth2Success from './components/oauth/OAuthSuccess';
 import ChatbotIcon from './components/chatbot/ChatbotIcon';
 import ChatbotDialog from './components/chatbot/ChatbotDialog';
 
+import { StudentFeedbackPage } from './components/student/StudentFeedbackPage';
+import { StudentFeedbackForm } from './components/student/StudentFeedbackForm';
+
 // Protected Route Component
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
   const { isAuthenticated } = useAuth();
@@ -445,6 +448,31 @@ function AppRoutes() {
             <div className="min-h-screen bg-gray-50">
               <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
                 <ManagerAssignedEventPage />
+              </div>
+            </div>
+          </ProtectedRoute>
+        } 
+      />
+
+      <Route 
+        path="/student/feedback" 
+        element={
+          <ProtectedRoute>
+            <div className="min-h-screen bg-gray-50">
+              <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+                <StudentFeedbackPage />
+              </div>
+            </div>
+          </ProtectedRoute>
+        } 
+      />
+      <Route 
+        path="/student/feedback/:eventId" 
+        element={
+          <ProtectedRoute>
+            <div className="min-h-screen bg-gray-50">
+              <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+                <StudentFeedbackForm />
               </div>
             </div>
           </ProtectedRoute>

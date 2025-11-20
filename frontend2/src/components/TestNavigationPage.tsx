@@ -10,7 +10,7 @@ import {
   Calendar,
   Bell,
   MessageCircle,
-  DollarSign,
+  IndianRupee ,
   BarChart3,
   Users,
   CheckCircle,
@@ -55,7 +55,7 @@ export function TestNavigationPage() {
     {
       label: 'Wallet',
       path: '/wallet',
-      icon: DollarSign,
+      icon: IndianRupee ,
       description: 'Wallet and payments'
     },
     {

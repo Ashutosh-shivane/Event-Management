@@ -13,7 +13,7 @@ import {
   Building2,
   MapPin,
   Package,
-  DollarSign,
+  IndianRupee ,
   CheckCircle,
   ArrowRight,
   ArrowLeft

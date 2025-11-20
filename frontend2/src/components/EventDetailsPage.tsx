@@ -13,7 +13,7 @@ import {
   MapPin,
   Users,
   Clock,
-  DollarSign,
+  IndianRupee ,
   Star,
   MessageCircle,
   Share2,

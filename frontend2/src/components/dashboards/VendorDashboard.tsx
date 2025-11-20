@@ -5,7 +5,7 @@ import { Button } from '../ui/button';
 import { Badge } from '../ui/badge';
 import { Progress } from '../ui/progress';
 import { 
-  DollarSign, 
+  IndianRupee , 
   Package, 
   Clock, 
   Star,
@@ -113,7 +113,7 @@ export function VendorDashboard() {
           <CardContent className="p-6">
             <div className="flex items-center">
               <div className="p-2 bg-green-100 rounded-lg">
-                <DollarSign className="h-6 w-6 text-green-600" />
+                <IndianRupee  className="h-6 w-6 text-green-600" />
               </div>
               <div className="ml-4">
                 <p className="text-sm text-gray-600">Total Earnings</p>

@@ -15,7 +15,7 @@ import {
   Calendar,
   MapPin,
   Users,
-  DollarSign,
+  IndianRupee ,
   Upload,
   Plus,
   X,

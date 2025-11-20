@@ -14,7 +14,7 @@ import {
   Phone,
   Mail,
   Globe,
-  DollarSign,
+  IndianRupee ,
   Star,
   Package,
   Edit,
@@ -414,7 +414,7 @@ export function VendorProfilePage() {
                 View Portfolio
               </Button>
               <Button variant="outline" className="w-full justify-start">
-                <DollarSign className="h-4 w-4 mr-2" />
+                <IndianRupee  className="h-4 w-4 mr-2" />
                 Pricing Calculator
               </Button>
               <Button variant="outline" className="w-full justify-start">

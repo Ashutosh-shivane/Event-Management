@@ -12,7 +12,7 @@ import {
   TrendingUp,
   Users,
   Calendar,
-  DollarSign,
+  IndianRupee ,
   Star,
   FileText
 } from 'lucide-react';
@@ -28,7 +28,7 @@ export function ReportsPage() {
   const overviewStats = [
     { label: 'Total Events', value: '156', change: '+12%', icon: Calendar, trend: 'up' },
     { label: 'Total Attendees', value: '12,847', change: '+8%', icon: Users, trend: 'up' },
-    { label: 'Revenue Generated', value: '$284,590', change: '+15%', icon: DollarSign, trend: 'up' },
+    { label: 'Revenue Generated', value: '$284,590', change: '+15%', icon: IndianRupee , trend: 'up' },
     { label: 'Average Rating', value: '4.7', change: '+0.2', icon: Star, trend: 'up' }
   ];
 

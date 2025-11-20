@@ -9,7 +9,7 @@ import { Input } from './ui/input';
 import { 
   Bell, 
   Calendar, 
-  DollarSign, 
+  IndianRupee , 
   Users,
   CheckCircle,
   X,

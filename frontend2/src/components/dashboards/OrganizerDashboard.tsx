@@ -6,7 +6,7 @@ import { Progress } from '../ui/progress';
 import { 
   Calendar, 
   Users, 
-  DollarSign, 
+  IndianRupee , 
   TrendingUp,
   Plus,
   Eye,
@@ -115,7 +115,7 @@ export function OrganizerDashboard({ onNavigate, onEventSelect }: OrganizerDashb
           <CardContent className="p-6">
             <div className="flex items-center">
               <div className="p-2 bg-yellow-100 rounded-lg">
-                <DollarSign className="h-6 w-6 text-yellow-600" />
+                <IndianRupee  className="h-6 w-6 text-yellow-600" />
               </div>
               <div className="ml-4">
                 <p className="text-sm text-gray-600">Total Revenue</p>
@@ -211,7 +211,7 @@ export function OrganizerDashboard({ onNavigate, onEventSelect }: OrganizerDashb
                 Manage Attendees
               </Button>
               <Button variant="outline" className="h-20 flex flex-col items-center justify-center">
-                <DollarSign size={20} className="mb-2" />
+                <IndianRupee  size={20} className="mb-2" />
                 View Payments
               </Button>
               <Button variant="outline" className="h-20 flex flex-col items-center justify-center">

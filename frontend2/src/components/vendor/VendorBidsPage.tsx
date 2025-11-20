@@ -11,7 +11,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '.
 import { 
   Search,
   Filter,
-  DollarSign,
+  IndianRupee ,
   Calendar,
   MapPin,
   Users,
