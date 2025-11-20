@@ -492,12 +492,14 @@ function mapInvitationSingle(invite: any): ManagerInvitation {
     const role = roleDefinitions.find(r => r.id === roleId);
     if (!role) return [];
     
-    return availableManagers.filter(manager => 
-      manager.specialties.some(specialty => 
-        role.title.toLowerCase().includes(specialty.toLowerCase()) ||
-        specialty.toLowerCase().includes(role.title.toLowerCase())
-      ) || manager.role.toLowerCase().includes(role.title.toLowerCase())
-    );
+    // return availableManagers.filter(manager => 
+    //   manager.specialties.some(specialty => 
+    //     role.title.toLowerCase().includes(specialty.toLowerCase()) ||
+    //     specialty.toLowerCase().includes(role.title.toLowerCase())
+    //   ) || manager.role.toLowerCase().includes(role.title.toLowerCase())
+    // );
+
+    return availableManagers;
   };
 
   const getInvitationStatus = (managerId: string, roleId: string) => {

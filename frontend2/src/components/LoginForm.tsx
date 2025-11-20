@@ -234,7 +234,7 @@ export function LoginForm({ initialMode = 'login' }: LoginFormProps) {
   
 
 </Button>
-<p className="text-xs text-gray-500 text-center mt-2">
+<p className="text-xs text-gray-500 text-center "   style={{ marginTop: "-15px" }}>
   *Google login is available for students only
 </p>
 
