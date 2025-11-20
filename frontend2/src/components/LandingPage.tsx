@@ -31,10 +31,14 @@ export function LandingPage() {
               <span className="font-bold text-xl">EventHub</span>
             </div>
             <nav className="hidden md:flex items-center space-x-8">
-              <button className="text-muted-foreground hover:text-foreground transition-colors">
+              <button className="text-muted-foreground hover:text-foreground transition-colors" 
+              onClick={() => document.getElementById("features")?.scrollIntoView({ behavior: "smooth" })}
+>
                 Features
               </button>
-              <button className="text-muted-foreground hover:text-foreground transition-colors">
+              <button className="text-muted-foreground hover:text-foreground transition-colors" 
+              onClick={() => document.getElementById("pricing")?.scrollIntoView({ behavior: "smooth" })}
+>
                 Pricing
               </button>
               <button 
@@ -146,7 +150,7 @@ export function LandingPage() {
       </section>
 
       {/* Features Section */}
-      <section className="py-20 px-6 bg-muted/30">
+      <section id="features"  className="py-20 px-6 bg-muted/30">
         <div className="container mx-auto max-w-6xl">
           <div className="text-center space-y-4 mb-16">
             <Badge variant="outline">Features</Badge>
@@ -314,7 +318,7 @@ export function LandingPage() {
       </section>
 
       {/* Pricing Section */}
-      <section className="py-20 px-6">
+      <section id="pricing" className="py-20 px-6">
         <div className="container mx-auto max-w-6xl">
           <div className="text-center space-y-4 mb-16">
             <Badge variant="outline">Pricing</Badge>
