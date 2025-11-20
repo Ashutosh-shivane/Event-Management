@@ -231,7 +231,12 @@ export function LoginForm({ initialMode = 'login' }: LoginFormProps) {
     <path fill="#34A853" d="M24 48c6.47 0 11.9-2.13 15.87-5.79l-7.48-5.82c-2.07 1.39-4.71 2.19-8.39 2.19-6.26 0-11.57-3.53-13.31-9.41l-7.98 6.37C6.76 42.81 14.74 48 24 48z"/>
   </svg>
   <span>Continue with Google</span>
+  
+
 </Button>
+<p className="text-xs text-gray-500 text-center mt-2">
+  *Google login is available for students only
+</p>
 
       </Card>
     </div>

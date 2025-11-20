@@ -117,7 +117,7 @@ export function VendorDashboard() {
               </div>
               <div className="ml-4">
                 <p className="text-sm text-gray-600">Total Earnings</p>
-                <p className="text-2xl font-semibold">$18,400</p>
+                <p className="text-2xl font-semibold">₹ 18,400</p>
                 <p className="text-xs text-green-600">+12% this month</p>
               </div>
             </div>
@@ -191,7 +191,7 @@ export function VendorDashboard() {
                         {contract.status}
                       </Badge>
                       <p className="text-lg font-semibold text-green-600 mt-1">
-                        ${contract.amount.toLocaleString()}
+                        ₹ {contract.amount.toLocaleString()}
                       </p>
                     </div>
                   </div>
@@ -234,7 +234,7 @@ export function VendorDashboard() {
                   <div className="flex justify-between items-start mb-2">
                     <h3 className="font-semibold text-gray-900">{bid.event}</h3>
                     <span className="text-lg font-semibold text-blue-600">
-                      ${bid.budget.toLocaleString()}
+                      ₹ {bid.budget.toLocaleString()}
                     </span>
                   </div>
                   

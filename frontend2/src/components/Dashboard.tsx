@@ -3,7 +3,7 @@ import { useAuth } from './AuthContext';
 import { StudentDashboard } from './student/StudentDashboard';
 import { OrganizerDashboard } from './organizer/OrganizerDashboard';
 import { ManagerDashboard } from './manager/ManagerDashboard';
-import { VendorDashboard } from './dashboards/VendorDashboard';
+import { VendorDashboard } from './vendor/VendorDashboard';
 import { AdminDashboard } from './dashboards/AdminDashboard';
 
 export function Dashboard() {
