@@ -3,6 +3,7 @@ package com.example.EventManagement.domain.organizeManageEvents;
 import com.example.EventManagement.domain.Event.Event;
 import com.example.EventManagement.domain.Event.EventOutDto;
 import com.example.EventManagement.domain.Event.EventRepository;
+import com.example.EventManagement.domain.notification.NotificationControlService;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,6 +23,8 @@ public class OME_service {
     private final EventRoleRepository eventRoleRepository;
     private final EventInvitationRepository eventInvitationRepository;
     private final EventRepository eventRepository;
+
+    private final NotificationControlService notificationControlService;
 
     @Autowired
     private ModelMapper modelMapper;
@@ -104,6 +107,8 @@ public class OME_service {
             eventInvitationOutDTO = modelMapper.map(eventInvitation, EventInvitationOutDTO.class);
         }
 
+        notificationControlService.notifyMangerForInvitation(eventInvitation.getUserid());
+
 
 
 
@@ -158,6 +163,8 @@ public class OME_service {
         // Save updated record
         eventInvitationRepository.save(invitation);
 
+        notificationControlService.notifyOrganizerManagerReplied(invitation);
+
         return "Invitation " + invitation.getStatus() + " successfully.";
     }
 
@@ -177,6 +184,9 @@ public class OME_service {
         List<EventInvitation> res=eventInvitationRepository.findByEventid(eventid);
 
         List<EventInvitationOutDTO> response=res.stream().map(r->modelMapper.map(r,EventInvitationOutDTO.class)).toList();
+
+
+        notificationControlService.notifyManagerThatSelected(eventInvitation.getEventid(),managerid);
 
 
 

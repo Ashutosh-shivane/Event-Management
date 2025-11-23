@@ -17,6 +17,8 @@ import {
   LogOut,
   Star
 } from 'lucide-react';
+import { useNotifications } from "./NotificationContext";
+
 
 interface SidebarProps {
   collapsed: boolean;
@@ -35,13 +37,17 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
+  const { unreadCount } = useNotifications();
+
+  
+
 
   const getNavigationItems = (): NavigationItem[] => {
     const baseItems: NavigationItem[] = [
       { key: 'dashboard', label: 'Dashboard', icon: LayoutDashboard, path: '/dashboard' },
       { key: 'events', label: 'Events', icon: Calendar, path: '/events' },
       { key: 'wallet', label: 'Wallet', icon: Wallet, path: '/wallet' },
-      { key: 'notifications', label: 'Notifications', icon: Bell, path: '/notifications', badge: 3 },
+      { key: 'notifications', label: 'Notifications', icon: Bell, path: '/notifications',badge: unreadCount > 0 ? unreadCount : undefined },
     ];
 
     // Add role-specific items

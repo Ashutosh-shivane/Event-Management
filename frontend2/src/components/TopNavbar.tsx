@@ -20,9 +20,11 @@ interface TopNavbarProps {
 export function TopNavbar({ onToggleSidebar }: TopNavbarProps) {
   const navigate = useNavigate();
   const { user } = useAuth();
-  const { getUnreadCount } = useNotifications();
+  // const { getUnreadCount } = useNotifications();
   
-  const unreadCount = user ? getUnreadCount(user.id) : 0;
+  // const unreadCount = user ? getUnreadCount(user.id) : 0;
+
+  const { unreadCount } = useNotifications();
 
   return (
     <header className="bg-white border-b border-gray-200 px-6 py-4">

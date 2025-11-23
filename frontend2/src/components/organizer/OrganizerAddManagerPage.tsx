@@ -609,7 +609,7 @@ function mapInvitationSingle(invite: any): ManagerInvitation {
 
                   <div className="grid grid-cols-2 gap-4">
                     <div className="space-y-2">
-                      <Label>Budget *</Label>
+                      <Label>Manager Payout *</Label>
                       <Input
                         type="number"
                         value={newRole.budget}
