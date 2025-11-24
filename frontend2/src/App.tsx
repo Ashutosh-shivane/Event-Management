@@ -47,10 +47,14 @@ import ChatbotDialog from './components/chatbot/ChatbotDialog';
 
 import { StudentFeedbackPage } from './components/student/StudentFeedbackPage';
 import { StudentFeedbackForm } from './components/student/StudentFeedbackForm';
+import { StudentEmailVerificationPage } from './components/student/StudentEmailVerificationPage';
+import { useNavigate } from "react-router-dom";
 
 // Protected Route Component
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
   const { isAuthenticated } = useAuth();
+  
+
   
   if (!isAuthenticated) {
     return <Navigate to="/" replace />;
@@ -72,12 +76,13 @@ function PublicRoute({ children }: { children: React.ReactNode }) {
 
 // Profile Page Wrapper with Layout
 function ProfilePageWrapper() {
+  const navigate = useNavigate();
   return (
     <div className="min-h-screen bg-gray-50">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <Button 
           variant="outline" 
-          onClick={() => window.history.back()}
+          onClick={() =>  navigate("/dashboard")}
           className="mb-6"
         >
           <ArrowLeft className="h-4 w-4 mr-2" />
@@ -475,6 +480,15 @@ function AppRoutes() {
                 <StudentFeedbackForm />
               </div>
             </div>
+          </ProtectedRoute>
+        } 
+      />
+
+      <Route 
+        path="/verify-email" 
+        element={
+          <ProtectedRoute>
+            <StudentEmailVerificationPage />
           </ProtectedRoute>
         } 
       />

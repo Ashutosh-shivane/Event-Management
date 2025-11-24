@@ -49,6 +49,9 @@ public class Event {
     private String cost;
 
 
+    private String whatsappGroupLink;
+
+
 
 
 

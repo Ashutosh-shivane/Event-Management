@@ -10,6 +10,7 @@ import { Badge } from '../ui/badge';
 import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '../ui/tabs';
 import { Progress } from '../ui/progress';
+import { useParams, useNavigate } from 'react-router-dom';
 import { 
   User, 
   Mail, 
@@ -23,7 +24,8 @@ import {
   Save,
   Edit3,
   CheckCircle,
-  AlertCircle
+  AlertCircle,
+  Verified
 } from 'lucide-react';
 
 import axios from 'axios';
@@ -34,6 +36,7 @@ export function StudentProfilePage() {
   const { user, updateUser } = useAuth();
   const [isEditing, setIsEditing] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
+  const navigate = useNavigate();
 
  const [studentdata, setStudentdata] = useState({});
 
@@ -93,7 +96,8 @@ export function StudentProfilePage() {
     // Emergency Contact
     emergencyContactName: response.data?.emergencyContactName || '',
     emergencyContactPhone: response.data?.emergencyContactPhone || '',
-    emergencyContactRelation: response.data?.emergencyContactRelation || ''}
+    emergencyContactRelation: response.data?.emergencyContactRelation || '',
+    Verified:response.data?.isVerified || 0}
 
     setFormData(tempdata);
     console.log("student here:", tempdata);  
@@ -414,6 +418,7 @@ export function StudentProfilePage() {
                   
                   <div>
                     <Label htmlFor="email">Email Address *</Label>
+                    <div className="flex space-x-2">
                     <Input
                       id="email"
                       type="email"
@@ -421,6 +426,15 @@ export function StudentProfilePage() {
                       onChange={(e) => handleInputChange('email', e.target.value)}
                       disabled={true}
                     />
+                    <Button
+                        variant="outline"
+                        onClick={() => navigate('/verify-email')}
+                        className="whitespace-nowrap"
+                      >
+                        <Mail className="h-4 w-4 mr-2" />
+                        Verify Email
+                      </Button>
+                      </div>
                   </div>
                   
                   <div>

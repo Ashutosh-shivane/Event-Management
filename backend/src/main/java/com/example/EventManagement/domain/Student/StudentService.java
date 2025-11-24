@@ -53,6 +53,7 @@ public class StudentService {
 
         data.setEmail(user.getUsername());
         data.setName(user.getName());
+        data.setIsVerified(  user.getVerified());
 
         return data;
 

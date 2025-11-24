@@ -22,7 +22,8 @@ import {
   Clock,
   Save,
   Eye,
-  Send
+  Send,
+  MessageCircle
 } from 'lucide-react';
 
 import axios from 'axios';
@@ -47,6 +48,9 @@ interface EventForm {
   isPublic: boolean;
   requiresApproval: boolean;
   allowWaitlist: boolean;
+  whatsappGroupLink:string;
+  // requiredVolunteer:number;
+  
 }
 
 
@@ -74,7 +78,8 @@ export function OrganizerEventCreatePage() {
     venue: "",
     capacity: "",
     price: "",
-    tags: []
+    tags: [],
+     whatsappGroupLink:""
   });
 
 
@@ -92,7 +97,9 @@ export function OrganizerEventCreatePage() {
   price: "",
   earlyBirdPrice: "",
   earlyBirdDeadline: "",
-  tags: []
+  tags: [],
+  whatsappGroupLink:""
+
 };
 
  
@@ -206,7 +213,8 @@ async function createEvent(eventForm:any) {
       
       cost: eventForm.price,
       tags: JSON.stringify(eventForm.tags),
-      createdid:localStorage.getItem('id')
+      createdid:localStorage.getItem('id'),
+      whatsappGroupLink:eventForm.whatsappGroupLink
       
     };
 
@@ -239,6 +247,8 @@ function validateEventForm(form: EventForm) {
   if (!form.requiredVolunteer) errors.push("Capacity / required volunteers is required");
 
   if (!form.price) errors.push("Volunteer price per day is required");
+
+  if(!form.whatsappGroupLink) errors.push("Whatsapp group is required for further communication for event.");
 
   return errors;
 }
@@ -463,6 +473,58 @@ const today = new Date().toISOString().split("T")[0];
                   </div>
                 </CardContent>
               </Card>
+
+
+
+<Card>
+                <CardHeader>
+                  <CardTitle>Gruoup</CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-6">
+                  
+                   
+                   <div className="space-y-2">
+                <Label htmlFor="whatsappGroupLink" className="flex items-center">
+                  <MessageCircle className="h-4 w-4 mr-2 text-green-600" />
+                  WhatsApp Group Link *
+                </Label>
+                 <div className="flex space-x-2">
+                <Input
+                  id="whatsappGroupLink"
+                  value={eventForm.whatsappGroupLink}
+                  onChange={(e) => handleFormChange('whatsappGroupLink', e.target.value)}
+                  placeholder="https://chat.whatsapp.com/..."
+                  type="url"
+                />
+
+                 <Button
+                    type="button"
+                    variant="outline"
+                    onClick={() => {
+                     
+                        window.open("https://web.whatsapp.com/", '_blank');
+                      
+                    }}
+                    
+                    className="bg-green-50 hover:bg-green-100 text-green-700 border-green-300"
+                  >
+                    <MessageCircle className="h-4 w-4 mr-2" />
+                    Open
+                  </Button>
+                  </div>
+
+                <p className="text-xs text-gray-500">
+                  Share a WhatsApp group link for event participants to communicate and coordinate.<br />
+                  First create a WhatsApp group for this event.  <br />
+                  Open the group settings → enable “Anyone can join with the link”.  <br />
+                  Then copy the invite link and paste it in the input box above.<br />
+                </p>
+              </div>
+                </CardContent>
+              </Card>
+
+
+
             </div>
           </TabsContent>
 

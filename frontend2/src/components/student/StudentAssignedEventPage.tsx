@@ -277,6 +277,23 @@ var userid=localStorage.getItem("id");
                   )}
                 </div>
               </div>
+
+
+
+<a
+  href={event.whatsappGroupLink}
+  target="_blank"
+  rel="noopener noreferrer"
+  className="w-full flex items-center justify-center gap-2 mt-4 bg-green-600 text-white py-2 rounded-lg hover:bg-green-700 transition"
+>
+  <img 
+    src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg"
+    alt="WhatsApp"
+    className="h-5 w-5"
+  />
+  Join WhatsApp Group
+</a>
+
               
              
             </CardContent>

@@ -36,5 +36,7 @@ public class EventOutDto {
 
     private String tags;
 
+    private String whatsappGroupLink;
+
 
 }
