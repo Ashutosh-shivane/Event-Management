@@ -19,6 +19,7 @@ import {
 } from 'lucide-react';
 
 import axios from "axios";
+import API from '../config/axiosConfig';
 
 
 
@@ -67,8 +68,8 @@ export function ManagerAssignedEventPage() {
 var userid=localStorage.getItem("id");
   
  useEffect(() => {
-    axios
-      .get(`http://localhost:8080/Manager/Assigneventlist/${userid}`) // replace with your backend URL
+    API
+      .get(`/Manager/Assigneventlist/${userid}`) // replace with your backend URL
       .then((response) => {
         setEvents(response.data); // store events
         setLoading(false);
@@ -272,6 +273,21 @@ var userid=localStorage.getItem("id");
                   )}
                 </div>
               </div>
+
+
+              <a
+  href={event.whatsappGroupLink}
+  target="_blank"
+  rel="noopener noreferrer"
+  className="w-full flex items-center justify-center gap-2 mt-4 bg-green-600 text-white py-2 rounded-lg hover:bg-green-700 transition"
+>
+  <img 
+    src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg"
+    alt="WhatsApp"
+    className="h-5 w-5"
+  />
+  Join WhatsApp Group
+</a>
               
              
             </CardContent>

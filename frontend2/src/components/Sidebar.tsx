@@ -17,6 +17,8 @@ import {
   LogOut,
   Star
 } from 'lucide-react';
+import { useNotifications } from "./NotificationContext";
+
 
 interface SidebarProps {
   collapsed: boolean;
@@ -35,13 +37,17 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
+  const { unreadCount } = useNotifications();
+
+  
+
 
   const getNavigationItems = (): NavigationItem[] => {
     const baseItems: NavigationItem[] = [
       { key: 'dashboard', label: 'Dashboard', icon: LayoutDashboard, path: '/dashboard' },
       { key: 'events', label: 'Events', icon: Calendar, path: '/events' },
       { key: 'wallet', label: 'Wallet', icon: Wallet, path: '/wallet' },
-      { key: 'notifications', label: 'Notifications', icon: Bell, path: '/notifications', badge: 3 },
+      { key: 'notifications', label: 'Notifications', icon: Bell, path: '/notifications',badge: unreadCount > 0 ? unreadCount : undefined },
     ];
 
     // Add role-specific items
@@ -54,7 +60,7 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
 
     if (user?.role === 'MANAGER') {
       baseItems.push(
-        { key: 'invitations', label: 'Invitations', icon: Bell, path: '/manager/invitations', badge: 2 },
+        { key: 'invitations', label: 'Invitations', icon: Bell, path: '/manager/invitations' },
         { key: 'add-event', label: 'Add Event', icon: Calendar, path: '/manager/add-event' },
           { key: 'Assigned_Events', label: 'Assigned Events', icon: Calendar, path: '/manager/Assigned_Events' },
         { key: 'approvals', label: 'Student Approvals', icon: Users, path: '/manager/approvals' }
@@ -114,11 +120,11 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
   }
 
   return (
-    <div className={`bg-white border-r border-gray-200 flex flex-col transition-all duration-300 ${
+    <div className={`bg-white border-r border-gray-200 flex flex-col transition-all duration-300 mr-3 ${
       collapsed ? 'w-16' : 'w-64'
     }`}>
       {/* Header */}
-      <div className="p-4 border-b border-gray-200">
+      <div className="p-4 border-b border-gray-200 ">
         <div className="flex items-center justify-between">
           {!collapsed && (
             <div className="flex items-center space-x-2">

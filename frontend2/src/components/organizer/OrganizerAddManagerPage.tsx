@@ -24,7 +24,7 @@ import {
   Crown,
   Settings,
   AlertTriangle,
-  DollarSign,
+  IndianRupee ,
   Clock,
   MessageSquare,
   TrendingUp,
@@ -32,6 +32,7 @@ import {
   Eye
 } from 'lucide-react';
 import axios from 'axios';
+import API from '../config/axiosConfig';
 
 interface RoleDefinition {
   id: string;
@@ -82,11 +83,21 @@ export function OrganizerAddManagerPage() {
     title: '',
     description: '',
     budget: '',
-    currency: 'USD',
+    currency: 'Rs',
     responsibilities: [''],
     requirements: [''],
     deadline: ''
   });
+
+  const intial_role={
+     title: '',
+    description: '',
+    budget: '',
+    currency: 'Rs',
+    responsibilities: [''],
+    requirements: [''],
+    deadline: ''
+  };
 
   // Mock event data
   const [eventData,setEventData] =useState( {
@@ -182,7 +193,7 @@ function mapInvitationSingle(invite: any): ManagerInvitation {
 
       console.log(eventId+"   here check eventid");
 
-       const res = await axios.get(`http://localhost:8080/OME/GetData/${eventId}`)
+       const res = await API.get(`/OME/GetData/${eventId}`)
       .then((res)=>{
         console.log(res.data);
 
@@ -309,7 +320,7 @@ function mapInvitationSingle(invite: any): ManagerInvitation {
 };
 
 
-     const res=await  axios.post("http://localhost:8080/OME/save/Role",payload);
+     const res=await  API.post("/OME/save/Role",payload);
 
      console.log(res.data);
 
@@ -336,6 +347,8 @@ function mapInvitationSingle(invite: any): ManagerInvitation {
     
     
     alert('Role created successfully!');
+
+    setNewRole(intial_role);
 
     }catch(err){
       console.log(err);
@@ -389,7 +402,7 @@ function mapInvitationSingle(invite: any): ManagerInvitation {
 
       var invitation:ManagerInvitation;
       try{
-      const res=await axios.post("http://localhost:8080/OME/SaveManagerInvitation",payload);
+      const res=await API.post("/OME/SaveManagerInvitation",payload);
 
      invitation =mapInvitationSingle(res.data);
 
@@ -443,7 +456,7 @@ function mapInvitationSingle(invite: any): ManagerInvitation {
 
       
       try{
-      const res=await axios.patch(`http://localhost:8080/OME/SelectManagerByOrg/${invitationId}/${invitation?.managerId}`);
+      const res=await API.patch(`/OME/SelectManagerByOrg/${invitationId}/${invitation?.managerId}`);
 
 
        const invitationlist=mapInvitations(res.data);
@@ -479,12 +492,14 @@ function mapInvitationSingle(invite: any): ManagerInvitation {
     const role = roleDefinitions.find(r => r.id === roleId);
     if (!role) return [];
     
-    return availableManagers.filter(manager => 
-      manager.specialties.some(specialty => 
-        role.title.toLowerCase().includes(specialty.toLowerCase()) ||
-        specialty.toLowerCase().includes(role.title.toLowerCase())
-      ) || manager.role.toLowerCase().includes(role.title.toLowerCase())
-    );
+    // return availableManagers.filter(manager => 
+    //   manager.specialties.some(specialty => 
+    //     role.title.toLowerCase().includes(specialty.toLowerCase()) ||
+    //     specialty.toLowerCase().includes(role.title.toLowerCase())
+    //   ) || manager.role.toLowerCase().includes(role.title.toLowerCase())
+    // );
+
+    return availableManagers;
   };
 
   const getInvitationStatus = (managerId: string, roleId: string) => {
@@ -520,6 +535,10 @@ function mapInvitationSingle(invite: any): ManagerInvitation {
   </div>
 );
 
+ const today = new Date().toISOString().split("T")[0];
+
+
+ 
 
 
   return (
@@ -590,7 +609,7 @@ function mapInvitationSingle(invite: any): ManagerInvitation {
 
                   <div className="grid grid-cols-2 gap-4">
                     <div className="space-y-2">
-                      <Label>Budget *</Label>
+                      <Label>Manager Payout *</Label>
                       <Input
                         type="number"
                         value={newRole.budget}
@@ -621,6 +640,7 @@ function mapInvitationSingle(invite: any): ManagerInvitation {
                     <Input
                       type="date"
                       value={newRole.deadline}
+                      min={today}
                       onChange={(e) => setNewRole(prev => ({ ...prev, deadline: e.target.value }))}
                     />
                   </div>
@@ -717,7 +737,7 @@ function mapInvitationSingle(invite: any): ManagerInvitation {
                           
                           <div className="flex items-center gap-4 text-sm">
                             <div className="flex items-center">
-                              {/* <DollarSign className="h-4 w-4 mr-1" />
+                              {/* <IndianRupee  className="h-4 w-4 mr-1" />
                                */}
 
                                RS.

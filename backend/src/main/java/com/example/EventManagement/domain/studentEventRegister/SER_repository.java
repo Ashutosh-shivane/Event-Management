@@ -25,7 +25,7 @@ public interface SER_repository extends JpaRepository<Event,Long> {
                     FROM events e
                     LEFT JOIN student_event_register s ON e.id = s.event_id
                     LEFT JOIN event_invitation ei ON e.id=ei.eventid
-                    WHERE ei.selected=1 AND ei.userid=:userid
+                    WHERE ei.selected=1 AND ei.userid=:userid AND e.start_at>NOW()
                     GROUP BY e.id, e.title, e.location, e.start_at
         """, nativeQuery = true)
     List<SER_Eventlist_DTO> getEventStats(@Param("userid") String userid);

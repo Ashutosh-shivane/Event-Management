@@ -23,7 +23,7 @@ import {
   TrendingUp, 
   Users, 
   Calendar, 
-  DollarSign,
+  IndianRupee ,
   Download,
   Filter,
   BarChart3,
@@ -170,7 +170,7 @@ export function AdminReportsPage() {
             <Card>
               <CardContent className="p-6">
                 <div className="flex items-center">
-                  <DollarSign className="h-8 w-8 text-yellow-600" />
+                  <IndianRupee  className="h-8 w-8 text-yellow-600" />
                   <div className="ml-4">
                     <p className="text-sm text-gray-600">Revenue</p>
                     <p>$427,300</p>

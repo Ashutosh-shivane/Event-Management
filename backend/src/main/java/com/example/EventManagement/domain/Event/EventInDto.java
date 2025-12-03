@@ -36,4 +36,6 @@ public class EventInDto {
 
     private Long createdid;
 
+    private String whatsappGroupLink;
+
 }

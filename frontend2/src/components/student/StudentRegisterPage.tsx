@@ -29,6 +29,7 @@ import {
   CalendarCheck
 } from 'lucide-react';
 import axios from 'axios';
+import API from '../config/axiosConfig';
 
 export function StudentRegisterPage() {
   const navigate = useNavigate();
@@ -62,8 +63,8 @@ export function StudentRegisterPage() {
 
           let eventid=localStorage.getItem('eventid');
 
-          const response = await axios.get(
-            `http://localhost:8080/Student/GetprofileCompleted/${userid}/${eventid}`
+          const response = await API.get(
+            `/Student/GetprofileCompleted/${userid}/${eventid}`
           );
           const profileCompleted = response.data.profileCompleted; 
           
@@ -177,8 +178,8 @@ export function StudentRegisterPage() {
       let indata=mapFormDataToDTO(formData);
     
       // Simulate API call
-      const response = await axios.post(
-      `http://localhost:8080/Student/RegisterEvent`,
+      const response = await API.post(
+      `/Student/RegisterEvent`,
      indata
     );
       
@@ -290,7 +291,7 @@ export function StudentRegisterPage() {
           </p>
           <Button 
             variant="outline" 
-            onClick={() => onNavigate('dashboard')}
+             onClick={() => navigate('/dashboard')}
             className="mt-4"
           >
             <ArrowLeft className="h-4 w-4 mr-2" />

@@ -1,15 +1,22 @@
-import React, { useState } from 'react';
+
+import { useEffect, useState } from "react";
 import { useAuth } from './AuthContext';
-import { useNotifications } from './NotificationContext';
+
 import { Card, CardHeader, CardTitle, CardContent } from './ui/card';
 import { Button } from './ui/button';
 import { Badge } from './ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from './ui/tabs';
 import { Input } from './ui/input';
+// import axios from "axios";
+// import SockJS from "sockjs-client/dist/sockjs";
+// import * as Stomp from "stompjs";
+
+import { useNotifications } from "./NotificationContext";
+
 import { 
   Bell, 
   Calendar, 
-  DollarSign, 
+  IndianRupee , 
   Users,
   CheckCircle,
   X,
@@ -28,46 +35,46 @@ import {
 
 export function NotificationsPage() {
   const { user } = useAuth();
-  const { 
-    getUserNotifications, 
-    getUnreadCount, 
-    markAsRead, 
-    markAllAsRead 
-  } = useNotifications();
+  
   const [filter, setFilter] = useState('all');
   const [searchQuery, setSearchQuery] = useState('');
 
-  // Get user notifications from context
-  const userNotifications = user ? getUserNotifications(user.id) : [];
-  const unreadCount = user ? getUnreadCount(user.id) : 0;
+   const { notifications, unreadCount, markAsRead, markAllAsRead } =
+    useNotifications();
 
-  // Add some default mock notifications if none exist (for demo purposes)
-  const mockNotifications = userNotifications.length === 0 ? [
-    {
-      id: 'mock-1',
-      title: 'Welcome to the Platform',
-      message: 'Welcome! Start by exploring the dashboard features.',
-      type: 'info' as const,
-      userId: user?.id || '',
-      userRole: user?.role || '',
-      timestamp: new Date(Date.now() - 10 * 60 * 1000), // 10 minutes ago
-      read: false,
-      data: {}
-    },
-    {
-      id: 'mock-2', 
-      title: 'System Update',
-      message: 'System has been updated with new features.',
-      type: 'success' as const,
-      userId: user?.id || '',
-      userRole: user?.role || '',
-      timestamp: new Date(Date.now() - 2 * 60 * 60 * 1000), // 2 hours ago
-      read: true,
-      data: {}
-    }
-  ] : [];
+ 
 
-  const allNotifications = [...userNotifications, ...mockNotifications];
+ 
+
+const userid=localStorage.getItem('id');
+
+
+
+ 
+
+
+
+
+ 
+ 
+
+// If backend returns empty, use fallback mock notifications (optional)
+const mockNotifications = notifications.length === 0 ? [
+  {
+    id: 'mock-1',
+    title: 'Welcome to the Platform',
+    message: 'Welcome! Start by exploring the dashboard features.',
+    type: 'info',
+    userId: user?.id || '',
+    timestamp: new Date(),
+    read: false,
+    data: {}
+  }
+] : [];
+
+// Select what to display
+const allNotifications = [...mockNotifications, ...notifications];
+
 
   // Helper function to get icon for notification type
   const getNotificationIcon = (type: string) => {
@@ -120,15 +127,15 @@ export function NotificationsPage() {
     return true;
   });
 
-  const handleMarkAsRead = (notificationId: string) => {
-    markAsRead(notificationId);
-  };
+const handleMarkAsRead = (notificationId) => {
+  markAsRead(notificationId);
+};
+
 
   const handleMarkAllAsRead = () => {
-    if (user) {
-      markAllAsRead(user.id);
-    }
-  };
+ markAllAsRead(userid);
+};
+
 
   const handleInvitationAction = (notification: any, action: 'accept' | 'decline') => {
     if (notification.actions) {

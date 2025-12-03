@@ -7,7 +7,7 @@ import { Progress } from '../ui/progress';
 import { 
   Users, 
   Calendar, 
-  DollarSign, 
+  IndianRupee , 
   TrendingUp,
   AlertTriangle,
   CheckCircle,
@@ -26,7 +26,7 @@ export function AdminDashboard() {
   const systemStats = [
     { label: 'Total Users', value: '2,847', change: '+12%', icon: Users, color: 'blue' },
     { label: 'Active Events', value: '156', change: '+8%', icon: Calendar, color: 'green' },
-    { label: 'Total Revenue', value: '$284,590', change: '+15%', icon: DollarSign, color: 'yellow' },
+    { label: 'Total Revenue', value: '$284,590', change: '+15%', icon: IndianRupee , color: 'yellow' },
     { label: 'System Health', value: '98.5%', change: '+0.2%', icon: TrendingUp, color: 'purple' }
   ];
 

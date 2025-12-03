@@ -10,6 +10,7 @@ import { Badge } from '../ui/badge';
 import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '../ui/tabs';
 import { Progress } from '../ui/progress';
+import { useParams, useNavigate } from 'react-router-dom';
 import { 
   User, 
   Mail, 
@@ -23,16 +24,19 @@ import {
   Save,
   Edit3,
   CheckCircle,
-  AlertCircle
+  AlertCircle,
+  Verified
 } from 'lucide-react';
 
 import axios from 'axios';
+import API from '../config/axiosConfig';
 
 
 export function StudentProfilePage() {
   const { user, updateUser } = useAuth();
   const [isEditing, setIsEditing] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
+  const navigate = useNavigate();
 
  const [studentdata, setStudentdata] = useState({});
 
@@ -55,7 +59,7 @@ export function StudentProfilePage() {
 
     
 
-    axios.get(`http://localhost:8080/Student/${userId}`)
+    API.get(`/Student/${userId}`)
     .then((response)=>{
       // setStudentdata(response.data);
 
@@ -92,7 +96,8 @@ export function StudentProfilePage() {
     // Emergency Contact
     emergencyContactName: response.data?.emergencyContactName || '',
     emergencyContactPhone: response.data?.emergencyContactPhone || '',
-    emergencyContactRelation: response.data?.emergencyContactRelation || ''}
+    emergencyContactRelation: response.data?.emergencyContactRelation || '',
+    Verified:response.data?.isVerified || 0}
 
     setFormData(tempdata);
     console.log("student here:", tempdata);  
@@ -275,8 +280,8 @@ export function StudentProfilePage() {
 
     try {
       // Simulate API call
-      const response = await axios.post(
-      `http://localhost:8080/Student/save`,
+      const response = await API.post(
+      `/Student/save`,
      indata
     );
       
@@ -320,6 +325,16 @@ export function StudentProfilePage() {
     'Sports Events', 'Tech Meetups', 'Workshops', 'Seminars', 
     'Social Events', 'Volunteer Work', 'Community Service'
   ];
+
+
+    const getMaxDOB = () => {
+  const d = new Date();
+  d.setFullYear(d.getFullYear() - 18);
+  const yyyy = d.getFullYear();
+  const mm = String(d.getMonth() + 1).padStart(2, '0');
+  const dd = String(d.getDate()).padStart(2, '0');
+  return `${yyyy}-${mm}-${dd}`;
+};
 
   return (
     <div className="min-h-screen bg-gray-50 p-6">
@@ -403,6 +418,7 @@ export function StudentProfilePage() {
                   
                   <div>
                     <Label htmlFor="email">Email Address *</Label>
+                    <div className="flex space-x-2">
                     <Input
                       id="email"
                       type="email"
@@ -410,6 +426,15 @@ export function StudentProfilePage() {
                       onChange={(e) => handleInputChange('email', e.target.value)}
                       disabled={true}
                     />
+                    <Button
+                        variant="outline"
+                        onClick={() => navigate('/verify-email')}
+                        className="whitespace-nowrap"
+                      >
+                        <Mail className="h-4 w-4 mr-2" />
+                        Verify Email
+                      </Button>
+                      </div>
                   </div>
                   
                   <div>
@@ -417,7 +442,22 @@ export function StudentProfilePage() {
                     <Input
                       id="phone"
                       value={formData.phone}
-                      onChange={(e) => handleInputChange('phone', e.target.value)}
+                      // onChange={(e) => handleInputChange('phone', e.target.value)}
+
+
+                      onChange={
+                        
+
+                        
+                        (e) => {
+                          
+                           const value = e.target.value.replace(/\D/g, ""); // remove non-numbers
+    if (value.length <= 10) {
+      handleInputChange("phone", value);
+    }
+                          
+                        }}
+
                       disabled={!isEditing}
                     />
                   </div>
@@ -427,6 +467,7 @@ export function StudentProfilePage() {
                     <Input
                       id="dateOfBirth"
                       type="date"
+                      max={getMaxDOB()}
                       value={formData.dateOfBirth}
                       onChange={(e) => handleInputChange('dateOfBirth', e.target.value)}
                       disabled={!isEditing}

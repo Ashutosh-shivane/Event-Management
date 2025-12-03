@@ -40,13 +40,13 @@ export function NotFoundPage() {
       description: 'Learn more about our platform',
       requireAuth: false
     },
-    {
-      icon: BookOpen,
-      label: 'Project Status',
-      path: '/project-status',
-      description: 'View development progress',
-      requireAuth: true
-    }
+    // {
+    //   icon: BookOpen,
+    //   label: 'Project Status',
+    //   path: '/project-status',
+    //   description: 'View development progress',
+    //   requireAuth: true
+    // }
   ];
 
   const availableLinks = quickLinks.filter(link => 

@@ -14,7 +14,7 @@ import {
   Calendar,
   MapPin,
   Users,
-  DollarSign,
+  IndianRupee ,
   Upload,
   Plus,
   X,
@@ -25,6 +25,8 @@ import {
 } from 'lucide-react';
 
 import axios from 'axios';
+
+import API from './config/axiosConfig';
 
 interface ManagerEventAddPageProps {
   onNavigate: (page: PageType) => void;
@@ -148,7 +150,7 @@ export function EventAddPage({ onNavigate }: ManagerEventAddPageProps) {
 async function createEvent(eventForm) {
   try {
 
-    const API_BASE = "http://localhost:8080/Event";
+    const API_BASE = "/Event";
     const payload = {
       title: eventForm.title,
       description: eventForm.description,
@@ -178,12 +180,7 @@ async function createEvent(eventForm) {
 
     console.log(payload);
 
-     const response = await axios.post(`${API_BASE}/create`, payload, {
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${localStorage.getItem("token") || ""}`,
-      },
-    });
+     const response = await API.post(`/Event/create`, payload);
 
     console.log("✅ Event created:", response.data);
     return response.data;

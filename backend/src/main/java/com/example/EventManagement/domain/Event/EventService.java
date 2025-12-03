@@ -1,6 +1,9 @@
 package com.example.EventManagement.domain.Event;
 
 import com.example.EventManagement.domain.entity.User;
+import com.example.EventManagement.domain.entity.type.UserType;
+import com.example.EventManagement.domain.notification.NotificationControlService;
+import com.example.EventManagement.domain.notification.NotificationService;
 import com.example.EventManagement.domain.repository.UserRepository;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,12 +16,15 @@ public class EventService {
     private EventRepository eventRepository;
     private UserRepository userRepository;
 
+    private NotificationControlService notificationControlService;
+
     @Autowired
     private ModelMapper modelMapper;
 
-    public EventService(EventRepository eventRepository,UserRepository userRepository){
+    public EventService(EventRepository eventRepository,UserRepository userRepository,NotificationControlService notificationControlService){
         this.eventRepository=eventRepository;
         this.userRepository=userRepository;
+        this.notificationControlService=notificationControlService;
     }
 
 
@@ -39,6 +45,13 @@ public class EventService {
         event.setStatus("Event Created");
 
         EventOutDto res=modelMapper.map(eventRepository.save(event),EventOutDto.class);
+
+
+
+        notificationControlService.notifyStudentsForNewEvent(event.getTitle());
+
+
+
 
         return res;
     }
@@ -91,6 +104,8 @@ public class EventService {
         }
 
         eventRepository.save(event);
+
+//        notificationControlService.notifyStudentsForUpdatedEvent(event.getTitle());
 
 
         return new EventOutDto();

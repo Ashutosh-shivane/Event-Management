@@ -13,7 +13,7 @@ import {
   MapPin,
   Users,
   Clock,
-  DollarSign,
+  IndianRupee ,
   Star,
   MessageCircle,
   Share2,
@@ -27,6 +27,7 @@ import {
 } from 'lucide-react';
 import { ImageWithFallback } from './figma/ImageWithFallback';
 import axios from 'axios';
+import API from './config/axiosConfig';
 
 
 
@@ -98,8 +99,8 @@ export function EventDetailsPage() {
 
 
   useEffect(() => {
-    axios
-      .get(`http://localhost:8080/Event/${eventId}`) // replace with your backend URL
+    API
+      .get(`/Event/${eventId}`) // replace with your backend URL
       .then((response) => {
 
         const mapped = mapEvent(response.data[0]);
@@ -297,7 +298,7 @@ export function EventDetailsPage() {
               ) : (
                 <>
                   <UserPlus className="h-5 w-5 mr-2" />
-                  Register for Rs. {eventdata.cost}
+                  Apply for Rs. {eventdata.cost}
                 </>
               )}
             </Button>

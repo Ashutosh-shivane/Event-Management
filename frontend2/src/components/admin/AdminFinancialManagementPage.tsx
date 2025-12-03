@@ -26,7 +26,7 @@ import {
   ResponsiveContainer
 } from 'recharts';
 import { 
-  DollarSign, 
+  IndianRupee , 
   TrendingUp, 
   CreditCard,
   Download,
@@ -283,7 +283,7 @@ export function AdminFinancialManagementPage() {
                     </span>
                   </div>
                 </div>
-                <DollarSign className="h-8 w-8 text-green-600" />
+                <IndianRupee  className="h-8 w-8 text-green-600" />
               </div>
             </CardContent>
           </Card>
@@ -638,7 +638,7 @@ export function AdminFinancialManagementPage() {
             <Card className="cursor-pointer hover:shadow-md transition-shadow">
               <CardContent className="p-6">
                 <div className="flex items-center">
-                  <DollarSign className="h-8 w-8 text-yellow-600" />
+                  <IndianRupee  className="h-8 w-8 text-yellow-600" />
                   <div className="ml-4">
                     <h3>Tax Report</h3>
                     <p className="text-sm text-gray-600">Tax calculations and compliance data</p>

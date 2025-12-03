@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
 import { Button } from '../ui/button';
 import { Badge } from '../ui/badge';
-import { Calendar, MapPin, Users, Star, MessageSquare } from 'lucide-react';
+import { Calendar, MapPin, Users, Star, MessageSquare,ArrowLeft } from 'lucide-react';
 
 interface Event {
   id: string;
@@ -121,13 +121,22 @@ export function StudentFeedbackPage() {
     navigate(`/student/feedback/${eventId}`);
   };
 
+   const handleBack = () => {
+    navigate('/dashboard');
+  };
+
   const attendedEvents = events.filter(event => event.hasAttended && event.canProvideFeedback);
   const notAttendedEvents = events.filter(event => !event.hasAttended);
 
   return (
     <div className="p-6 space-y-6">
-      <div className="flex items-center justify-between">
-        <div>
+      <div className="flex items-center ">
+         <Button variant="outline" onClick={handleBack}>
+                  <ArrowLeft className="h-4 w-4 mr-2 " />
+                  Back
+                </Button>
+        <div className='pl-4'>
+               
           <h1 className="text-2xl font-semibold text-gray-900">Event Feedback</h1>
           <p className="text-gray-600 mt-1">Provide feedback for events you have attended</p>
         </div>

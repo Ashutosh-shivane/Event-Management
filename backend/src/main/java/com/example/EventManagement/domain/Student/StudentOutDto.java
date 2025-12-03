@@ -64,6 +64,9 @@ public class StudentOutDto {
 
     private String emergencyContactRelation;
 
+
+    private Boolean isVerified;
+
 //    private User user;
 
 

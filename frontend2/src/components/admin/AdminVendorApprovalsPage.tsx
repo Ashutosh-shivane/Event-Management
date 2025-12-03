@@ -23,7 +23,7 @@ import {
   Phone,
   Mail,
   Globe,
-  DollarSign,
+  IndianRupee ,
   Calendar,
   Users,
   FileText,
@@ -277,7 +277,7 @@ export function AdminVendorApprovalsPage() {
               <div>
                 <label className="text-sm text-gray-600">Pricing Range</label>
                 <p className="flex items-center">
-                  <DollarSign className="h-4 w-4 mr-2" />
+                  <IndianRupee  className="h-4 w-4 mr-2" />
                   {vendor.pricing}
                 </p>
               </div>

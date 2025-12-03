@@ -8,7 +8,6 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from './ui/tabs';
 import { 
   Wallet, 
   CreditCard, 
-  DollarSign, 
   TrendingUp,
   Download,
   Plus,
@@ -173,7 +172,7 @@ export function WalletPage() {
           <CardContent className="p-6">
             <div className="flex items-center">
               <div className="p-2 bg-red-100 rounded-lg">
-                {/* <DollarSign className="h-6 w-6 text-red-600" /> */}
+                {/* <IndianRupee  className="h-6 w-6 text-red-600" /> */}
                 <IndianRupee className="h-6 w-6 text-red-600" />
               </div>
               <div className="ml-4">

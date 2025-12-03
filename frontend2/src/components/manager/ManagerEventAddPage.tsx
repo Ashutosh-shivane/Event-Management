@@ -15,7 +15,7 @@ import {
   MapPin,
   Clock,
   Users,
-  DollarSign,
+  IndianRupee ,
   FileText,
   Image,
   Plus,
@@ -612,7 +612,7 @@ export function ManagerEventAddPage() {
             <CardHeader>
               <CardTitle className="flex items-center justify-between">
                 <div className="flex items-center">
-                  <DollarSign className="h-5 w-5 mr-2" />
+                  <IndianRupee  className="h-5 w-5 mr-2" />
                   Vendor Requirements (Optional)
                 </div>
                 <Button

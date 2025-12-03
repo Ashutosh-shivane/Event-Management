@@ -30,6 +30,7 @@ import {
 } from 'lucide-react';
 
 import axios from 'axios';
+import API from '../config/axiosConfig';
 
 export function ManagerProfilePage() {
   const { user, updateUser } = useAuth();
@@ -53,7 +54,7 @@ export function ManagerProfilePage() {
 
 
 
-    axios.get(`http://localhost:8080/Manager/${userId}`)
+    API.get(`/Manager/${userId}`)
       .then((response) => {
         // setStudentdata(response.data);
 
@@ -271,8 +272,8 @@ export function ManagerProfilePage() {
      let indata=mapFormDataToManagerInDto(formData,localStorage.getItem("id"));
     try {
       // Simulate API call
-      const response = await axios.post(
-      `http://localhost:8080/Manager/save`,
+      const response = await API.post(
+      `/Manager/save`,
      indata
     );
 
@@ -312,6 +313,17 @@ export function ManagerProfilePage() {
     'Event Manager', 'Project Manager', 'Operations Manager', 'Marketing Manager',
     'Logistics Manager', 'Budget Manager', 'Vendor Manager', 'Team Lead'
   ];
+
+
+  
+    const getMaxDOB = () => {
+  const d = new Date();
+  d.setFullYear(d.getFullYear() - 18);
+  const yyyy = d.getFullYear();
+  const mm = String(d.getMonth() + 1).padStart(2, '0');
+  const dd = String(d.getDate()).padStart(2, '0');
+  return `${yyyy}-${mm}-${dd}`;
+};
 
   return (
     <div className="min-h-screen bg-gray-50 p-6">
@@ -416,7 +428,20 @@ export function ManagerProfilePage() {
                     <Input
                       id="phone"
                       value={formData.phone}
-                      onChange={(e) => handleInputChange('phone', e.target.value)}
+                      // onChange={(e) => handleInputChange('phone', e.target.value)}
+                       onChange={
+                        
+
+                        
+                        (e) => {
+                          
+                           const value = e.target.value.replace(/\D/g, ""); // remove non-numbers
+    if (value.length <= 10) {
+      handleInputChange("phone", value);
+    }
+                          
+                        }}
+
                       disabled={!isEditing}
                     />
                   </div>
@@ -426,6 +451,7 @@ export function ManagerProfilePage() {
                     <Input
                       id="dateOfBirth"
                       type="date"
+                         max={getMaxDOB()}
                       value={formData.dateOfBirth}
                       onChange={(e) => handleInputChange('dateOfBirth', e.target.value)}
                       disabled={!isEditing}

@@ -25,7 +25,7 @@ import {
   XCircle,
   Users,
   MapPin,
-  DollarSign,
+  IndianRupee ,
   Clock,
   Flag,
   TrendingUp,
@@ -261,7 +261,7 @@ export function AdminEventManagementPage() {
           <Card>
             <CardContent className="p-4">
               <div className="flex items-center">
-                <DollarSign className="h-6 w-6 text-green-600" />
+                <IndianRupee  className="h-6 w-6 text-green-600" />
                 <div className="ml-3">
                   <p className="text-sm text-gray-600">Budget</p>
                   <p>${event.budget.toLocaleString()}</p>

@@ -33,6 +33,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '../ui/tabs';
 import { toast } from 'sonner';
 
 import axios from 'axios';
+import API from '../config/axiosConfig';
 
 interface Student {
   id: string;
@@ -91,7 +92,7 @@ const [students, setStudents] = React.useState<Student[]>([]);
 
 
     try{
-     const res= await axios.get(`http://localhost:8080/SER/getEventstats/${eventId}`);
+     const res= await API.get(`/SER/getEventstats/${eventId}`);
 
 
       const mappedEvent = mapBackendEventToFrontend(res.data.event);
@@ -359,7 +360,7 @@ function mapBackendStudentToFrontend(studentData: any): Student {
 console.log(studentStatusArray);
 
 
-    const res=await axios.patch(`http://localhost:8080/SER/saveEventstats/${eventId}/save`, studentStatusArray); // send current state
+    const res=await API.patch(`/SER/saveEventstats/${eventId}/save`, studentStatusArray); // send current state
     toast.success('All student statuses saved!');
 
 

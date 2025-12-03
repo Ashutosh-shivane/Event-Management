@@ -15,17 +15,19 @@ import {
   Calendar,
   MapPin,
   Users,
-  DollarSign,
+  IndianRupee ,
   Upload,
   Plus,
   X,
   Clock,
   Save,
   Eye,
-  Send
+  Send,
+  MessageCircle
 } from 'lucide-react';
 
 import axios from 'axios';
+import API from '../config/axiosConfig';
 
 
 
@@ -46,6 +48,9 @@ interface EventForm {
   isPublic: boolean;
   requiresApproval: boolean;
   allowWaitlist: boolean;
+  whatsappGroupLink:string;
+  // requiredVolunteer:number;
+  
 }
 
 
@@ -73,8 +78,29 @@ export function OrganizerEventCreatePage() {
     venue: "",
     capacity: "",
     price: "",
-    tags: []
+    tags: [],
+     whatsappGroupLink:""
   });
+
+
+  const initialForm: EventForm = {
+  title: "",
+  description: "",
+  category: "",
+  date: "",
+  startTime: "",
+  endTime: "",
+  location: "",
+  venue: "",
+  requiredVolunteer: 0,
+  capacity: "",
+  price: "",
+  earlyBirdPrice: "",
+  earlyBirdDeadline: "",
+  tags: [],
+  whatsappGroupLink:""
+
+};
 
  
 
@@ -134,10 +160,21 @@ export function OrganizerEventCreatePage() {
   };
 
  const handlePublish = async () => {
+
+   const validationErrors = validateEventForm(eventForm);
+
+  if (validationErrors.length > 0) {
+    alert("Please fix the following errors:\n\n" + validationErrors.join("\n"));
+    return;
+  }
+
+
     try {
       console.log("Publishing event...", eventForm);
       const res = await createEvent(eventForm);
       alert("Event created successfully! ID: " + res.id);
+
+      setEventForm(initialForm);
      
     } catch (err) {
       alert("Error while creating event");
@@ -147,9 +184,12 @@ export function OrganizerEventCreatePage() {
 
   // helper function
 async function createEvent(eventForm:any) {
+
+ 
+
   try {
 
-    const API_BASE = "http://localhost:8080/Event";
+    const API_BASE = "/Event";
     const payload = {
       title: eventForm.title,
       description: eventForm.description,
@@ -173,18 +213,14 @@ async function createEvent(eventForm:any) {
       
       cost: eventForm.price,
       tags: JSON.stringify(eventForm.tags),
-      createdid:localStorage.getItem('id')
+      createdid:localStorage.getItem('id'),
+      whatsappGroupLink:eventForm.whatsappGroupLink
       
     };
 
     console.log(payload);
 
-     const response = await axios.post(`${API_BASE}/create`, payload, {
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${localStorage.getItem("token") || ""}`,
-      },
-    });
+     const response = await API.post(`/Event/create`, payload);
 
     console.log("✅ Event created:", response.data);
     return response.data;
@@ -193,6 +229,32 @@ async function createEvent(eventForm:any) {
     throw err;
   }
 }
+
+function validateEventForm(form: EventForm) {
+  const errors: string[] = [];
+
+  if (!form.title.trim()) errors.push("Event title is required");
+  if (!form.description.trim()) errors.push("Event description is required");
+  if (!form.category.trim()) errors.push("Category is required");
+
+  if (!form.date) errors.push("Event date is required");
+  if (!form.startTime) errors.push("Start time is required");
+  if (!form.endTime) errors.push("End time is required");
+
+  if (!form.location.trim()) errors.push("Location is required");
+  if (!form.venue.trim()) errors.push("Venue name is required");
+
+  if (!form.requiredVolunteer) errors.push("Capacity / required volunteers is required");
+
+  if (!form.price) errors.push("Volunteer price per day is required");
+
+  if(!form.whatsappGroupLink) errors.push("Whatsapp group is required for further communication for event.");
+
+  return errors;
+}
+
+const today = new Date().toISOString().split("T")[0];
+
 
 
 
@@ -339,6 +401,7 @@ async function createEvent(eventForm:any) {
                         id="date"
                         type="date"
                         value={eventForm.date}
+                          min={today}
                         onChange={(e) => handleFormChange('date', e.target.value)}
                       />
                     </div>
@@ -397,7 +460,7 @@ async function createEvent(eventForm:any) {
                 <CardContent className="space-y-6">
                   <div className="grid md:grid-cols-2 gap-6">
                     <div className="space-y-2">
-                      <Label htmlFor="price"> Price (Rs) *</Label>
+                      <Label htmlFor="price"> Volunteer per day (Rs) *</Label>
                       <Input
                         id="price"
                         type="number"
@@ -410,6 +473,58 @@ async function createEvent(eventForm:any) {
                   </div>
                 </CardContent>
               </Card>
+
+
+
+<Card>
+                <CardHeader>
+                  <CardTitle>Gruoup</CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-6">
+                  
+                   
+                   <div className="space-y-2">
+                <Label htmlFor="whatsappGroupLink" className="flex items-center">
+                  <MessageCircle className="h-4 w-4 mr-2 text-green-600" />
+                  WhatsApp Group Link *
+                </Label>
+                 <div className="flex space-x-2">
+                <Input
+                  id="whatsappGroupLink"
+                  value={eventForm.whatsappGroupLink}
+                  onChange={(e) => handleFormChange('whatsappGroupLink', e.target.value)}
+                  placeholder="https://chat.whatsapp.com/..."
+                  type="url"
+                />
+
+                 <Button
+                    type="button"
+                    variant="outline"
+                    onClick={() => {
+                     
+                        window.open("https://web.whatsapp.com/", '_blank');
+                      
+                    }}
+                    
+                    className="bg-green-50 hover:bg-green-100 text-green-700 border-green-300"
+                  >
+                    <MessageCircle className="h-4 w-4 mr-2" />
+                    Open
+                  </Button>
+                  </div>
+
+                <p className="text-xs text-gray-500">
+                  Share a WhatsApp group link for event participants to communicate and coordinate.<br />
+                  First create a WhatsApp group for this event.  <br />
+                  Open the group settings → enable “Anyone can join with the link”.  <br />
+                  Then copy the invite link and paste it in the input box above.<br />
+                </p>
+              </div>
+                </CardContent>
+              </Card>
+
+
+
             </div>
           </TabsContent>
 

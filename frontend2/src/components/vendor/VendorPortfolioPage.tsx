@@ -16,7 +16,7 @@ import {
   Calendar,
   MapPin,
   Users,
-  DollarSign,
+  IndianRupee ,
   Image as ImageIcon,
   Upload,
   X
@@ -328,8 +328,8 @@ export function VendorPortfolioPage() {
                 </div>
                 {item.budget > 0 && (
                   <div className="flex items-center">
-                    <DollarSign className="h-3 w-3 mr-2" />
-                    ${item.budget.toLocaleString()}
+                    <IndianRupee  className="h-3 w-3 mr-2" />
+                    ₹ {item.budget.toLocaleString()}
                   </div>
                 )}
               </div>

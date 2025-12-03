@@ -39,9 +39,22 @@ import {ManagerAssignedEventPage} from './components/manager/ManagerAssignedEven
 
 import {OrganizerEventEditPage} from './components/organizer/OrganizerEventEditPage';
 
+import OAuth2Success from './components/oauth/OAuthSuccess';
+
+
+import ChatbotIcon from './components/chatbot/ChatbotIcon';
+import ChatbotDialog from './components/chatbot/ChatbotDialog';
+
+import { StudentFeedbackPage } from './components/student/StudentFeedbackPage';
+import { StudentFeedbackForm } from './components/student/StudentFeedbackForm';
+import { StudentEmailVerificationPage } from './components/student/StudentEmailVerificationPage';
+import { useNavigate } from "react-router-dom";
+
 // Protected Route Component
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
   const { isAuthenticated } = useAuth();
+  
+
   
   if (!isAuthenticated) {
     return <Navigate to="/" replace />;
@@ -63,12 +76,13 @@ function PublicRoute({ children }: { children: React.ReactNode }) {
 
 // Profile Page Wrapper with Layout
 function ProfilePageWrapper() {
+  const navigate = useNavigate();
   return (
     <div className="min-h-screen bg-gray-50">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <Button 
           variant="outline" 
-          onClick={() => window.history.back()}
+          onClick={() =>  navigate("/dashboard")}
           className="mb-6"
         >
           <ArrowLeft className="h-4 w-4 mr-2" />
@@ -113,6 +127,15 @@ function AppRoutes() {
         element={
           <PublicRoute>
             <LoginForm initialMode="signup" />
+          </PublicRoute>
+        } 
+      />
+
+      <Route 
+        path="/oauth2/success/google" 
+        element={
+          <PublicRoute>
+            <OAuth2Success  />
           </PublicRoute>
         } 
       />
@@ -436,6 +459,40 @@ function AppRoutes() {
         } 
       />
 
+      <Route 
+        path="/student/feedback" 
+        element={
+          <ProtectedRoute>
+            <div className="min-h-screen bg-gray-50">
+              <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+                <StudentFeedbackPage />
+              </div>
+            </div>
+          </ProtectedRoute>
+        } 
+      />
+      <Route 
+        path="/student/feedback/:eventId" 
+        element={
+          <ProtectedRoute>
+            <div className="min-h-screen bg-gray-50">
+              <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+                <StudentFeedbackForm />
+              </div>
+            </div>
+          </ProtectedRoute>
+        } 
+      />
+
+      <Route 
+        path="/verify-email" 
+        element={
+          <ProtectedRoute>
+            <StudentEmailVerificationPage />
+          </ProtectedRoute>
+        } 
+      />
+
       {/* Catch all route - 404 page */}
       <Route path="*" element={<NotFoundPage />} />
 
@@ -446,12 +503,21 @@ function AppRoutes() {
 }
 
 export default function App() {
+  const [isChatbotOpen, setIsChatbotOpen] = React.useState(false);
   return (
     <Router>
       <AuthProvider>
         <NotificationProvider>
           <AppRoutes />
           <Toaster />
+          <ChatbotIcon 
+            isOpen={isChatbotOpen} 
+            onClick={() => setIsChatbotOpen(!isChatbotOpen)} 
+          />
+          <ChatbotDialog 
+            isOpen={isChatbotOpen} 
+            onClose={() => setIsChatbotOpen(false)} 
+          />
         </NotificationProvider>
       </AuthProvider>
     </Router>

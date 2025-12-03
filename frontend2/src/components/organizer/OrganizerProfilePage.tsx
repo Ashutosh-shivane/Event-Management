@@ -28,10 +28,11 @@ import {
   Users,
   TrendingUp,
   Globe,
-  DollarSign
+  IndianRupee 
 } from 'lucide-react';
 
 import axios from 'axios';
+import API from '../config/axiosConfig';
 
 export function OrganizerProfilePage() {
   const { user, updateUser } = useAuth();
@@ -56,7 +57,7 @@ export function OrganizerProfilePage() {
 
 
 
-    axios.get(`http://localhost:8080/Organizer/${userId}`)
+    API.get(`/Organizer/${userId}`)
       .then((response) => {
         // setStudentdata(response.data);
 
@@ -163,12 +164,11 @@ export function OrganizerProfilePage() {
 
   const calculateProfileCompletion = () => {
     const requiredFields = [
-      'name', 'email', 'phone', 'organizationName', 'organizationType',
-      'jobTitle', 'yearsExperience', 'bio', 'specializations', 'eventTypes'
+      'name', 'email', 'phone', 'organizationName', 'organizationType', 'organizationBio'
     ];
     const optionalFields = [
-      'address', 'industry', 'website', 'achievements', 'vision',
-      'eventSizes', 'budgetRanges', 'businessModel', 'targetAudience',
+      'businessAddress', 'industry', 'website', 
+       'businessModel', 'targetAudience',
       'businessAddress', 'emergencyContactName', 'emergencyContactPhone'
     ];
 
@@ -258,8 +258,8 @@ export function OrganizerProfilePage() {
       // Simulate API call
       
 
-        const response = await axios.post(
-      `http://localhost:8080/Organizer/save`,
+        const response = await API.post(
+      `/Organizer/save`,
      indata
     );
       
@@ -291,6 +291,19 @@ export function OrganizerProfilePage() {
     'Event Management Company', 'Corporate', 'Non-profit', 'Educational Institution',
     'Government Agency', 'Freelance', 'Wedding Planner', 'Festival Organizer'
   ];
+
+
+  const getMaxDOB = () => {
+  const d = new Date();
+  d.setFullYear(d.getFullYear() - 18);
+  const yyyy = d.getFullYear();
+  const mm = String(d.getMonth() + 1).padStart(2, '0');
+  const dd = String(d.getDate()).padStart(2, '0');
+  return `${yyyy}-${mm}-${dd}`;
+};
+
+
+
 
   return (
     <div className="min-h-screen bg-gray-50 p-6">
@@ -394,7 +407,18 @@ export function OrganizerProfilePage() {
                     <Input
                       id="phone"
                       value={formData.phone}
-                      onChange={(e) => handleInputChange('phone', e.target.value)}
+                      onChange={
+                        
+
+                        
+                        (e) => {
+                          
+                           const value = e.target.value.replace(/\D/g, ""); // remove non-numbers
+    if (value.length <= 10) {
+      handleInputChange("phone", value);
+    }
+                          
+                        }}
                       disabled={!isEditing}
                     />
                   </div>
@@ -404,6 +428,7 @@ export function OrganizerProfilePage() {
                     <Input
                       id="dateOfBirth"
                       type="date"
+                       max={getMaxDOB()}
                       value={formData.dateOfBirth}
                       onChange={(e) => handleInputChange('dateOfBirth', e.target.value)}
                       disabled={!isEditing}
@@ -673,7 +698,7 @@ export function OrganizerProfilePage() {
             <Card>
               <CardHeader>
                 <CardTitle className="flex items-center">
-                  <DollarSign className="h-5 w-5 mr-2" />
+                  <IndianRupee  className="h-5 w-5 mr-2" />
                   Business Information
                 </CardTitle>
               </CardHeader>

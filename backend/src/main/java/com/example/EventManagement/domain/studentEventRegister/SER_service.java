@@ -3,12 +3,15 @@ package com.example.EventManagement.domain.studentEventRegister;
 import com.example.EventManagement.domain.Event.Event;
 import com.example.EventManagement.domain.Event.EventOutDto;
 import com.example.EventManagement.domain.Event.EventRepository;
+import com.example.EventManagement.domain.Student.StudentEventRegister;
+import com.example.EventManagement.domain.notification.NotificationControlService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -23,6 +26,8 @@ public class SER_service {
     private final SER_repository serRepository;
 
     private final EventRepository eventRepository;
+
+    private final NotificationControlService notificationControlService;
 
 
     public List<SER_Eventlist_DTO> getEventStats(String userid) {
@@ -53,12 +58,24 @@ public class SER_service {
     @Transactional
     public String saveEventstddata(String eventid, List<StudentStatusUpdateDTO> updates) {
 
+        List<Long> registerIds = updates.stream()
+                .map(StudentStatusUpdateDTO::getId)
+                .toList();
 
         for (StudentStatusUpdateDTO update : updates) {
 
+
+
             System.out.println(eventid+" " +update.getId()+" "+update.getStatus());
             serRepository.updateStudentStatus(eventid, update.getId(), update.getStatus());
+
         }
+
+
+
+
+
+        notificationControlService.notifyStudentForSelected(registerIds);
 
         return "saved";
 

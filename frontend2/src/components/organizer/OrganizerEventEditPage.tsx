@@ -16,6 +16,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from ".
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../ui/tabs";
 import { Badge } from "../ui/badge";
 
+import API from '../config/axiosConfig';
+
 interface EventForm {
   title: string;
   description: string;
@@ -65,7 +67,7 @@ export function OrganizerEventEditPage() {
   useEffect(() => {
     const fetchEvent = async () => {
       try {
-        const res = await axios.get(`http://localhost:8080/Event/update/${eventId}/${userid}`);
+        const res = await API.get(`/Event/update/${eventId}/${userid}`);
         const data = res.data;
 
         console.log("here");
@@ -123,6 +125,15 @@ export function OrganizerEventEditPage() {
 
   // 🔹 Update Event (PUT Request)
   const handleUpdate = async () => {
+
+
+    const validationErrors = validateEventForm(eventForm);
+
+  if (validationErrors.length > 0) {
+    alert("Please fix the following errors:\n\n" + validationErrors.join("\n"));
+    return;
+  }
+
     try {
       const payload = {
         title: eventForm.title,
@@ -137,8 +148,8 @@ export function OrganizerEventEditPage() {
         updatedBy: localStorage.getItem("id"),
       };
 
-      const res = await axios.put(
-        `http://localhost:8080/Event/update/${eventId}/${userid}`,
+      const res = await API.put(
+        `/Event/update/${eventId}/${userid}`,
         payload,
         
       );
@@ -151,7 +162,32 @@ export function OrganizerEventEditPage() {
     }
   };
 
+
+  function validateEventForm(form: EventForm) {
+  const errors: string[] = [];
+
+  if (!form.title.trim()) errors.push("Event title is required");
+  if (!form.description.trim()) errors.push("Event description is required");
+  if (!form.category.trim()) errors.push("Category is required");
+
+  if (!form.date) errors.push("Event date is required");
+  if (!form.startTime) errors.push("Start time is required");
+  if (!form.endTime) errors.push("End time is required");
+
+  if (!form.location.trim()) errors.push("Location is required");
+  // if (!form.venue.trim()) errors.push("Venue name is required");
+
+  if (!form.requiredVolunteer) errors.push("Capacity / required volunteers is required");
+
+  if (!form.price) errors.push("Volunteer price per day is required");
+
+  return errors;
+}
+
+
   if (loading) return <div className="text-center p-8 text-lg">Loading event details...</div>;
+
+  const today = new Date().toISOString().split("T")[0];
 
   return (
     <div className="min-h-screen bg-background">
@@ -293,6 +329,7 @@ export function OrganizerEventEditPage() {
                       id="date"
                       type="date"
                       value={eventForm.date}
+                        min={today}
                       onChange={(e) => handleFormChange("date", e.target.value)}
                     />
                   </div>

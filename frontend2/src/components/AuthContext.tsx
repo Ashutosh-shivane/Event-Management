@@ -20,6 +20,8 @@ interface AuthContextType {
   logout: () => void;
   updateProfile: (updates: Partial<User>) => void;
   updateUser: (updates: Partial<User>) => void;
+   handleGoogleLogin:any;
+   handleGoogleOAuthCallback: () => void;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -66,6 +68,39 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   };
 
+const handleGoogleOAuthCallback = () => {
+  const params = new URLSearchParams(window.location.search);
+
+  const token = params.get("token");
+  const username = params.get("username");
+  const name = params.get("name");
+  const userid = params.get("userid");
+  const role = params.get("role") as UserRole;
+  const profileCompleted = params.get("profileCompleted");
+
+  if (token) {
+    // Save in localStorage
+    localStorage.setItem("token", token);
+    localStorage.setItem("username", username || "");
+    localStorage.setItem("id", userid || "");
+    localStorage.setItem("userrole", role || "STUDENT");
+     localStorage.setItem("useremail", role);
+    // localStorage.setItem("profileCompleted", profileCompleted || "false");
+
+    // Update AuthContext state
+    const googleUser: User = {
+      id: userid || "",
+      name: name || "",
+      email: username || "",
+      role: (role as UserRole) || "STUDENT",
+      profileCompleted: profileCompleted || "false",
+    };
+
+    setUser(googleUser);
+    setIsAuthenticated(true);
+  }
+};
+
 
   // Mock signup - in real app, this would call an API
   const signup = async (name: string, email: string, password: string, role: UserRole) => {
@@ -91,6 +126,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
 
+  const handleGoogleLogin = () => {
+  window.location.href = "http://localhost:8080/oauth2/authorization/google";
+};
+
+
+
 
 
   const logout = () => {
@@ -114,7 +155,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
 
   return (
-    <AuthContext.Provider value={{ user, isAuthenticated, login, signup, logout, updateProfile, updateUser }}>
+    <AuthContext.Provider value={{ user, isAuthenticated, login, signup, logout, updateProfile, updateUser , handleGoogleLogin,handleGoogleOAuthCallback}}>
       {children}
     </AuthContext.Provider>
   );
