@@ -29,6 +29,10 @@ import {
 import axios from 'axios';
 import API from '../config/axiosConfig';
 
+import MapLocationPicker  from './MapLocationPicker';
+
+import MapTest from './MapTest';
+
 
 
 interface EventForm {
@@ -81,6 +85,9 @@ export function OrganizerEventCreatePage() {
     tags: [],
      whatsappGroupLink:""
   });
+
+  const [selectedLat, setSelectedLat] = useState(null);
+const [selectedLng, setSelectedLng] = useState(null);
 
 
   const initialForm: EventForm = {
@@ -385,6 +392,8 @@ const today = new Date().toISOString().split("T")[0];
                 </div>
               </CardContent>
             </Card>
+
+
           </TabsContent>
 
           <TabsContent value="details" className="mt-6">
@@ -450,6 +459,26 @@ const today = new Date().toISOString().split("T")[0];
                       placeholder="Convention center, hotel, university, etc."
                     />
                   </div>
+
+
+
+<div className="h-[400px] w-full">
+      <MapTest
+        onSelect={({ lat, lng }) => {
+          setSelectedLat(lat);
+          setSelectedLng(lng);
+
+          // Store inside form
+          // handleFormChange("l", `${lat},${lng}`);
+        }}
+      />
+    </div>
+
+    <p className="text-sm text-gray-600 mt-2">
+      Selected Location: {selectedLat && selectedLng ? `${selectedLat}, ${selectedLng}` : "Click on the map"}
+    </p>
+
+
                 </CardContent>
               </Card>
 
@@ -526,6 +555,18 @@ const today = new Date().toISOString().split("T")[0];
 
 
             </div>
+
+
+
+    
+           
+
+
+
+
+
+
+
           </TabsContent>
 
           
@@ -534,6 +575,9 @@ const today = new Date().toISOString().split("T")[0];
 
           
         </Tabs>
+
+        
+ 
       </div>
     </div>
   );
