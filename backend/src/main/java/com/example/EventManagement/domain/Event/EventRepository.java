@@ -12,7 +12,7 @@ public interface EventRepository extends JpaRepository<Event,Long> {
 
     @Query(value = "SELECT e.id, e.title, e.description, e.start_at, e.end_at, e.location, " +
             "e.managedby_manager, e.required_volunteer, e.status, e.category, e.tags, e.cost, " +
-            "u.id AS createdById, u.name AS createdByName " +
+            "u.id AS createdById, u.name AS createdByName ,e.latitude,e.longitude " +
             "FROM events e " +
             "JOIN user u ON e.created_by_id = u.id " +
             "WHERE e.id = :eventId",

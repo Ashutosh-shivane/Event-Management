@@ -38,4 +38,8 @@ public class EventInDto {
 
     private String whatsappGroupLink;
 
+    private String latitude;
+
+    private String longitude;
+
 }
