@@ -7,6 +7,7 @@ import { Badge } from './ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from './ui/tabs';
 import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar';
 import { Progress } from './ui/progress';
+
 import {
   ArrowLeft,
   Calendar,
@@ -28,6 +29,8 @@ import {
 import { ImageWithFallback } from './figma/ImageWithFallback';
 import axios from 'axios';
 import API from './config/axiosConfig';
+
+import EventLocationMap from './EventLocationMap';
 
 
 
@@ -75,6 +78,10 @@ export function EventDetailsPage() {
 
   console.log(eventId);
 
+  const [googleMapsUrl ,setGoogleMapsUrl]=useState("");
+
+   
+
    const mapEvent = (row) => ({
   id: row[0],
   title: row[1],
@@ -90,6 +97,8 @@ export function EventDetailsPage() {
   cost: row[11],
   createdById: row[12],
   createdByName: row[13],
+  latitude:row[14],
+  longitude:row[15],
 });
 
 
@@ -110,6 +119,9 @@ export function EventDetailsPage() {
         console.log(response.data[0]);
         console.log(mapped); 
 
+        setGoogleMapsUrl( `https://www.google.com/maps?q=${mapped.latitude},${mapped.longitude}`);
+
+        
         localStorage.setItem("eventDetails", JSON.stringify(mapped));
 
         
@@ -344,9 +356,33 @@ export function EventDetailsPage() {
                          
                         </div>
                       </div>
-                      <div className="h-48 bg-muted rounded-lg flex items-center justify-center">
-                        <div className="text-muted-foreground">Map placeholder</div>
-                      </div>
+
+                     
+
+                      {eventdata.latitude != null && eventdata.longitude != null ? (<>
+  <EventLocationMap
+    lat={eventdata.latitude}
+    lng={eventdata.longitude}
+  />
+  <div className="mt-3 flex justify-center">
+        <a
+          href={googleMapsUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="px-4 py-2 bg-blue-600 text-white rounded-lg shadow hover:bg-blue-700 transition"
+        >
+          Open in Google Maps
+        </a>
+      </div>
+      </>
+) : (
+  <div className="h-48 bg-muted rounded-lg flex items-center justify-center">
+    <div className="text-muted-foreground">Map placeholder</div>
+  </div>
+)}
+
+  
+
                     </div>
                   </CardContent>
                 </Card>

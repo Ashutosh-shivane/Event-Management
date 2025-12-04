@@ -221,7 +221,9 @@ async function createEvent(eventForm:any) {
       cost: eventForm.price,
       tags: JSON.stringify(eventForm.tags),
       createdid:localStorage.getItem('id'),
-      whatsappGroupLink:eventForm.whatsappGroupLink
+      whatsappGroupLink:eventForm.whatsappGroupLink,
+      latitude:selectedLat,
+      longitude:selectedLng,
       
     };
 
