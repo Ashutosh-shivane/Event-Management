@@ -25,13 +25,13 @@ public class DashboardService {
 
             Map<String, Object> data = new HashMap<>();
 
-            // 1️⃣ Fetch summary stats (count + total hours)
+
             Object num = dashboardRepository.getStudentEventcount(userid);
             if (num != null) {
-                // JPA returns Object[] for multiple columns
+
                 Object[] result = (Object[]) num;
 
-                // Safely extract numeric values
+
                 String pastEventCount = result[0] != null ? result[0].toString() : "0";
                 String upcomingEventCount = result[1] != null ? result[1].toString() : "0";
                 String totalHours = result[2] != null ? result[2].toString() : "0";
@@ -45,14 +45,14 @@ public class DashboardService {
                 data.put("total_hours", 0.0);
             }
 
-            // 2️⃣ Fetch active events and convert to DTOs
+
             List<Event> activeEvents = dashboardRepository.getStudentActiveEvent(userid);
             List<EventOutDto> activeEventDtos = activeEvents.stream()
                     .map(event -> modelMapper.map(event, EventOutDto.class))
                     .collect(Collectors.toList());
             data.put("active_events", activeEventDtos);
 
-            // 3️⃣ Fetch registered events and convert to DTOs
+
             List<Event> registeredEvents = dashboardRepository.getStudentRegisterEvent(userid);
             List<EventOutDto> registeredEventDtos = registeredEvents.stream()
                     .map(event -> modelMapper.map(event, EventOutDto.class))
@@ -71,7 +71,7 @@ public class DashboardService {
 
             Map<String, Object> data = new HashMap<>();
 
-            // ✅ Fetch the count data (returned as Object[])
+
             Object[] countData = (Object[]) dashboardRepository.getManagerEventcount(userid);
 
             // Extract safely (use string formatting to avoid class cast issues)
@@ -79,16 +79,16 @@ public class DashboardService {
             String upcomingEventCount = countData[1] != null ? countData[1].toString() : "0";
             String approvedUpcomingCount = countData[2] != null ? countData[2].toString() : "0";
 
-            // ✅ Fetch upcoming event stats
+
             List<SER_Eventlist_DTO> eventListDtos = dashboardRepository.getMangerUpcomingeventstats(userid);
 
-            // ✅ Fetch assigned events & convert to DTOs
+
             List<Event> events = dashboardRepository.getMangerAssignedEvent(userid);
             List<EventOutDto> eventOutDtos = events.stream()
                     .map(event -> modelMapper.map(event, EventOutDto.class))
                     .collect(Collectors.toList());
 
-            // ✅ Populate data map
+
             data.put("past_event_count", pastEventCount);
             data.put("upcoming_event_count", upcomingEventCount);
             data.put("approved_upcoming_event_count", approvedUpcomingCount);
@@ -104,7 +104,7 @@ public class DashboardService {
 
         Map<String, Object> data = new HashMap<>();
 
-        // Step 1: Get event counts and totals
+
         Object result = dashboardRepository.getOrganizerEventcount(userid);
 
         if (result != null) {
