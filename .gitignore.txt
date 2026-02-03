@@ -1,6 +1,0 @@
-.idea/
-./frontend/node_modules
-./frontend2/node_modules
-./frontend
-/frontend
-backend/src/main/resources/application.properties
