@@ -152,7 +152,7 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
             className={`w-full justify-start ${collapsed ? 'px-2' : 'px-3'}`}
             onClick={() => handleNavigation(item.path)}
           >
-            <item.icon className={`h-5 w-5 ${collapsed ? '' : 'mr-3'}`} />
+            <item.icon className={`h-5 w-5 ${collapsed ? '' : 'mr-3'}`}   />
             {!collapsed && (
               <>
                 <span>{item.label}</span>
